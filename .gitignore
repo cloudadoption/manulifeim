@@ -11,3 +11,6 @@ helix-importer-ui
 # Ensure these files are tracked
 !CLAUDE.md
 !AGENTS.md
+
+# browser snapshots of the live site (large, local only)
+tools/importer/snapshots/

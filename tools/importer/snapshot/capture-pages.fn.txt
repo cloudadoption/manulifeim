@@ -1,0 +1,44 @@
+async (page) => {
+  page.setDefaultTimeout(15000);
+  const q = await (await page.request.get('http://localhost:3000/tools/importer/snapshots/_queue.json', { timeout: 5000 })).json();
+  const out = [];
+  const t0 = Date.now();
+  let errors = 0;
+  for (const url of q.urls) {
+    if (Date.now() - t0 > q.budgetMs) break;
+    const started = Date.now();
+    const rec = { url, at: new Date().toISOString() };
+    try {
+      const resp = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      rec.status = resp ? resp.status() : 0;
+      rec.finalUrl = page.url();
+      const chain = [];
+      let r = resp && resp.request().redirectedFrom();
+      while (r) { chain.push(r.url()); r = r.redirectedFrom(); }
+      rec.redirectedFrom = chain;
+      await page.waitForLoadState('load', { timeout: 20000 }).catch(() => {});
+      await page.waitForTimeout(2000);
+      rec.title = await page.title();
+      rec.rendered = await page.evaluate(() => {
+        const d = document.documentElement.cloneNode(true);
+        d.querySelectorAll('script, noscript, iframe, link[rel=preload], link[rel=prefetch], link[rel=modulepreload]').forEach((e) => e.remove());
+        return `<!DOCTYPE html>\n${d.outerHTML}`;
+      });
+      errors = 0;
+    } catch (e) {
+      rec.error = String(e.message || e).slice(0, 300);
+      errors += 1;
+    }
+    if ([403, 429, 503].includes(rec.status) || /access denied/i.test(rec.title || '') || errors >= 2) {
+      rec.blocked = true;
+      delete rec.raw;
+      delete rec.rendered;
+      out.push(rec);
+      break;
+    }
+    out.push(rec);
+    const wait = 5000 + Math.random() * 5000 - (Date.now() - started);
+    if (wait > 0) await page.waitForTimeout(wait);
+  }
+  return out;
+}

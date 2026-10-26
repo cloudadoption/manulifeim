@@ -1,0 +1,11 @@
+{
+  "sites": {
+    "manulifeim": {
+      "previewOrg": "cloudadoption",
+      "previewSite": "manulifeim",
+      "contentHostUrl": "https://content.da.live/cloudadoption/manulifeim/",
+      "botProtected": true
+    }
+  },
+  "botProtected": true
+}
