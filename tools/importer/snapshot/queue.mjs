@@ -11,7 +11,9 @@
  * Rows already in _state.json (any outcome) are skipped, so a page is never fetched twice.
  */
 import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { parseCsv, SNAP_DIR, ORIGIN, readState } from './lib.mjs';
+import {
+  parseCsv, SNAP_DIR, ORIGIN, readState, readJson,
+} from './lib.mjs';
 
 const args = process.argv.slice(2);
 const opt = (name, def) => {
@@ -45,6 +47,9 @@ const ordered = [
 const batch = ordered.slice(0, size);
 const queue = {
   budgetMs, minGapMs: minGap, maxGapMs: maxGap, urls: batch.map((r) => `${ORIGIN}${r.live_path}`), remaining: ordered.length - batch.length };
+// images still to download are fetched in the gaps between pages (same-origin, in the page)
+const images = readJson(`${SNAP_DIR}/_images.json`, {});
+queue.images = Object.keys(images).filter((u) => !images[u].file && !images[u].status).slice(0, Number(opt('images', 300)));
 writeFileSync(`${SNAP_DIR}/_queue.json`, JSON.stringify(queue, null, 2));
-console.log(`queued ${batch.length}, remaining after batch ${queue.remaining}`);
+console.log(`queued ${batch.length} pages and ${queue.images.length} images, remaining after batch ${queue.remaining}`);
 if (!existsSync(`${SNAP_DIR}/_state.json`)) console.log('(no state yet)');

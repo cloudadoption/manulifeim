@@ -1,0 +1,181 @@
+# Query index definition for manulifeim (tw/en), for the AEM configuration service
+# (content of the site's `content/query.yaml`; same format as the retired helix-query.yaml).
+# Not read from this repo: the lead applies it to the config service after approval.
+# Fields, consumers and caveats: tools/importer/QUERY-INDEX.md.
+#
+# Content-bus indices are always delivered as a single sheet, so every "sheet" is its
+# own index with its own target. `default` holds every page (search, cards autofill,
+# related-articles, tag-list); the others are subsets for the listing block.
+#
+# Metadata comes from the importer (tools/importer/transformers/metadata.js). EDS renders a
+# metadata row `Publication Date | 2026-09-23` as <meta name="publication-date">, `Tags` as
+# one <meta property="article:tag"> per value, `Title` as og:title, `Image` as og:image.
+version: 1
+
+indices:
+  default: &default
+    include:
+      - '/institutional/tw/en'
+      - '/institutional/tw/en/**'
+    exclude:
+      - '/institutional/tw/en/nav'
+      - '/institutional/tw/en/footer'
+      - '/institutional/tw/en/fragments/**'
+      - '/institutional/tw/en/drafts/**'
+      - '/institutional/tw/en/library/**'
+      - '/institutional/tw/en/metadata'
+      - '/institutional/tw/en/search'
+      - '/institutional/tw/en/**/query-index*'
+    target: /institutional/tw/en/query-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[name="description"]
+        value: attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: match(attribute(el, "content"), "^https?://[^/]+(/[^?]*)")
+      template:
+        select: head > meta[name="template"]
+        value: attribute(el, "content")
+      publicationDate:
+        select: head > meta[name="publication-date"]
+        value: attribute(el, "content")
+      publicationTimestamp:
+        select: head > meta[name="publication-date"]
+        value: parseTimestamp(attribute(el, "content"), "YYYY-MM-DD")
+      lastModified:
+        select: none
+        value: parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
+      authors:
+        select: head > meta[name="authors"]
+        value: attribute(el, "content")
+      authorDetails:
+        select: head > meta[name="author-details"]
+        value: attribute(el, "content")
+      assetManager:
+        select: head > meta[name="asset-manager"]
+        value: attribute(el, "content")
+      assetManagerSlug:
+        select: head > meta[name="asset-manager-slug"]
+        value: attribute(el, "content")
+      category:
+        select: head > meta[name="category"]
+        value: attribute(el, "content")
+      categorySlug:
+        select: head > meta[name="category-slug"]
+        value: attribute(el, "content")
+      tags:
+        select: head > meta[property="article:tag"]
+        values: attribute(el, "content")
+      tagSlugs:
+        select: head > meta[name="tag-slugs"]
+        value: attribute(el, "content")
+      theme:
+        select: head > meta[name="theme"]
+        value: attribute(el, "content")
+      topic:
+        select: head > meta[name="topic"]
+        value: attribute(el, "content")
+      assetClass:
+        select: head > meta[name="asset-class"]
+        value: attribute(el, "content")
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")
+
+  viewpoints:
+    <<: *default
+    include:
+      - '/institutional/tw/en/viewpoints/*/*'
+    target: /institutional/tw/en/query-index-viewpoints.json
+
+  press:
+    <<: *default
+    include:
+      - '/institutional/tw/en/about-us/press-releases/*'
+    target: /institutional/tw/en/query-index-press.json
+
+  case-studies:
+    <<: *default
+    include:
+      - '/institutional/tw/en/sustainable-investing-case-studies/*/*'
+    target: /institutional/tw/en/query-index-case-studies.json
+
+  resources:
+    <<: *default
+    include:
+      - '/institutional/tw/en/resources/documents/*'
+      - '/institutional/tw/en/resources/fact-sheets/*'
+    target: /institutional/tw/en/query-index-resources.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[name="description"]
+        value: attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: match(attribute(el, "content"), "^https?://[^/]+(/[^?]*)")
+      template:
+        select: head > meta[name="template"]
+        value: attribute(el, "content")
+      publicationDate:
+        select: head > meta[name="publication-date"]
+        value: attribute(el, "content")
+      publicationTimestamp:
+        select: head > meta[name="publication-date"]
+        value: parseTimestamp(attribute(el, "content"), "YYYY-MM-DD")
+      lastModified:
+        select: none
+        value: parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
+      tags:
+        select: head > meta[property="article:tag"]
+        values: attribute(el, "content")
+      topic:
+        select: head > meta[name="topic"]
+        value: attribute(el, "content")
+      audience:
+        select: head > meta[name="audience"]
+        value: attribute(el, "content")
+      documentUrl:
+        selectFirst: main a[href*="/content/dam/"]
+        value: attribute(el, "href")
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")
+
+  people:
+    <<: *default
+    include:
+      - '/institutional/tw/en/authors/*'
+      - '/institutional/tw/en/consultant-team/*'
+    target: /institutional/tw/en/query-index-people.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[name="description"]
+        value: attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: match(attribute(el, "content"), "^https?://[^/]+(/[^?]*)")
+      template:
+        select: head > meta[name="template"]
+        value: attribute(el, "content")
+      position:
+        selectFirst: main .team h4 + p
+        value: textContent(el)
+      bio:
+        selectFirst: main .team h4 + p + p
+        value: words(textContent(el), 0, 120)
+      lastModified:
+        select: none
+        value: parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")

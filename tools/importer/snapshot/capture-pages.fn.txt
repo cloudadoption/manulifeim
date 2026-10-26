@@ -1,9 +1,14 @@
 async (page) => {
+  // Captures queued pages one every minGap-maxGap ms; in the gaps it downloads queued images
+  // in the page (same origin). Returns {pages, images} for ingest.mjs.
   page.setDefaultTimeout(15000);
   const q = await (await page.request.get('http://localhost:3000/tools/importer/snapshots/_queue.json', { timeout: 5000 })).json();
   const out = [];
+  const imgs = [];
+  const imgQueue = [...(q.images || [])];
   const t0 = Date.now();
   let errors = 0;
+  let imgBlocked = false;
   for (const url of q.urls) {
     if (Date.now() - t0 > q.budgetMs) break;
     const started = Date.now();
@@ -31,14 +36,37 @@ async (page) => {
     }
     if ([403, 429, 503].includes(rec.status) || /access denied/i.test(rec.title || '') || errors >= 2) {
       rec.blocked = true;
-      delete rec.raw;
       delete rec.rendered;
       out.push(rec);
       break;
     }
     out.push(rec);
-    const wait = (q.minGapMs || 5000) + Math.random() * ((q.maxGapMs || 10000) - (q.minGapMs || 5000)) - (Date.now() - started);
+    const gap = (q.minGapMs || 5000) + Math.random() * ((q.maxGapMs || 10000) - (q.minGapMs || 5000));
+    // images in the gap, 1.5 s apart, until the gap is used up
+    while (!imgBlocked && rec.status === 200 && imgQueue.length && Date.now() - started < gap - 3000) {
+      const iu = imgQueue.shift();
+      const got = await page.evaluate(async (u) => {
+        try {
+          const ctrl = new AbortController();
+          const timer = setTimeout(() => ctrl.abort(), 15000);
+          const r = await fetch(u, { credentials: 'include', signal: ctrl.signal });
+          clearTimeout(timer);
+          const blob = await r.blob();
+          const b64 = r.ok ? await new Promise((res) => {
+            const fr = new FileReader();
+            fr.onload = () => res(String(fr.result).split(',')[1]);
+            fr.readAsDataURL(blob);
+          }) : null;
+          return { url: u, status: r.status, type: blob.type, b64 };
+        } catch (e) { return { url: u, status: 0, error: String(e.message || e) }; }
+      }, iu).catch((e) => ({ url: iu, status: 0, error: String(e.message || e) }));
+      imgs.push(got);
+      if ([403, 429].includes(got.status)) imgBlocked = true;
+      await page.waitForTimeout(1500);
+    }
+    const wait = gap - (Date.now() - started);
     if (wait > 0) await page.waitForTimeout(wait);
   }
-  return out;
+  await page.goto('about:blank');
+  return { pages: out, images: imgs };
 }

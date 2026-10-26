@@ -15,3 +15,7 @@ helix-importer-ui
 # browser snapshots of the live site (large, local only)
 tools/importer/snapshots/
 tools/importer/bd-snapshots
+# generated importer artifacts
+tools/importer/*.bundle.js
+tools/importer/urls-*.txt
+tools/importer/reports/

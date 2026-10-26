@@ -6,11 +6,23 @@
  *
  * Exits 2 when the batch hit a block (403/429/...), so the caller stops instead of retrying.
  */
-import { readFileSync, unlinkSync } from 'fs';
+import { readFileSync, unlinkSync, writeFileSync } from 'fs';
+import { execFileSync } from 'child_process';
 import storeRecords from './store.mjs';
 
 const file = process.argv[2];
-const batch = JSON.parse(readFileSync(file, 'utf-8'));
+const data = JSON.parse(readFileSync(file, 'utf-8'));
+// the capture returns either an array of page records or {pages, images}
+const batch = Array.isArray(data) ? data : data.pages;
+if (!Array.isArray(data) && data.images?.length) {
+  const imgFile = `${file}.images.json`;
+  writeFileSync(imgFile, JSON.stringify(data.images));
+  try {
+    console.log(execFileSync('node', ['tools/importer/snapshot/images.mjs', 'ingest', imgFile]).toString().trim());
+  } catch (e) {
+    console.log(String(e.stdout || e.message).trim());
+  }
+}
 const res = storeRecords(batch);
 unlinkSync(file);
 console.log(`batch: ${batch.length} captured, ${res.stored} stored; total snapshots ${res.done}/${res.total}; images pending ${res.pendingImages}`);

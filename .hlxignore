@@ -9,5 +9,4 @@ sync-block-collection.sh
 tools/migration-scope/
 tools/reports/
 tools/importer/snapshots/
-tools/importer/snapshot/
-tools/importer/bd-snapshots
+tools/importer/
