@@ -10,13 +10,17 @@ import {
   parseCsv, readState, writeState, writeFile, snapshotFile, readJson, ORIGIN, SNAP_DIR,
 } from './lib.mjs';
 
-const IMG_RE = /(?:src|srcset|data-src|data-srcset|href)="([^"]+\.(?:jpe?g|png|gif|svg|webp)(?:\?[^"]*)?)"|url\((?:&quot;|["'])?([^)"'&]+\.(?:jpe?g|png|gif|svg|webp))/gi;
+const IMG_RE = /(src|srcset|data-src|data-srcset|href)="([^"]+\.(?:jpe?g|png|gif|svg|webp)(?:\?[^"]*)?(?:\s+\d+[wx])?(?:,[^"]*)?)"|url\((?:&quot;|["'])?([^)"'&]+\.(?:jpe?g|png|gif|svg|webp))/gi;
 
-function imageUrls(html) {
+export function imageUrls(html) {
   const found = new Set();
-  html.replace(IMG_RE, (m, a, b) => {
-    (a || b).split(',').forEach((part) => {
-      const u = part.trim().split(/\s+/)[0].replace(/&amp;/g, '&');
+  html.replace(IMG_RE, (m, attr, value, cssUrl) => {
+    // srcset lists "url descriptor" pairs; other attributes hold one URL that may contain spaces
+    const parts = attr && /srcset/i.test(attr)
+      ? value.split(/,\s+/).map((p) => p.trim().replace(/\s+\d+(?:\.\d+)?[wx]$/, ''))
+      : [(value || cssUrl).trim()];
+    parts.forEach((part) => {
+      const u = part.replace(/&amp;/g, '&');
       if (!u || u.startsWith('data:')) return;
       try {
         const abs = new URL(u, ORIGIN);

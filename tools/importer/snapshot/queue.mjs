@@ -4,7 +4,8 @@
  * The browser capture (see capture.js in this folder) reads that file from the local dev
  * server, so the capture code never changes between batches.
  *
- *   node tools/importer/snapshot/queue.mjs [--size 25] [--budget 540] [--group article]
+ *   node tools/importer/snapshot/queue.mjs [--size 25] [--budget 540] [--gap 20-30] [--group article]
+ *   (--gap: seconds between page starts, min-max)
  *
  * Order: one sample page per template group, then live_status 200 rows, then unchecked rows.
  * Rows already in _state.json (any outcome) are skipped, so a page is never fetched twice.
@@ -20,6 +21,7 @@ const opt = (name, def) => {
 const size = Number(opt('size', 25));
 const budgetMs = Number(opt('budget', 540)) * 1000;
 const group = opt('group', null);
+const [minGap, maxGap] = opt('gap', '5-10').split('-').map((n) => Number(n) * 1000);
 
 const rows = parseCsv(readFileSync('tools/migration-scope/pages.csv', 'utf-8'));
 const state = readState();
@@ -41,7 +43,8 @@ const ordered = [
   ...rest.filter((r) => r.live_status !== '200'),
 ];
 const batch = ordered.slice(0, size);
-const queue = { budgetMs, urls: batch.map((r) => `${ORIGIN}${r.live_path}`), remaining: ordered.length - batch.length };
+const queue = {
+  budgetMs, minGapMs: minGap, maxGapMs: maxGap, urls: batch.map((r) => `${ORIGIN}${r.live_path}`), remaining: ordered.length - batch.length };
 writeFileSync(`${SNAP_DIR}/_queue.json`, JSON.stringify(queue, null, 2));
 console.log(`queued ${batch.length}, remaining after batch ${queue.remaining}`);
 if (!existsSync(`${SNAP_DIR}/_state.json`)) console.log('(no state yet)');

@@ -14,3 +14,4 @@ helix-importer-ui
 
 # browser snapshots of the live site (large, local only)
 tools/importer/snapshots/
+tools/importer/bd-snapshots

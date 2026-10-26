@@ -37,7 +37,7 @@ async (page) => {
       break;
     }
     out.push(rec);
-    const wait = 5000 + Math.random() * 5000 - (Date.now() - started);
+    const wait = (q.minGapMs || 5000) + Math.random() * ((q.maxGapMs || 10000) - (q.minGapMs || 5000)) - (Date.now() - started);
     if (wait > 0) await page.waitForTimeout(wait);
   }
   return out;
