@@ -11,8 +11,13 @@
  * | image        | date p / ### [Title](/viewpoints/…) / authors list / summary p |
  *
  *   Authors list item: [photo] **Name, CFA**, Position <br> Company
- *   (`Filter` / `Source` rows are reserved for the query-index feed; renderItems()
- *   takes plain objects {path,title,date,authors:[{name,title,company,image}],summary,image}.)
+ *
+ * | Source | /institutional/tw/en/query-index-viewpoints.json |  (optional) "latest N" feed:
+ * | Filter | category=fixed-income                            |  the newest index entries
+ *   (viewpoints only, optional Filter as in the listing block) replace the authored teasers;
+ *   the authored teasers stay when the index is empty or unreachable.
+ *   renderItems() takes plain objects {path,title,date,authors:[{name,title,company,image}],
+ *   summary,image}.
  */
 import {
   buildAuthorInline,
@@ -20,7 +25,12 @@ import {
   parseDate,
   toPicture,
   parseTeaserRow,
+  fetchIndex,
+  indexEntryToItem,
 } from '../../scripts/block-utils.js';
+import {
+  normalizeEntry, applyFilters, parseFilter, sortItems, VARIANT_BASE,
+} from '../../scripts/listing-core.js';
 
 const CONFIG_KEYS = ['title', 'link', 'limit', 'filter', 'view', 'source', 'sort'];
 
@@ -143,7 +153,20 @@ function buildHeader(config, getList) {
   return { header, setView };
 }
 
-export default function decorate(block) {
+/**
+ * Newest viewpoints from the query index for the "latest N" feed.
+ * @returns {Promise<object[]>} teaser items (empty when the index has none)
+ */
+async function latestFromIndex(config, limit) {
+  const rows = await fetchIndex(config.source);
+  const byPath = new Map(rows.map((r) => [normalizeEntry(r).path, r]));
+  const items = rows.map(normalizeEntry).filter(VARIANT_BASE.viewpoints);
+  const picked = sortItems(applyFilters(items, parseFilter(config.filter)), config.sort || 'newest')
+    .slice(0, limit > 0 ? limit : 3);
+  return picked.map((it) => indexEntryToItem(byPath.get(it.path)));
+}
+
+export default async function decorate(block) {
   const config = {};
   const items = [];
   [...block.children].forEach((row) => {
@@ -176,4 +199,9 @@ export default function decorate(block) {
     ul.replaceWith(next);
     ul = next;
   };
+
+  if (config.source) {
+    const fresh = await latestFromIndex(config, limit);
+    if (fresh.length) block.renderItems(fresh);
+  }
 }

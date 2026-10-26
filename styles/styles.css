@@ -205,10 +205,19 @@ body.appear {
   display: block;
 }
 
-/* header space is reserved before the header block loads: 50px dark, 80px white from 801px */
+/* header space is reserved before the header block loads: 50px dark, 80px white from 801px.
+   min-height: the loaded header grows with the site banner below the bar. */
 header {
-  height: var(--header-height);
+  min-height: var(--header-height);
   background-color: var(--color-header-mobile);
+}
+
+/* attestation prompt (live body.attestation__blur): scripts.js sets the class before first paint
+   while the Taiwan disclaimer is not accepted; the modal is in blocks/attestation */
+body.attestation-blur :is(main, footer, .header-bar, .header-rail) {
+  filter: blur(10px);
+  pointer-events: none;
+  user-select: none;
 }
 
 header .header,

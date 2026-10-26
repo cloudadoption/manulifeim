@@ -1,0 +1,458 @@
+/*
+ * Attestation / region selector modal (live dialog#region-modal.attestation__modal,
+ * .modal__wrap.region-select). Mobile first: base = live <= 600px (full screen),
+ * (width >= 601px) two panes 700px high, (width >= 901px) 900px wide.
+ */
+
+.attestation-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  max-width: 100vw;
+  height: 100%;
+  max-height: 100%;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  color: var(--color-text);
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.3s, opacity 0.3s;
+}
+
+.attestation-modal:not([open]) {
+  display: none;
+}
+
+.attestation-modal.open {
+  visibility: visible;
+  opacity: 1;
+}
+
+.attestation-modal::backdrop {
+  background-color: var(--color-overlay);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.attestation-modal.open::backdrop {
+  opacity: 1;
+}
+
+.attestation-modal .attestation-icon {
+  display: inline-block;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  background-color: currentcolor;
+  mask: var(--attestation-icon) center / contain no-repeat;
+}
+
+/* wrap (live .modal__wrap.region-select) */
+.attestation-modal .attestation-wrap {
+  position: relative;
+  display: block;
+  width: 100vw;
+  min-width: 100vw;
+  max-width: 100%;
+  height: 100%;
+  min-height: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-raised);
+  transform: translateY(2em);
+  transition: transform 0.3s;
+}
+
+.attestation-modal.open .attestation-wrap {
+  transform: translateY(0);
+}
+
+/* titles (live .region-select__title) */
+.attestation-modal .attestation-title {
+  margin: 32px;
+  color: var(--color-text);
+  font-size: 24px;
+  font-weight: var(--font-weight-light);
+  line-height: var(--line-height-heading);
+}
+
+.attestation-modal .attestation-title:focus {
+  outline: 0;
+  box-shadow: none;
+}
+
+.attestation-modal .attestation-scroll {
+  flex: 1 1 100%;
+  border-top: 1px solid var(--color-border);
+  overflow-y: visible;
+}
+
+/* country pane (live .region-select__country-section) */
+.attestation-modal .attestation-countries {
+  display: flex;
+  flex: 4 4 44.4444%;
+  flex-direction: column;
+  order: 1;
+  background-color: var(--color-white);
+}
+
+.attestation-modal.prompt .attestation-countries {
+  display: block;
+  clip-path: inset(0);
+}
+
+.attestation-modal.prompt.one-pane .attestation-countries {
+  display: none;
+}
+
+.attestation-modal .attestation-group-label {
+  margin: 32px 32px 8px;
+  color: var(--color-text);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-body);
+}
+
+.attestation-modal .attestation-country-group {
+  margin: 8px 0;
+  border-top: 1px solid var(--color-border);
+  padding: 0;
+  list-style: none;
+}
+
+.attestation-modal .attestation-country-link {
+  display: block;
+  width: 100%;
+  border-bottom: 1px solid var(--color-border);
+  padding: 24px 32px;
+  color: var(--color-text);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  text-align: left;
+  text-decoration: none;
+}
+
+.attestation-modal .attestation-country-link:hover,
+.attestation-modal .attestation-country-link:focus,
+.attestation-modal .attestation-country-link:active {
+  background-color: var(--color-page-bg);
+  color: var(--color-text);
+}
+
+/* business pane: the Taiwan disclaimer (live .region-select__business-section .attestation) */
+.attestation-modal .attestation-business {
+  display: flex;
+  flex: 5 5 55.5556%;
+  flex-direction: column;
+  order: 2;
+  max-width: 900px;
+  height: 700px;
+  max-height: 100%;
+  background-color: var(--color-text);
+  color: var(--color-white);
+}
+
+.attestation-modal .attestation-business .attestation-title {
+  color: var(--color-white);
+}
+
+.attestation-modal .attestation-pane {
+  display: flex;
+  flex: 0 0 100vh;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.attestation-modal .attestation-content {
+  display: flex;
+  flex: 1 1 100%;
+  flex-direction: column;
+  min-height: 0;
+  border-top: 1px solid var(--color-text-muted);
+  padding: 24px;
+  overflow: hidden;
+}
+
+.attestation-modal .attestation-text {
+  flex: 1 1 auto;
+  max-width: none;
+  margin: 24px 0;
+  padding: 16px;
+  overflow: auto;
+  background-color: var(--color-text-muted);
+  color: var(--color-white);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+}
+
+.attestation-modal .attestation-text > * + * {
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+
+.attestation-modal .attestation-text :is(h2, h3, h4, p, li, td, th, blockquote) {
+  color: var(--color-white);
+}
+
+.attestation-modal .attestation-text :is(h2, h3) {
+  font-size: 24px;
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-heading);
+}
+
+.attestation-modal .attestation-text h4 {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-bold);
+}
+
+.attestation-modal .attestation-text :is(b, strong) {
+  font-weight: var(--font-weight-semibold);
+}
+
+.attestation-modal .attestation-text a:any-link {
+  color: var(--color-white);
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+
+.attestation-modal .attestation-text a:hover,
+.attestation-modal .attestation-text a:focus {
+  color: var(--color-primary);
+}
+
+/* buttons: Cancel (grey) / I agree (green), 56px */
+.attestation-modal .attestation-buttons {
+  display: flex;
+  min-height: 48px;
+  margin-left: -24px;
+}
+
+.attestation-modal .attestation-buttons > * {
+  flex: 1 1 auto;
+  margin-left: 24px;
+}
+
+.attestation-modal .attestation-cancel,
+.attestation-modal .attestation-accept {
+  position: relative;
+  top: 0;
+  display: inline-block;
+  height: 56px;
+  border: 2px solid;
+  border-radius: 0;
+  padding: 17px 22px;
+  color: var(--color-white);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-heading);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  appearance: none;
+  user-select: none;
+  transition: border-color 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out, top 0.1s ease-in-out;
+}
+
+.attestation-modal .attestation-cancel {
+  border-color: var(--color-text);
+  background-color: var(--color-text-muted);
+}
+
+.attestation-modal .attestation-cancel:hover,
+.attestation-modal .attestation-cancel:focus {
+  border-color: var(--color-text-muted);
+  background-color: var(--color-header-mobile);
+  color: var(--color-white);
+}
+
+.attestation-modal .attestation-accept {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+}
+
+.attestation-modal .attestation-accept:hover,
+.attestation-modal .attestation-accept:focus {
+  border-color: var(--color-primary-dark);
+  background-color: var(--color-primary-dark);
+  color: var(--color-white);
+}
+
+.attestation-modal .attestation-cancel:focus,
+.attestation-modal .attestation-accept:focus {
+  box-shadow: 0 0 0 2px var(--color-white);
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+}
+
+.attestation-modal .attestation-cancel:active,
+.attestation-modal .attestation-accept:active {
+  top: 2px;
+}
+
+/* which Cancel shows (live: link in the 1-pane prompt and the selector, button in the 2-pane prompt) */
+.attestation-modal .attestation-cancel-prompt,
+.attestation-modal.prompt:not(.one-pane) .attestation-cancel-link {
+  display: none;
+}
+
+.attestation-modal.prompt:not(.one-pane) .attestation-cancel-prompt {
+  display: inline-block;
+}
+
+/* "Change region" (1-pane prompt only) */
+.attestation-modal .attestation-region-select {
+  display: none;
+  border-top: 1px solid var(--color-text-muted);
+  padding: 16px 32px;
+  text-align: right;
+}
+
+.attestation-modal.prompt.one-pane .attestation-region-select {
+  display: block;
+}
+
+.attestation-modal .attestation-region-select-link {
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  padding: 8px;
+  background: none;
+  color: var(--color-white);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-small);
+  cursor: pointer;
+  appearance: none;
+}
+
+.attestation-modal .attestation-region-select-link:hover,
+.attestation-modal .attestation-region-select-link:focus,
+.attestation-modal .attestation-region-select-link:active {
+  color: var(--color-white);
+  text-decoration: underline;
+}
+
+.attestation-modal .attestation-region-select-link .attestation-icon {
+  position: relative;
+  top: -1px;
+  width: 12px;
+  height: 12px;
+  margin-left: 8px;
+}
+
+/* close (region selector only) */
+.attestation-modal .attestation-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 1;
+  border: 0;
+  padding: 0;
+  background-color: transparent;
+  color: var(--color-text-muted);
+  line-height: 0;
+  cursor: pointer;
+  appearance: none;
+}
+
+.attestation-modal .attestation-close:hover,
+.attestation-modal .attestation-close:focus,
+.attestation-modal .attestation-close:active {
+  color: var(--color-text);
+}
+
+.attestation-modal.prompt .attestation-close {
+  display: none;
+}
+
+@media (width >= 601px) {
+  .attestation-modal .attestation-wrap {
+    display: flex;
+    width: auto;
+    height: 700px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .attestation-modal.prompt .attestation-wrap {
+    max-width: 900px;
+    background-color: var(--color-text);
+  }
+
+  .attestation-modal .attestation-title {
+    margin: 48px;
+    font-size: 32px;
+  }
+
+  .attestation-modal .attestation-scroll {
+    overflow-y: auto;
+  }
+
+  .attestation-modal.prompt .attestation-countries {
+    display: flex;
+    transition: clip-path 0.3s;
+  }
+
+  .attestation-modal.prompt.one-pane .attestation-countries {
+    display: flex;
+    visibility: hidden;
+    flex-grow: 0;
+    flex-basis: 0;
+    overflow: hidden;
+    clip-path: inset(0 100% 0 0);
+  }
+
+  .attestation-modal .attestation-group-label {
+    margin: 48px 48px 8px;
+  }
+
+  .attestation-modal .attestation-country-link {
+    padding: 24px 48px;
+  }
+
+  .attestation-modal .attestation-pane {
+    flex: 1 1 100%;
+    height: auto;
+    max-height: 100%;
+  }
+
+  .attestation-modal .attestation-content {
+    padding: 48px;
+  }
+
+  .attestation-modal .attestation-close {
+    color: var(--color-white);
+  }
+
+  .attestation-modal .attestation-close:hover,
+  .attestation-modal .attestation-close:focus,
+  .attestation-modal .attestation-close:active {
+    color: var(--color-primary);
+  }
+}
+
+@media (width >= 901px) {
+  .attestation-modal .attestation-wrap {
+    min-width: 900px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .attestation-modal,
+  .attestation-modal::backdrop,
+  .attestation-modal .attestation-wrap,
+  .attestation-modal.prompt .attestation-countries {
+    transition: none;
+  }
+}

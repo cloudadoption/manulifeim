@@ -4,15 +4,16 @@
  * DA authoring table:
  *
  * | Tag List |
- *   (no rows) → tags and counts are built from /query-index.json (`tags` column),
- *   linking to /viewpoints/tag/{slug}.
+ *   (no rows) → tags and counts are built from the viewpoints query index (`tags` +
+ *   `tagSlugs` columns), linking to /institutional/tw/en/viewpoints/all?tag={slug}
+ *   (live /viewpoints/tag/{slug}; the listing block filters by ?tag=).
  *
  * Optional rows:
  * | Title | All Tags |
  * | list of links "Asia (173)" → /viewpoints/tag/asia   (static tags; used instead of the index) |
  */
-import { toClassName } from '../../scripts/aem.js';
-import { fetchIndex, splitList } from '../../scripts/block-utils.js';
+import { fetchIndex } from '../../scripts/block-utils.js';
+import { INDEX_URLS, SITE_ROOT, normalizeEntry } from '../../scripts/listing-core.js';
 
 function buildList(tags) {
   const ul = document.createElement('ul');
@@ -32,7 +33,7 @@ function buildList(tags) {
 
 export default async function decorate(block) {
   let title = 'All Tags';
-  let base = '/viewpoints/tag/';
+  let base = `${SITE_ROOT}/viewpoints/all?tag=`;
   const authored = [];
   [...block.children].forEach((row) => {
     const cells = [...row.children];
@@ -63,18 +64,25 @@ export default async function decorate(block) {
 
   let tags = authored;
   if (!tags.length) {
-    const index = await fetchIndex();
+    let index = await fetchIndex(INDEX_URLS.viewpoints);
+    if (!index.length) index = await fetchIndex();
     const counts = new Map();
-    index.forEach((entry) => {
-      splitList(entry.tags).forEach((tag) => {
-        counts.set(tag, (counts.get(tag) || 0) + 1);
+    index.map(normalizeEntry).filter((e) => e.template === 'viewpoint').forEach((entry) => {
+      entry.tags.forEach((tag, i) => {
+        const slug = entry.tagSlugs.length === entry.tags.length ? entry.tagSlugs[i] : '';
+        const cur = counts.get(tag) || { count: 0, slug };
+        cur.count += 1;
+        if (!cur.slug && slug) cur.slug = slug;
+        counts.set(tag, cur);
       });
     });
+    const slugOf = (t) => t.toLowerCase().replace(/[^0-9a-z]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
     tags = [...counts.entries()]
       .sort((a, b) => a[0].localeCompare(b[0], 'en', { sensitivity: 'base' }))
-      .map(([tag, count]) => ({
+      .map(([tag, { count, slug }]) => ({
         label: `${tag} (${count})`,
-        href: `${base.replace(/\/?$/, '/')}${toClassName(tag)}`,
+        href: base.includes('?') || base.endsWith('=') ? `${base}${encodeURIComponent(slug || slugOf(tag))}`
+          : `${base.replace(/\/?$/, '/')}${slug || slugOf(tag)}`,
       }));
   }
   details.append(buildList(tags));

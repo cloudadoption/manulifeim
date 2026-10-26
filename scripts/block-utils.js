@@ -3,6 +3,9 @@
  * related-articles, browse-by, tag-list). Blocks import from /scripts/ only.
  */
 import { createOptimizedPicture } from './aem.js';
+import {
+  INDEX_URLS, readIndexJson, normalizeEntry, isoDate,
+} from './listing-core.js';
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
   'August', 'September', 'October', 'November', 'December'];
@@ -185,18 +188,39 @@ export function buildAuthorInline(author, prefix) {
 }
 
 const indexCache = {};
+const PAGE = 1000; // rows per request (JSON sheets answer at most 1000 rows by default)
+
+async function fetchAllRows(path) {
+  const url = new URL(path, window.location.href);
+  const sheet = url.searchParams.get('sheet') || '';
+  const rows = [];
+  let offset = 0;
+  // page through offset/limit until total is reached (static files answer everything at once)
+  for (let i = 0; i < 50; i += 1) {
+    url.searchParams.set('offset', offset);
+    url.searchParams.set('limit', PAGE);
+    // eslint-disable-next-line no-await-in-loop
+    const resp = await fetch(url.href);
+    if (!resp.ok) break;
+    // eslint-disable-next-line no-await-in-loop
+    const { rows: chunk, total } = readIndexJson(await resp.json(), sheet);
+    rows.push(...chunk);
+    offset += chunk.length;
+    if (!chunk.length || offset >= total) break;
+  }
+  return rows;
+}
 
 /**
- * Fetches a query index (cached per path).
+ * Fetches all rows of a query index (cached per path). Default: the site index
+ * /institutional/tw/en/query-index.json (tools/importer/query.yaml). `?sheet=` works for
+ * multi-sheet JSON files.
  * @param {string} path
  * @returns {Promise<object[]>}
  */
-export async function fetchIndex(path = '/query-index.json') {
+export async function fetchIndex(path = INDEX_URLS.all) {
   if (!indexCache[path]) {
-    indexCache[path] = fetch(path)
-      .then((resp) => (resp.ok ? resp.json() : { data: [] }))
-      .then((json) => json.data || [])
-      .catch(() => []);
+    indexCache[path] = fetchAllRows(path).catch(() => []);
   }
   return indexCache[path];
 }
@@ -227,17 +251,19 @@ export function splitList(value) {
  * @returns {object}
  */
 export function indexEntryToItem(entry) {
-  const image = entry.image && !String(entry.image).includes('default-meta-image') ? entry.image : '';
+  const n = normalizeEntry(entry);
   return {
-    path: entry.path,
-    title: entry.title || '',
-    date: entry.date || entry['publication-date'] || '',
-    authors: splitList(entry.authors).map((name) => ({ name })),
-    summary: entry.summary || entry.description || '',
-    image,
-    category: entry.category || '',
-    tags: splitList(entry.tags),
-    template: entry.template || '',
+    path: n.path || entry.path,
+    title: n.title,
+    date: entry.date || isoDate(n.ts) || entry.publicationDate || '',
+    authors: n.authors.map((a) => ({
+      name: a.name, title: a.title, company: a.company, image: a.image,
+    })),
+    summary: entry.summary || n.description,
+    image: n.image,
+    category: n.category,
+    tags: n.tags,
+    template: n.template,
   };
 }
 

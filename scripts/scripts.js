@@ -77,6 +77,41 @@ function decorateTemplateAndTheme() {
   return template;
 }
 
+/* Taiwan disclaimer acceptance (same key as live, any truthy value) */
+export const ATTESTATION_KEY = 'mim-inst-attestation-accepted-TW';
+
+function isAttestationAccepted() {
+  try {
+    return !!localStorage.getItem(ATTESTATION_KEY);
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * Opens the "Select a location" region selector (header region button, `#region-select` links).
+ */
+export async function openRegionSelector() {
+  // eslint-disable-next-line import/no-cycle
+  const { showRegionSelector } = await import('../blocks/attestation/attestation.js');
+  await showRegionSelector();
+}
+
+/**
+ * Shows the attestation prompt (first visit): Taiwan disclaimer, page blurred until accepted.
+ */
+async function loadAttestationPrompt() {
+  try {
+    // eslint-disable-next-line import/no-cycle
+    const { showAttestation } = await import('../blocks/attestation/attestation.js');
+    await showAttestation();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Attestation failed', error);
+    document.body.classList.remove('attestation-blur');
+  }
+}
+
 /**
  * load fonts.css and set a session storage flag
  */
@@ -201,6 +236,9 @@ export function decorateMain(main) {
  */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
+  // blur the page before first paint until the disclaimer is accepted (modal loads after LCP)
+  const attestationPending = !isAttestationAccepted();
+  if (attestationPending) document.body.classList.add('attestation-blur');
   const template = decorateTemplateAndTheme();
   const templateStyles = STYLED_TEMPLATES.includes(template)
     ? loadCSS(`${window.hlx.codeBasePath}/styles/templates.css`).catch(() => {})
@@ -212,6 +250,9 @@ async function loadEager(doc) {
     document.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);
   }
+  // right after the LCP section, not awaited: the dialog and its fragments load in parallel
+  // with the rest of the page
+  if (attestationPending) loadAttestationPrompt();
 
   try {
     /* if desktop (proxy for fast connection) or fonts already loaded, load fonts.css */

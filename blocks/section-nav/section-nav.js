@@ -199,17 +199,29 @@ function buildLinks(block) {
   const items = collectAuthoredLinks(block);
   const wrapper = document.createElement('div');
   wrapper.className = 'section-nav-inner';
-  const path = window.location.pathname.replace(/\/$/, '');
+  const here = new URL(window.location.href);
+  const path = here.pathname.replace(/\/$/, '');
   let activeIndex = -1;
+  let fallback = -1;
   items.forEach((item, i) => {
-    let p = item.href;
+    let u;
     try {
-      p = new URL(item.href, window.location.href).pathname.replace(/\/$/, '');
+      u = new URL(item.href, window.location.href);
     } catch (e) {
-      // keep href
+      return;
     }
-    if (activeIndex === -1 && (path === p || path.startsWith(`${p}/`))) activeIndex = i;
+    const p = u.pathname.replace(/\/$/, '');
+    const query = [...u.searchParams.entries()];
+    if (query.length) {
+      // query links (press categories: ?category=archive) match on path + parameters;
+      // without the parameter in the URL the first one is the default (live root listing)
+      if (p !== path) return;
+      const same = query.every(([k, v]) => here.searchParams.get(k) === v);
+      if (activeIndex === -1 && same) activeIndex = i;
+      else if (fallback === -1 && !query.some(([k]) => here.searchParams.has(k))) fallback = i;
+    } else if (activeIndex === -1 && (path === p || path.startsWith(`${p}/`))) activeIndex = i;
   });
+  if (activeIndex === -1) activeIndex = fallback;
 
   // mobile: native select (live pressCategories__select)
   const mobile = document.createElement('div');

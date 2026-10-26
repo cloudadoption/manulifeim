@@ -13,9 +13,10 @@
  * | (opt) image | ## Title / p / (opt) link "Learn more"                           |
  *
  * | Cards (news) |                                                               |
- * | Source       | /about-us/press-releases   (optional; builds from query index)  |
+ * | Source       | /about-us/press-releases   (optional; newest index entries)     |
  * | Limit        | 4                                                               |
- * | date p / ## Title / link "Read more"     (authored rows, used when no Source)  |
+ * | date p / ## Title / link "Read more"     (authored rows: shown without Source,  |
+ * |                                           or as fallback when the index is empty) |
  *
  * | Cards (separate[, three]) |                                                  |
  * | image | date / ## Title / authors / text / link                                |
@@ -278,14 +279,18 @@ export default async function decorate(block) {
     });
     setColumns(block, ul, 2);
     block.replaceChildren(ul);
-    if (config.source && !authored.length) {
+    let fromIndex = [];
+    if (config.source) {
+      // "latest N" (live latest-news): newest index entries under the Source path
       const limit = parseInt(config.limit, 10) || 4;
       const base = toPath(config.source);
       const index = await fetchIndex();
-      const items = sortByDateDesc(index
+      fromIndex = sortByDateDesc(index
         .filter((e) => toPath(e.path).startsWith(`${base}/`))
         .map(indexEntryToItem)).slice(0, limit);
-      items.forEach((item) => ul.append(buildTeaserFromItem(item, false)));
+    }
+    if (fromIndex.length) {
+      fromIndex.forEach((item) => ul.append(buildTeaserFromItem(item, false)));
     } else {
       authored.forEach((row) => {
         const li = buildTeaser(row, false);
