@@ -1,0 +1,300 @@
+/* Rules are grouped by template, so selectors of different templates interleave. */
+/* stylelint-disable no-descending-specificity */
+
+/*
+ * Page-level layouts that are not blocks. scripts.js adds `template-<name>` to <body>
+ * from the `Template` metadata and loads this file for the templates styled here:
+ * viewpoint (article), case-study-detail, press-release, case-study-list.
+ *
+ * Authoring convention for viewpoint and case-study-detail pages:
+ *   - Section 1: the page header. viewpoint: date paragraph, h1, summary paragraph.
+ *     case-study-detail: h1, description paragraph.
+ *   - Sections 2..n: the body (default content and blocks such as figure, disclosure,
+ *     link-list). They go in the left column.
+ *   - One section with Section Metadata `Style: sidebar`, placed after the body sections.
+ *     It holds the sidebar blocks (author, link-list, case-study-sidebar) and goes in the
+ *     right column, next to the body, from 1101px. Below that it stacks: after the body on
+ *     articles, above the body on case studies (as on live).
+ *   - Sections after the sidebar section span the full width (e.g. related viewpoints, tags).
+ *
+ * Live widths: article sidebar 416px (border-left #ededed), content in a 600px reading
+ * column; case study sidebar 521px (border-left #e0e0e0). Breakpoints as in styles.css.
+ */
+
+/* ---------------------------------------------------------------- viewpoint (article) */
+.template-viewpoint main {
+  background-color: var(--color-white);
+}
+
+/* header: date, h1 and summary in the 600px column */
+.template-viewpoint main > .section:first-child {
+  padding: 16px 0;
+}
+
+:where(.template-viewpoint main > .section:first-child > div) {
+  width: auto;
+  max-width: var(--width-reading);
+  margin: 16px;
+  padding: 0;
+}
+
+.template-viewpoint main > .section:first-child .default-content-wrapper > p:first-child:has(+ h1) {
+  color: var(--color-header-mobile);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
+}
+
+.template-viewpoint main > .section:first-child h1 {
+  font-weight: var(--font-weight-regular);
+}
+
+.template-viewpoint main > .section:first-child h1 ~ p {
+  font-size: var(--font-size-lead);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.5em;
+}
+
+/* body: every wrapper sits in the 600px reading column (blocks may override their -wrapper) */
+:where(.template-viewpoint main > .section:not(:first-child, .sidebar, .sidebar ~ .section) > div) {
+  width: auto;
+  max-width: var(--width-reading);
+  margin: 16px;
+  padding: 0;
+}
+
+.template-viewpoint main > .section:nth-child(2) > .default-content-wrapper:first-child:has(> p:first-child > picture) {
+  margin-top: 0;
+}
+
+.template-viewpoint main > .section:not(:first-child, .sidebar) .default-content-wrapper > p:has(> picture:only-child) {
+  text-align: center;
+}
+
+/* sidebar */
+.template-viewpoint main > .section.sidebar {
+  padding: 24px 16px;
+}
+
+:where(.template-viewpoint main > .section.sidebar > div) {
+  padding: 0;
+}
+
+/* full-width sections after the sidebar (live .viewpoints-footer) */
+.template-viewpoint main > .section.sidebar + .section {
+  border-top: 1px solid var(--color-border);
+}
+
+/* ---------------------------------------------------------------- case-study-detail */
+.template-case-study-detail main {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 32px;
+  background-color: var(--color-white);
+}
+
+.template-case-study-detail main > .section:first-child {
+  order: -2;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--color-border-strong);
+  padding: 24px 16px;
+}
+
+:where(.template-case-study-detail main > .section:first-child > div) {
+  padding: 0;
+}
+
+.template-case-study-detail main > .section:first-child h1 {
+  font-weight: var(--font-weight-regular);
+}
+
+.template-case-study-detail main > .section:first-child h1 ~ p {
+  width: auto;
+  max-width: var(--width-reading);
+}
+
+/* body */
+.template-case-study-detail main > .section:not(:first-child, .sidebar, .sidebar ~ .section) {
+  padding: 0 16px;
+}
+
+.template-case-study-detail main > .section:not(:first-child, .sidebar, .sidebar ~ .section) + .section:not(.sidebar) {
+  margin-top: 24px;
+}
+
+:where(.template-case-study-detail main > .section:not(:first-child, .sidebar, .sidebar ~ .section) > div) {
+  padding: 0;
+}
+
+:where(.template-case-study-detail main > .section:not(:first-child, .sidebar, .sidebar ~ .section) > div + div) {
+  margin-top: 24px;
+}
+
+/* each live text component starts with its h2 (ISSUE / ACTION / OUTCOME): 24px between them */
+.template-case-study-detail main > .section:not(:first-child, .sidebar) .default-content-wrapper > h2:not(:first-child) {
+  margin-top: 24px;
+}
+
+/* sidebar: above the body up to 1100px (live column-reverse) */
+.template-case-study-detail main > .section.sidebar {
+  order: -1;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--color-border-strong);
+  padding: 0 16px;
+}
+
+:where(.template-case-study-detail main > .section.sidebar > div) {
+  padding: 0;
+}
+
+/* ---------------------------------------------------------------- press-release */
+
+/* first paragraph = release date; live leaves the <time> unstyled (16px, line-height 1, canvas text) */
+.template-press-release main > .section:first-child > .default-content-wrapper:first-child > p:first-child {
+  color: #000;
+  font-size: var(--font-size-body);
+  line-height: 1;
+}
+
+/* a wrapper holding only the date has no bottom padding (live inline padding-bottom: 0) */
+:where(.template-press-release main > .section:first-child > .default-content-wrapper:first-child:not(:has(h1))) {
+  padding-bottom: 0;
+}
+
+/* title: 32px / 300 (24px <= 600), one component padding above, two below */
+.template-press-release main .default-content-wrapper > h1 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-light);
+}
+
+.template-press-release main .default-content-wrapper > h1:not(:first-child) {
+  margin-top: var(--spacing-section-y);
+}
+
+.template-press-release main .default-content-wrapper > h1 + * {
+  margin-top: calc(2 * var(--spacing-section-y));
+}
+
+/* ---------------------------------------------------------------- case-study-list */
+.template-case-study-list main {
+  background-color: var(--color-white);
+}
+
+/* ---------------------------------------------------------------- >= 601px (live <= 800) */
+@media (width >= 601px) {
+  .template-viewpoint main > .section:first-child {
+    padding: 64px 0;
+  }
+
+  :where(.template-viewpoint main > .section:first-child > div) {
+    width: calc(100% - 64px);
+    margin: 0 auto;
+  }
+
+  :where(.template-viewpoint main > .section:not(:first-child, .sidebar, .sidebar ~ .section) > div) {
+    width: calc(100% - 64px);
+    margin: 32px auto;
+  }
+
+  .template-viewpoint main > .section.sidebar {
+    padding: 24px 64px;
+  }
+
+  .template-case-study-detail main > .section:first-child {
+    margin-bottom: 32px;
+    padding: 24px;
+  }
+
+  .template-case-study-detail main > .section:first-child h1 ~ p {
+    width: calc(100% - 64px);
+  }
+
+  .template-case-study-detail main > .section:not(:first-child, .sidebar, .sidebar ~ .section),
+  .template-case-study-detail main > .section.sidebar {
+    padding: 0 24px;
+  }
+}
+
+/* ---------------------------------------------------------------- >= 801px (live <= 1100) */
+@media (width >= 801px) {
+  :where(.template-viewpoint main > .section:first-child > div),
+  :where(.template-viewpoint main > .section:not(:first-child, .sidebar, .sidebar ~ .section) > div) {
+    width: calc(100% - 128px);
+  }
+
+  .template-case-study-detail main > .section:first-child {
+    padding: 64px;
+  }
+
+  .template-case-study-detail main > .section:first-child h1 ~ p {
+    width: calc(100% - 128px);
+  }
+
+  .template-case-study-detail main > .section:not(:first-child, .sidebar, .sidebar ~ .section),
+  .template-case-study-detail main > .section.sidebar {
+    padding: 0 64px;
+  }
+}
+
+/* ---------------------------------------------------------------- >= 1101px (live desktop) */
+@media (width >= 1101px) {
+  /* two columns: body left, sidebar right. The sidebar spans every body row;
+     unused implicit rows collapse to 0. */
+  .template-viewpoint main,
+  .template-case-study-detail main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--width-article-sidebar);
+  }
+
+  .template-case-study-detail main {
+    grid-template-columns: minmax(0, 1fr) var(--width-case-study-sidebar);
+    padding-bottom: 64px;
+  }
+
+  .template-viewpoint main > .section,
+  .template-case-study-detail main > .section {
+    grid-column: 1;
+    order: 0;
+  }
+
+  .template-viewpoint main > .section:first-child,
+  .template-case-study-detail main > .section:first-child {
+    grid-row: 1;
+  }
+
+  .template-case-study-detail main > .section:first-child {
+    grid-column: 1 / -1;
+    margin-bottom: 64px;
+  }
+
+  .template-viewpoint main > .section.sidebar,
+  .template-case-study-detail main > .section.sidebar {
+    grid-column: 2;
+    grid-row: 2 / span 99;
+  }
+
+  .template-viewpoint main > .section.sidebar ~ .section,
+  .template-case-study-detail main > .section.sidebar ~ .section {
+    grid-column: 1 / -1;
+  }
+
+  /* article */
+  .template-viewpoint main > .section:first-child {
+    padding: 64px 24px 64px 0;
+  }
+
+  .template-viewpoint main > .section:not(:first-child, .sidebar, .sidebar ~ .section) {
+    padding-right: 24px;
+  }
+
+  .template-viewpoint main > .section.sidebar {
+    border-left: 1px solid var(--color-border);
+    padding: 0 64px;
+  }
+
+  /* case study */
+  .template-case-study-detail main > .section.sidebar {
+    margin-bottom: 0;
+    border-bottom: 0;
+    border-left: 1px solid var(--color-border-strong);
+  }
+}

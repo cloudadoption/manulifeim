@@ -4,7 +4,8 @@ import {
   decorateIcons,
   decorateSections,
   decorateBlocks,
-  decorateTemplateAndTheme,
+  getMetadata,
+  toClassName,
   waitForFirstImage,
   loadSection,
   loadSections,
@@ -35,6 +36,45 @@ if (window.trustedTypes && window.trustedTypes.createPolicy) {
     createScriptURL: (input) => input,
     createScript: (input) => input,
   });
+}
+
+/**
+ * Template names (the `Template` metadata, kebab-case): home, plain, viewpoints,
+ * viewpoint (article), press-release-root, press-release, case-study-list,
+ * case-study-detail, search. Live route classes (e.g. `caseStudyDetail`) and the
+ * aliases below are accepted too.
+ */
+const TEMPLATE_ALIASES = {
+  article: 'viewpoint',
+  'viewpoint-detail': 'viewpoint',
+  'case-study': 'case-study-detail',
+  'case-study-listing': 'case-study-list',
+  'press-release-listing': 'press-release-root',
+};
+
+/* templates with page-level layout rules in styles/templates.css */
+const STYLED_TEMPLATES = ['viewpoint', 'case-study-detail', 'press-release', 'case-study-list'];
+
+/**
+ * Adds `template-<name>` and `theme-<name>` classes to the body. The classes are
+ * prefixed so they cannot collide with block class names (e.g. a `search` block).
+ * @returns {string} the normalised template name, or an empty string
+ */
+function decorateTemplateAndTheme() {
+  const value = getMetadata('template');
+  let template = '';
+  if (value) {
+    const name = toClassName(value.trim().replace(/([a-z0-9])([A-Z])/g, '$1-$2'));
+    template = TEMPLATE_ALIASES[name] || name;
+    document.body.classList.add(`template-${template}`);
+  }
+  const theme = getMetadata('theme');
+  if (theme) {
+    theme.split(',').forEach((t) => {
+      if (t.trim()) document.body.classList.add(`theme-${toClassName(t.trim())}`);
+    });
+  }
+  return template;
 }
 
 /**
@@ -161,10 +201,14 @@ export function decorateMain(main) {
  */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
-  decorateTemplateAndTheme();
+  const template = decorateTemplateAndTheme();
+  const templateStyles = STYLED_TEMPLATES.includes(template)
+    ? loadCSS(`${window.hlx.codeBasePath}/styles/templates.css`).catch(() => {})
+    : null;
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
+    if (templateStyles) await templateStyles;
     document.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);
   }

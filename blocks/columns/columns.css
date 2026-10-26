@@ -1,33 +1,85 @@
-.columns > div {
-  display: flex;
-  flex-direction: column;
-}
+/* columns: 8-4 | 6-6 | 4-4-4 | 3-3-3-3 | 12 (layout-* class set by JS) */
 
-.columns img {
-  width: 100%;
-}
-
-.columns > div > div {
-  order: 1;
-}
-
-.columns > div > .columns-img-col {
-  order: 0;
-}
-
-.columns > div > .columns-img-col img {
+.columns .columns-row {
   display: block;
+  padding: 0 24px;
 }
 
-@media (width >= 900px) {
-  .columns > div {
-    align-items: center;
-    flex-direction: unset;
-    gap: 24px;
+.columns .columns-row + .columns-row {
+  margin-top: 32px;
+}
+
+.columns .columns-col {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+}
+
+.columns .columns-col:not(:first-child) {
+  margin-top: 24px;
+}
+
+/* text inside columns is full width */
+.columns .columns-col > * {
+  max-width: none;
+}
+
+.columns .columns-col > :first-child {
+  margin-top: 0;
+}
+
+.columns .columns-col img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* images (image.parbase) inside columns */
+.columns .columns-col > p:has(> picture:only-child) {
+  text-align: center;
+}
+
+.columns .columns-col > p:not(:first-child):has(> picture:only-child) {
+  margin-top: 32px;
+}
+
+.columns .columns-img-col {
+  text-align: center;
+}
+
+.columns .columns-img-col picture,
+.columns .columns-img-col img {
+  display: inline-block;
+}
+
+@media (width >= 801px) {
+  .columns .columns-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 0;
   }
 
-  .columns > div > div {
-    flex: 1;
-    order: unset;
+  .columns .columns-col:not(:first-child) {
+    margin-top: 0;
+  }
+
+  .columns .columns-fw-3 {
+    width: calc(25% - 16px);
+  }
+}
+
+@media (width >= 961px) {
+  .columns .columns-fw-6 {
+    width: calc(50% - 12px);
+  }
+}
+
+@media (width >= 1281px) {
+  .columns .columns-fw-8 {
+    width: calc(66.6667% - 16px);
+  }
+
+  .columns .columns-fw-4 {
+    width: calc(33.3333% - 16px);
   }
 }

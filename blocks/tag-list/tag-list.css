@@ -1,0 +1,76 @@
+/* tag-list (viewpoint-tags) */
+
+.tag-list .tag-list-details {
+  padding: 0;
+}
+
+/* in the article footer (live .viewpoints-footer .viewpoint-tags) */
+.tag-list.padded .tag-list-details {
+  padding: 16px;
+}
+
+.tag-list .tag-list-details summary {
+  cursor: pointer;
+}
+
+.tag-list .tag-list-title {
+  display: inline;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #282b3e);
+  vertical-align: middle;
+}
+
+.tag-list .tag-list-list {
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  column-count: 1;
+}
+
+.tag-list .tag-list-item {
+  width: 100%;
+  padding: 8px 0;
+  break-inside: avoid;
+}
+
+.tag-list a.tag-list-link {
+  display: inline-block;
+  padding-right: 16px;
+  font-size: 16px;
+  line-height: 1.75;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #282b3e);
+  text-decoration: underline;
+}
+
+.tag-list a.tag-list-link:hover,
+.tag-list a.tag-list-link:focus,
+.tag-list a.tag-list-link:active {
+  color: var(--color-primary, #06854d);
+}
+
+@media (width >= 321px) {
+  .tag-list .tag-list-list {
+    column-count: 2;
+  }
+}
+
+@media (width >= 601px) {
+  .tag-list.padded .tag-list-details {
+    padding: 32px;
+  }
+
+  .tag-list .tag-list-list {
+    column-count: 3;
+  }
+}
+
+@media (width >= 800px) {
+  .tag-list .tag-list-list {
+    column-count: 4;
+  }
+}

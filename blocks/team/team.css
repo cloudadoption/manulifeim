@@ -1,0 +1,254 @@
+/* team (teamMembers) */
+/* stylelint-disable no-descending-specificity */
+
+.team .team-card {
+  background-color: var(--color-white, #fff);
+  box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
+}
+
+.team .team-member {
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: stretch;
+  padding: 24px;
+}
+
+.team .team-member:not(:last-child) {
+  border-bottom: 1px solid var(--color-border-strong, #e0e0e0);
+}
+
+.team .team-content {
+  flex: 0 0 auto;
+  min-width: 0;
+  padding-left: 0;
+}
+
+.team .team-photo {
+  flex: 0 0 auto;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.team .team-photo picture {
+  display: inline-block;
+}
+
+.team .team-photo img {
+  display: inline-block;
+  width: 320px;
+  max-width: 100%;
+  height: auto;
+}
+
+.team .team-photo:empty {
+  display: none;
+}
+
+.team .team-name {
+  max-width: none;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #282b3e);
+}
+
+.team .team-title {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  color: var(--color-text-muted, #5e6073);
+}
+
+.team a.team-linkedin {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 2px 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--color-text, #282b3e);
+  text-decoration: none;
+}
+
+.team a.team-linkedin:hover {
+  text-decoration: underline;
+}
+
+/* bio (rich text) */
+.team .team-bio {
+  position: relative;
+  min-height: 0;
+  margin-top: 16px;
+  overflow: hidden;
+  font-size: 16px;
+  line-height: 1.75;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #282b3e);
+}
+
+.team .team-bio > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.team .team-bio > :not(:first-child) {
+  margin-top: 16px;
+}
+
+.team .team-bio p,
+.team .team-bio li {
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.team .team-bio ul,
+.team .team-bio ol {
+  padding-left: 16px;
+  list-style-position: inside;
+}
+
+.team .team-bio ul {
+  list-style-type: disc;
+}
+
+.team .team-bio ol {
+  list-style-type: decimal;
+}
+
+.team .team-bio li + li {
+  margin-top: 8px;
+}
+
+.team .team-bio b,
+.team .team-bio strong {
+  font-weight: 600;
+}
+
+.team .team-bio a:any-link {
+  color: inherit;
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+
+.team .team-bio a:hover {
+  color: var(--color-primary, #06854d);
+}
+
+.team .team-bio.team-bio-collapsed {
+  max-height: 112px;
+}
+
+.team .team-bio.team-bio-collapsed::after {
+  content: "";
+  position: absolute;
+  top: 96px;
+  left: 0;
+  width: 100%;
+  height: 16px;
+  background: linear-gradient(180deg, hsl(0deg 0% 100% / 0%), #fff);
+}
+
+/* read more / collapse */
+.team .team-read-more summary {
+  margin: 14px 0 16px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.team .team-read-more summary::-webkit-details-marker {
+  display: none;
+}
+
+.team .team-read-more summary::marker {
+  content: none;
+}
+
+.team .team-read-more[open] summary {
+  margin: 0;
+}
+
+.team .team-read-more[open] .team-more,
+.team .team-read-more:not([open]) .team-less {
+  display: none;
+}
+
+.team .team-more,
+.team .team-less {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.75;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #282b3e);
+}
+
+.team .team-less {
+  width: 100%;
+  margin: 14px 0 16px;
+  padding: 0;
+  appearance: none;
+  border: none;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.team .team-toggle-icon {
+  display: inline-block;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+  background-color: var(--color-text, #282b3e);
+  mask: url("../../icons/plus.svg") center / contain no-repeat;
+}
+
+.team .team-icon-minus {
+  mask-image: url("../../icons/minus.svg");
+}
+
+@media (width >= 601px) {
+  .team .team-name {
+    font-size: 32px;
+  }
+}
+
+@media (width >= 801px) {
+  .team .team-member {
+    flex-direction: row-reverse;
+    align-items: flex-start;
+    padding: 48px;
+  }
+
+  .team .team-content {
+    flex: 1 1 auto;
+    padding-left: 48px;
+  }
+
+  .team .team-photo {
+    flex: 0 0 256px;
+    margin-bottom: 0;
+  }
+
+  .team .team-photo img {
+    width: 256px;
+  }
+
+  .team .team-name {
+    max-width: calc(100% - 150px);
+  }
+
+  .team a.team-linkedin {
+    position: absolute;
+    top: 48px;
+    right: 48px;
+    margin-top: 0;
+  }
+}

@@ -21,6 +21,17 @@ Edge Delivery Services. Read a block first. Omissions are in the repo or known.
 - All committed files are served. Use `.hlxignore`.
 - Skills: `/plugin marketplace add adobe/skills`, then `aem-edge-delivery-services` (24 skills, incl. `docs-search`).
 
+## Manulife replica: styles
+- Tokens: `styles/styles.css` `:root` (`--color-*`, `--shadow-*`, `--font-*`, `--font-size-*`, `--line-height-*`, `--spacing-*`, `--width-*`, `--header-height`, `--layout-rail-width`). Source values: `migration-work/analysis/design-tokens.md`. Use tokens, not hex.
+- Breakpoints are mobile-first and mirror live max-width 600/800/1100: `(width >= 601px)`, `(width >= 801px)`, `(width >= 1101px)`. Type steps up at 601; section padding and the 80px rail/header start at 801.
+- Fonts: `styles/fonts.css` (Manulife JH Sans 300/400/600/700, JH Serif italic); size-adjusted Arial/Times fallbacks in styles.css. `em` in headings = serif italic.
+- Every section wrapper gets the live component padding (32/64, 24/32, 16) via `:where()`, so a block's `.x-wrapper` rule overrides it without `!important`.
+- Buttons (decorateButtons): `**link**` = primary green, `_link_` = secondary white, `**_link_**` (`.button.accent`) = link with arrow.
+- Section Metadata `Style`: `centered` (75% centred, qw-8), `narrow` (600px column), `divider` (1px #e0e0e0 rule above), `white` (white band), `sidebar` (template right column). `Layout`: `6-6`, `8-4`, `4-8`, `4-4-4`, `3-3-3-3`.
+- `Template` metadata → `body.template-<name>`: home, plain, viewpoints, viewpoint (alias article), press-release-root, press-release, case-study-list, case-study-detail (alias case-study), search. Layouts in `styles/templates.css`, loaded only for viewpoint, case-study-detail, press-release, case-study-list.
+- Article / case study authoring: section 1 = header (date p, h1, summary p); body sections next; then one section with `Style: sidebar` (author, link-list, case-study-sidebar). Sections after the sidebar span full width.
+- Press release: first paragraph = date, h1 = 32px/300 title.
+
 ## Manulife replica: live snapshots
 - www.manulifeim.com answers 403 to curl; pages are read once in the browser and stored in `tools/importer/snapshots/` (bulk HTML gitignored, local only). `_state.json` = per live path status, `_log.jsonl` = capture log, `_images.json` = image URLs per page.
 - Capture loop: `node tools/importer/snapshot/queue.mjs --size N --budget S` → run `capture-pages.fn.txt` in the Playwright MCP browser (`browser_run_code`, `filename: snap-NNN.json`; it reads `_queue.json` from the dev server) → `node tools/importer/snapshot/ingest.mjs /tmp/playwright/snap-NNN.json`. One page every 5–10 s. Accept the attestation on `/institutional/tw/en` first.

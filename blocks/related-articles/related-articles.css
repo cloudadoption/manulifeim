@@ -1,0 +1,180 @@
+/* related-articles (related-viewpoints) */
+
+.related-articles .related-articles-inner {
+  padding: 24px;
+}
+
+.related-articles .related-articles-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #282b3e);
+}
+
+.related-articles .related-articles-main {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.related-articles .related-articles-item {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 100%;
+  flex-direction: column;
+  min-width: 100%;
+  max-width: 100%;
+  margin: 0 0 24px;
+  padding: 24px;
+  background-color: var(--color-white, #fff);
+  box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
+}
+
+.related-articles .related-articles-date {
+  width: 100%;
+  margin: 0 0 16px;
+  font-size: 12px;
+  line-height: 1.33;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #282b3e);
+}
+
+.related-articles .related-articles-item-title {
+  width: 100%;
+  margin: 16px 0;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #282b3e);
+}
+
+.related-articles .related-articles-item-title a:any-link {
+  color: var(--color-text, #282b3e);
+  text-decoration: none;
+}
+
+.related-articles .related-articles-item-title a:hover,
+.related-articles .related-articles-item-title a:focus {
+  color: var(--color-text-muted, #5e6073);
+}
+
+.related-articles .related-articles-authors {
+  margin-bottom: 16px;
+}
+
+.related-articles .related-articles-author {
+  display: flex;
+  align-items: center;
+}
+
+.related-articles .related-articles-author + .related-articles-author {
+  margin-top: 16px;
+}
+
+.related-articles .related-articles-author-photo {
+  flex: none;
+  margin-right: 16px;
+}
+
+.related-articles .related-articles-author-photo.image-hidden {
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.related-articles .related-articles-author-photo img {
+  display: block;
+  width: 64px;
+  height: 64px;
+  border: 1px solid transparent;
+  border-radius: 64px;
+  object-fit: cover;
+}
+
+.related-articles .related-articles-author-text {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-size: 12px;
+  line-height: 1.33;
+  letter-spacing: -0.02em;
+  color: var(--color-primary, #06854d);
+  text-decoration: none;
+}
+
+.related-articles a.related-articles-author-text:hover {
+  text-decoration: underline;
+}
+
+.related-articles .related-articles-author-company {
+  color: var(--color-header-mobile, #424559);
+}
+
+.related-articles .related-articles-text {
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #282b3e);
+}
+
+.related-articles .related-articles-link {
+  display: flex;
+  flex-grow: 1;
+  align-items: flex-end;
+  margin-top: 16px;
+}
+
+.related-articles a.related-articles-link-anchor {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #282b3e);
+  text-decoration: none;
+}
+
+.related-articles a.related-articles-link-anchor::before {
+  content: "";
+  position: relative;
+  top: -1px;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+  background-color: currentcolor;
+  mask: url("../../icons/arrow-right-circle.svg") center / contain no-repeat;
+}
+
+.related-articles a.related-articles-link-anchor:hover,
+.related-articles a.related-articles-link-anchor:focus {
+  text-decoration: underline;
+}
+
+@media (width >= 601px) {
+  .related-articles .related-articles-inner {
+    padding: 32px;
+  }
+}
+
+@media (width >= 801px) {
+  .related-articles .related-articles-item {
+    flex: 1 0 calc(50% - 12px);
+    min-width: 0;
+    max-width: calc(50% - 12px);
+    margin: 0 24px 24px 0;
+  }
+
+  .related-articles .related-articles-item:nth-child(2n),
+  .related-articles .related-articles-item:last-child {
+    margin-right: 0;
+  }
+}

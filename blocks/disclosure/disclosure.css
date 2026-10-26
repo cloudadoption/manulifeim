@@ -1,0 +1,170 @@
+/* disclosure: "Important disclosures" accordion (+inset, open) */
+
+.disclosure {
+  padding-top: 8px;
+}
+
+.disclosure .disclosure-item + .disclosure-item {
+  margin-top: 16px;
+}
+
+.disclosure.inset .disclosure-item {
+  max-width: 800px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.disclosure .disclosure-trigger {
+  display: inline-block;
+  margin-bottom: 16px;
+  outline: none;
+  list-style: none;
+  cursor: pointer;
+}
+
+.disclosure .disclosure-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.disclosure .disclosure-trigger::marker {
+  content: none;
+}
+
+.disclosure .disclosure-trigger:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-text, #282b3e);
+  outline: 2px solid var(--color-white, #fff);
+  outline-offset: 2px;
+}
+
+.disclosure .disclosure-trigger-disabled {
+  cursor: default;
+}
+
+.disclosure .disclosure-trigger-content {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 32px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #282b3e);
+}
+
+.disclosure .disclosure-label {
+  padding: 4px;
+}
+
+.disclosure .disclosure-trigger:not(.disclosure-trigger-disabled):hover .disclosure-label,
+.disclosure .disclosure-trigger:not(.disclosure-trigger-disabled):focus .disclosure-label {
+  text-decoration: underline;
+}
+
+.disclosure .disclosure-main-icon,
+.disclosure .disclosure-arrow-icon {
+  position: relative;
+  top: -1px;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+  background-color: currentcolor;
+  mask: url("../../icons/scale.svg") center / contain no-repeat;
+}
+
+.disclosure .disclosure-arrow-icon {
+  mask-image: url("../../icons/arrow-down.svg");
+  transition: transform 0.3s ease-in-out;
+}
+
+.disclosure details[open] .disclosure-arrow-icon {
+  transform: scaleY(-1);
+}
+
+/* rich text */
+.disclosure .disclosure-content {
+  text-align: left;
+  font-size: 16px;
+  line-height: 1.75;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #282b3e);
+}
+
+.disclosure .disclosure-content > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.disclosure .disclosure-content > :not(:first-child) {
+  margin-top: 16px;
+}
+
+.disclosure .disclosure-content p,
+.disclosure .disclosure-content li {
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.disclosure .disclosure-content small,
+.disclosure .disclosure-content sup,
+.disclosure .disclosure-content sub {
+  font-size: 0.83em;
+}
+
+.disclosure .disclosure-content sup {
+  vertical-align: super;
+}
+
+.disclosure .disclosure-content sub {
+  vertical-align: sub;
+}
+
+.disclosure .disclosure-content b,
+.disclosure .disclosure-content strong {
+  font-weight: 600;
+}
+
+.disclosure .disclosure-content u {
+  text-decoration: underline;
+}
+
+.disclosure .disclosure-content a:any-link {
+  color: inherit;
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+
+.disclosure .disclosure-content a:hover,
+.disclosure .disclosure-content a:focus {
+  color: var(--color-primary, #06854d);
+}
+
+.disclosure .disclosure-content ul,
+.disclosure .disclosure-content ol {
+  padding-left: 16px;
+  list-style-position: inside;
+}
+
+.disclosure .disclosure-content ul {
+  list-style-type: disc;
+}
+
+.disclosure .disclosure-content ol {
+  list-style-type: decimal;
+}
+
+.disclosure .disclosure-content li + li {
+  margin-top: 8px;
+}
+
+/* fragment content (sections) inside the disclosure */
+.disclosure .disclosure-content .section,
+.disclosure .disclosure-content .default-content-wrapper {
+  margin: 0;
+  padding: 0;
+}
+
+.disclosure .disclosure-content .default-content-wrapper > :not(:first-child) {
+  margin-top: 16px;
+}

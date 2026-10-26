@@ -1,0 +1,207 @@
+/* table (table2): card, header-row, header-column, header-row-column, no-header */
+
+.table.card .table-main {
+  padding: 48px;
+  background-color: var(--color-white, #fff);
+  box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
+}
+
+.table .table-title {
+  margin: 0 0 24px;
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #282b3e);
+}
+
+.table .table-title sup {
+  font-size: 0.7em;
+  vertical-align: super;
+}
+
+.table .table-figure {
+  margin: 0;
+}
+
+.table table {
+  width: 100%;
+  border: none;
+  border-collapse: collapse;
+}
+
+.table tbody {
+  display: block;
+  width: 100%;
+}
+
+.table tr {
+  display: block;
+  margin: 0 -24px;
+  border-bottom: 1px solid var(--color-border-strong, #e0e0e0);
+}
+
+.table tr:last-child {
+  border-bottom: none;
+}
+
+.table td,
+.table th {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  padding: 24px 16px;
+  border: none;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 175%;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #282b3e);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.table td p,
+.table th p {
+  margin: 0;
+}
+
+.table td a:any-link,
+.table th a:any-link,
+.table td u {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.table td a:hover {
+  color: var(--color-primary, #06854d);
+}
+
+.table td ul,
+.table td ol {
+  padding-left: 30px;
+}
+
+.table td ul {
+  list-style-type: disc;
+}
+
+.table td ol {
+  list-style-type: decimal;
+}
+
+.table td img {
+  max-width: 100%;
+}
+
+/* header row */
+.table:is(.header-row, .header-row-column) tr:first-child :is(td, th) {
+  padding: 15px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 150%;
+}
+
+/* header column */
+.table:is(.header-column, .header-row-column) tr :is(td, th):first-child {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 175%;
+}
+
+/* stacked mobile layout */
+.table:not(.no-header) tr {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+}
+
+.table:is(.header-row, .header-row-column) tr:first-child {
+  display: none;
+}
+
+.table:not(.no-header) tr:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.table:not(.no-header) :is(td, th) {
+  margin-bottom: 16px;
+  padding: 0 24px;
+}
+
+.table:not(.no-header) :is(td, th):last-child {
+  margin-bottom: 0;
+}
+
+.table td[data-title]::before,
+.table th[scope="row"][data-title]::before {
+  content: attr(data-title);
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.02em;
+}
+
+.table .table-caption {
+  display: block;
+  margin-top: 24px;
+  font-size: 12px;
+  letter-spacing: -0.02em;
+  color: var(--color-header-mobile, #424559);
+}
+
+.table .table-caption p {
+  margin: 0;
+}
+
+@media (width >= 601px) {
+  .table .table-title {
+    font-size: 32px;
+  }
+}
+
+@media (width >= 801px) {
+  .table tbody {
+    display: table-row-group;
+  }
+
+  .table tr,
+  .table:not(.no-header) tr {
+    display: table-row;
+    margin: 0;
+    padding: 0;
+  }
+
+  .table:is(.header-row, .header-row-column) tr:first-child {
+    display: table-row;
+  }
+
+  .table td,
+  .table th,
+  .table:not(.no-header) :is(td, th) {
+    display: table-cell;
+    width: auto;
+    margin: 0;
+    padding: 24px 16px;
+    font-size: 14px;
+    line-height: 140%;
+    vertical-align: top;
+  }
+
+  .table:is(.header-row, .header-row-column) tr:first-child :is(td, th) {
+    padding: 15px;
+    font-size: 12px;
+    line-height: 150%;
+  }
+
+  .table:is(.header-column, .header-row-column) tr :is(td, th):first-child {
+    font-size: 16px;
+    line-height: 175%;
+  }
+
+  .table td[data-title]::before,
+  .table th[scope="row"][data-title]::before {
+    content: none;
+  }
+}
