@@ -32,8 +32,14 @@ function buildTrigger(labelCell, open) {
   icon.setAttribute('aria-hidden', 'true');
   const text = document.createElement('span');
   text.className = 'disclosure-label';
-  if (labelCell && labelCell.textContent.trim()) text.append(...labelCell.childNodes);
-  else text.textContent = DEFAULT_LABEL;
+  if (labelCell && labelCell.textContent.trim()) {
+    // a one-paragraph label (as aem.page may render it) gives its inline content
+    const only = labelCell.children.length === 1 ? labelCell.firstElementChild : null;
+    const source = only && only.tagName === 'P' ? only : labelCell;
+    text.append(...source.childNodes);
+  } else {
+    text.textContent = DEFAULT_LABEL;
+  }
   trigger.setAttribute('aria-label', text.textContent.trim());
   content.append(icon, text);
   if (!open) {
