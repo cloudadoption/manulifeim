@@ -163,8 +163,14 @@ function buildCarousel(block) {
     if (paused) return;
     // progress fill and slide timer in one: Web Animations keep working without CSS animation
     const fill = pills[current].querySelector('.hero-pill-fill');
-    timer = fill.animate([{ width: '0%' }, { width: '100%' }], { duration: speed * 1000, easing: 'linear', fill: 'forwards' });
-    timer.onfinish = () => { timer = null; goTo(current + 1); }; // eslint-disable-line no-use-before-define
+    timer = fill.animate([{ width: '0%' }, { width: '100%' }], {
+      duration: speed * 1000, easing: 'linear', fill: 'forwards',
+    });
+    timer.onfinish = () => {
+      timer = null;
+      // eslint-disable-next-line no-use-before-define
+      goTo(current + 1);
+    };
     if (held) timer.pause();
   };
 

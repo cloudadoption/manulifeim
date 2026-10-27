@@ -131,7 +131,9 @@ main > .section.hero-container > .hero-wrapper {
   background-color: var(--color-primary, #06854d);
 }
 
-/* media cells: with or without the paragraph / editor layers around the picture */
+/* media cells: with or without the paragraph / editor layers around the picture
+   (.ProseMirror is the Canvas editor's own class name) */
+/* stylelint-disable selector-class-pattern */
 .hero .hero-media :is(p, .prosemirror-editor, .ProseMirror, picture),
 .hero .hero-slide-image :is(p, .prosemirror-editor, .ProseMirror, picture) {
   display: block;
@@ -139,6 +141,7 @@ main > .section.hero-container > .hero-wrapper {
   height: 100%;
   margin: 0;
 }
+/* stylelint-enable selector-class-pattern */
 
 /* config rows (Speed): hidden on pages, editable in Canvas */
 .hero > [data-config] {
