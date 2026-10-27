@@ -14,14 +14,16 @@
   list-style: none;
 }
 
-/* one white card holding all cells (every variant but separate): a grid whose 1px rules
-   are drawn as right / bottom box-shadows on the cells, clipped by the container at its
-   outer edge (so the last column and row never show one, a lone last cell does) */
+/* one white card holding all cells (every variant but separate): a grid with 1px gaps (the
+   space live's borders take) filled by right / bottom box-shadows on the cells; the
+   container clips them at its outer edge, so the last column and row never show one and
+   a lone last cell does */
 .cards:is(.teaser, .tiles, .news) .cards-list {
   --cards-columns: 1;
 
   display: grid;
   grid-template-columns: repeat(var(--cards-columns), minmax(0, 1fr));
+  gap: 1px;
   overflow: hidden;
   background-color: var(--color-white);
   box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
