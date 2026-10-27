@@ -10,8 +10,15 @@
  * Without a heading, the first bold paragraph is the name. Bios taller than 112px
  * collapse with a "Read more" / "Collapse" toggle (live TeamMemberReadMore).
  * An optional LinkedIn link (linkedin.com) in the text cell becomes the profile link.
+ *
+ * Rows and cells get classes (team-member, team-photo, team-content); the name and title
+ * are the first two elements of the text cell and styled by position. On pages the bio
+ * paragraphs move into a collapsible .team-bio; in Canvas nothing moves.
  */
 /* eslint-enable max-len */
+import isAuthoring from '../../scripts/authoring.js';
+import { isMediaCell } from '../../scripts/block-utils.js';
+
 const COLLAPSED_HEIGHT = 112;
 
 function buildToggle(bio) {
@@ -67,92 +74,46 @@ function setupCollapse(bio) {
   ro.observe(bio);
 }
 
+/** A paragraph holding only a LinkedIn link (the profile link next to the name). */
+function isLinkedin(el) {
+  const a = el.querySelector('a[href*="linkedin.com"]');
+  return !!a && el.textContent.trim() === a.textContent.trim();
+}
+
 export default function decorate(block) {
-  const card = document.createElement('div');
-  card.className = 'team-card';
   const bios = [];
-
   [...block.children].forEach((row) => {
-    const article = document.createElement('article');
-    article.className = 'team-member';
-    const content = document.createElement('div');
-    content.className = 'team-content';
-    const photoWrap = document.createElement('div');
-    photoWrap.className = 'team-photo';
-
-    const body = document.createElement('div');
+    row.classList.add('team-member');
+    row.setAttribute('role', 'article');
+    let content = null;
     [...row.children].forEach((cell) => {
-      if (cell.querySelector('picture') && !cell.textContent.trim()) {
-        if (!photoWrap.children.length) photoWrap.append(cell.querySelector('picture'));
-      } else {
-        body.append(...cell.childNodes);
+      if (isMediaCell(cell)) cell.classList.add('team-photo');
+      else if (!content) {
+        content = cell;
+        cell.classList.add('team-content');
       }
     });
-    if (!photoWrap.children.length) {
-      const p = [...body.children].find((el) => el.querySelector('picture') && !el.textContent.trim());
-      if (p) {
-        photoWrap.append(p.querySelector('picture'));
-        p.remove();
-      }
-    }
-    [...body.children].forEach((el) => {
+    if (!content) return;
+    [...content.children].forEach((el) => {
       if (el.tagName === 'P' && !el.textContent.trim() && !el.querySelector('picture')) el.remove();
     });
-
-    let nameEl = body.querySelector('h1, h2, h3, h4, h5, h6');
-    if (!nameEl) {
-      const first = body.firstElementChild;
-      if (first && first.querySelector('strong, b') && first.textContent.trim() === first.querySelector('strong, b').textContent.trim()) {
-        nameEl = document.createElement('h4');
-        nameEl.textContent = first.textContent.trim();
-        first.replaceWith(nameEl);
-      }
-    }
-    const header = document.createElement('header');
-    header.className = 'team-header';
-    let titleEl = null;
-    if (nameEl) {
-      const children = [...body.children];
-      titleEl = children[children.indexOf(nameEl) + 1];
-      if (titleEl && titleEl.tagName !== 'P') titleEl = null;
-      nameEl.classList.add('team-name');
-      header.append(nameEl);
-      if (titleEl) {
-        const t = document.createElement('div');
-        t.className = 'team-title';
-        t.innerHTML = titleEl.innerHTML;
-        titleEl.remove();
-        header.append(t);
-      }
-    }
-
-    // LinkedIn link
-    const linkedin = [...body.querySelectorAll('a[href*="linkedin.com"]')]
-      .find((a) => a.closest('p') && a.closest('p').textContent.trim() === a.textContent.trim());
-    if (linkedin) {
-      const p = linkedin.closest('p');
-      linkedin.className = 'team-linkedin';
-      p.replaceWith(linkedin);
-      header.append(linkedin);
-    }
-
-    const bio = document.createElement('div');
-    bio.className = 'team-bio';
-    bio.append(...body.childNodes);
-    content.append(header);
-    if (bio.textContent.trim()) {
-      content.append(bio);
+    const name = content.firstElementChild;
+    const img = row.querySelector('.team-photo img');
+    if (img && !img.alt && name) img.alt = name.textContent.trim();
+    const linkedin = [...content.children].find(isLinkedin);
+    linkedin?.classList.add('team-linkedin');
+    // Canvas: the paragraphs stay as authored; the read-more collapse is for pages only
+    if (isAuthoring()) return;
+    const kids = [...content.children].filter((k) => k !== linkedin);
+    const titled = kids[1] && kids[1].tagName === 'P';
+    const bioEls = kids.slice(titled ? 2 : 1);
+    if (bioEls.some((e) => e.textContent.trim())) {
+      const bio = document.createElement('div');
+      bio.className = 'team-bio';
+      bioEls[0].before(bio);
+      bio.append(...bioEls);
       bios.push(bio);
     }
-
-    if (photoWrap.children.length) {
-      const img = photoWrap.querySelector('img');
-      if (img && !img.alt && nameEl) img.alt = nameEl.textContent.trim();
-    }
-    article.append(content, photoWrap);
-    card.append(article);
   });
-
-  block.replaceChildren(card);
   bios.forEach((bio) => setupCollapse(bio));
 }

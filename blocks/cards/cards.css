@@ -44,29 +44,32 @@ main > .section:has(.hero.overlap) + .section .cards {
   z-index: 1;
 }
 
-/* ---------- teaser cards (default, news, separate) ---------- */
+/* ---------- teaser cards (default, news, separate) ----------
+   li > .cards-card-image + .cards-card-body (the authored cells); in the body: date
+   (paragraphs before the title), title, authors list, text, link paragraph */
 
 .cards:not(.tiles) .cards-list > li {
   display: flex;
   flex-direction: column;
 }
 
-.cards .cards-image {
+.cards:not(.tiles) .cards-card-image {
   padding: 24px 24px 0;
 }
 
-.cards .cards-image picture {
+.cards .cards-card-image :is(p, picture) {
   display: block;
+  margin: 0;
 }
 
-.cards .cards-image img {
+.cards:not(.tiles) .cards-card-image img {
   display: block;
   width: 100%;
   height: 185px;
   object-fit: cover;
 }
 
-.cards .cards-body {
+.cards:not(.tiles) .cards-card-body {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -76,16 +79,24 @@ main > .section:has(.hero.overlap) + .section .cards {
   padding: 24px;
 }
 
-.cards .cards-date {
-  width: 100%;
+/* text */
+.cards:not(.tiles) .cards-card-body > :is(p, div, .prosemirror-editor) {
   margin: 0 0 16px;
-  font-size: 12px;
-  line-height: 1.33;
+  font-size: 14px;
+  line-height: 1.5;
   letter-spacing: -0.02em;
   color: var(--color-text, #282b3e);
 }
 
-.cards .cards-title {
+/* date: the paragraphs before the title */
+.cards:not(.tiles) .cards-card-body > :is(p, .prosemirror-editor):has(~ :is(h1, h2, h3, h4, h5, h6)) {
+  width: 100%;
+  margin: 0 0 16px;
+  font-size: 12px;
+  line-height: 1.33;
+}
+
+.cards:not(.tiles) .cards-card-body > :is(h1, h2, h3, h4, h5, h6) {
   width: 100%;
   margin: 16px 0;
   font-size: 24px;
@@ -95,38 +106,29 @@ main > .section:has(.hero.overlap) + .section .cards {
   color: var(--color-text, #282b3e);
 }
 
-.cards .cards-title em,
-.cards .cards-title i {
+.cards:not(.tiles) .cards-card-body > :is(h1, h2, h3, h4, h5, h6) :is(em, i) {
   font-family: var(--font-family-serif, "Manulife JH Serif", "Times New Roman", serif);
   font-style: italic;
 }
 
-.cards .cards-title a:any-link {
+.cards:not(.tiles) .cards-card-body > :is(h1, h2, h3, h4, h5, h6) a:any-link {
   color: var(--color-text, #282b3e);
   text-decoration: none;
 }
 
-.cards .cards-title a:hover {
+.cards:not(.tiles) .cards-card-body > :is(h1, h2, h3, h4, h5, h6) a:hover {
   color: var(--color-text-muted, #5e6073);
 }
 
-.cards .cards-text {
-  margin: 0 0 16px;
-  font-size: 14px;
-  line-height: 1.5;
-  letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
-}
-
-.cards .cards-link {
+/* link: a plain link alone in its paragraph, pushed to the bottom of the card */
+.cards:not(.tiles) .cards-card-body > .link-cta-wrapper {
   display: flex;
   flex-grow: 1;
   align-items: flex-end;
   margin: 16px 0 0;
 }
 
-.cards a.cards-link-anchor,
-.cards a.cards-tile-link {
+.cards a.link-cta {
   display: inline-flex;
   align-items: center;
   padding: 2px 0;
@@ -138,8 +140,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   text-decoration: none;
 }
 
-.cards a.cards-link-anchor::before,
-.cards a.cards-tile-link::before {
+.cards a.link-cta::before {
   content: "";
   position: relative;
   top: -1px;
@@ -151,41 +152,42 @@ main > .section:has(.hero.overlap) + .section .cards {
   mask: url("../../icons/arrow-right-circle.svg") center / contain no-repeat;
 }
 
-.cards a.cards-link-anchor:hover,
-.cards a.cards-link-anchor:focus,
-.cards a.cards-tile-link:hover,
-.cards a.cards-tile-link:focus {
+.cards a.link-cta:hover,
+.cards a.link-cta:focus {
   color: var(--color-text, #282b3e);
   text-decoration: underline;
 }
 
-/* inline authors */
-.cards .cards-authors {
-  margin-bottom: 16px;
+/* authors: the authored list, [photo] **Name**, Position <br> Company per item */
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
 }
 
-.cards .cards-author {
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-.cards .cards-author + .cards-author {
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li + li {
   margin-top: 16px;
 }
 
-.cards .cards-author-photo {
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li > :is(p, picture, .prosemirror-editor):has(img),
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li > picture {
   flex: none;
-  margin-right: 8px;
+  margin: 0 8px 0 0;
 }
 
-.cards .cards-author-photo.image-hidden {
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li > .image-hidden {
   width: 1px;
   height: 1px;
   overflow: hidden;
 }
 
-.cards .cards-author-photo img {
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li img {
   display: block;
   width: 40px;
   height: 40px;
@@ -194,9 +196,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   object-fit: cover;
 }
 
-.cards .cards-author-text {
-  display: flex;
-  flex-flow: row wrap;
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li > :is(p, .prosemirror-editor):not(:has(img)) {
   width: 100%;
   margin: 0;
   font-size: 12px;
@@ -205,13 +205,37 @@ main > .section:has(.hero.overlap) + .section .cards {
   color: var(--color-primary, #06854d);
 }
 
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li strong {
+  font-weight: inherit;
+}
+
+.cards .cards-author-company {
+  color: var(--color-header-mobile, #424559);
+}
+
+/* generated author lines (index cards): name, position and company as wrapping items */
+.cards .cards-author-text {
+  display: flex;
+  flex-flow: row wrap;
+}
+
 .cards .cards-author-name {
   white-space: pre-wrap;
 }
 
-.cards .cards-author-company {
+.cards .cards-author-text .cards-author-company {
   width: 100%;
-  color: var(--color-header-mobile, #424559);
+}
+
+/* config rows (news Source / Limit): hidden on pages, editable in Canvas */
+.cards > [data-config] {
+  display: none;
+}
+
+html[quick-edit] .cards > [data-config] {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
 }
 
 /* ---------- news ---------- */
@@ -220,21 +244,24 @@ main > .section:has(.hero.overlap) + .section .cards {
   padding: 24px;
 }
 
-.cards.news .cards-body {
+.cards.news .cards-card-body {
   padding: 0;
 }
 
-/* ---------- tiles ---------- */
+/* ---------- tiles: li.cards-tile > (image cell) + body cell ---------- */
 
 .cards.tiles .cards-list > li {
   padding: 48px;
 }
 
-.cards.tiles .cards-tile-image {
+.cards.tiles .cards-card-image,
+.cards.tiles .cards-card-image :is(p, picture),
+.cards.tiles .cards-card-body > :is(p, .prosemirror-editor):has(> picture:only-child) {
   display: block;
+  margin: 0;
 }
 
-.cards.tiles .cards-tile-image img {
+.cards.tiles :is(.cards-card-image, .cards-card-body > :is(p, .prosemirror-editor):has(> picture:only-child)) img {
   display: block;
   max-width: 100%;
   max-height: 125px;
@@ -242,13 +269,15 @@ main > .section:has(.hero.overlap) + .section .cards {
   padding-bottom: 24px;
 }
 
-.cards.tiles .cards-tile > :not(:first-child) {
+.cards.tiles .cards-card-body > :not(:first-child) {
   margin-top: 16px;
 }
 
-.cards.tiles .cards-tile h2,
-.cards.tiles .cards-tile h3,
-.cards.tiles .cards-tile h4 {
+.cards.tiles .cards-card-body > :is(p, .prosemirror-editor):has(> picture:only-child) + * {
+  margin-top: 0;
+}
+
+.cards.tiles .cards-card-body :is(h2, h3, h4) {
   margin-bottom: 0;
   font-size: 24px;
   font-weight: 400;
@@ -257,29 +286,20 @@ main > .section:has(.hero.overlap) + .section .cards {
   color: var(--color-text, #282b3e);
 }
 
-.cards.tiles .cards-tile h2 {
+.cards.tiles .cards-card-body > :first-child {
   margin-top: 0;
 }
 
-.cards.tiles .cards-tile h2 strong,
-.cards.tiles .cards-tile h2 b,
-.cards.tiles .cards-tile h3 strong {
+.cards.tiles .cards-card-body :is(h2, h3) :is(strong, b) {
   font-weight: 700;
 }
 
-.cards.tiles .cards-tile h2 em,
-.cards.tiles .cards-tile h2 i,
-.cards.tiles .cards-tile h3 em {
+.cards.tiles .cards-card-body :is(h2, h3) :is(em, i) {
   font-family: var(--font-family-serif, "Manulife JH Serif", "Times New Roman", serif);
   font-style: italic;
 }
 
-.cards.tiles .cards-tile h3 {
-  margin-top: 16px;
-}
-
-.cards.tiles .cards-tile p,
-.cards.tiles .cards-tile li {
+.cards.tiles .cards-card-body :is(p, li) {
   margin-bottom: 0;
   font-size: 16px;
   line-height: 1.75;
@@ -287,26 +307,26 @@ main > .section:has(.hero.overlap) + .section .cards {
   color: var(--color-text, #282b3e);
 }
 
-.cards.tiles .cards-tile > :first-child,
-.cards.tiles .cards-tile > .cards-tile-image + * {
-  margin-top: 0;
-}
-
-.cards.tiles .cards-tile p a:any-link {
+.cards.tiles .cards-card-body p a:any-link:not(.link-cta) {
   color: inherit;
   text-decoration: underline;
 }
 
-.cards.tiles .cards-tile p a:hover {
+.cards.tiles .cards-card-body p a:hover:not(.link-cta) {
   color: var(--color-primary, #06854d);
 }
 
-.cards.tiles a.cards-tile-link {
-  display: flex;
+.cards.tiles .cards-card-body > .link-cta-wrapper {
+  display: block;
   margin-top: 16px;
 }
 
-.cards.tiles .cards-tile > a.cards-tile-link:first-of-type {
+/* the tile link spans the tile (live a.cards-tile-link is display: flex) */
+.cards.tiles a.link-cta {
+  display: flex;
+}
+
+.cards.tiles .cards-card-body > .link-cta-wrapper:not(.link-cta-wrapper ~ .link-cta-wrapper) {
   margin-top: 24px;
 }
 
@@ -328,15 +348,15 @@ main > .section:has(.hero.overlap) + .section .cards {
   box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
 }
 
-.cards.separate .cards-image {
+.cards.separate .cards-card-image {
   padding: 0;
 }
 
-.cards.separate .cards-body {
+.cards.separate .cards-card-body {
   padding: 0;
 }
 
-.cards.separate .cards-author-photo img {
+.cards.separate .cards-card-body > :is(ul, ol) > li img {
   width: 64px;
   height: 64px;
 }
@@ -353,22 +373,16 @@ main > .section:has(.hero.overlap) + .section .cards {
   padding: 0;
 }
 
-.cards.separate.three .cards-image img {
+.cards.separate.three .cards-card-image img {
   height: auto;
 }
 
-.cards.separate.three .cards-body {
+.cards.separate.three .cards-card-body {
   padding: 24px;
 }
 
-@media (width <= 600px) {
-  .cards.tiles .cards-tile h2 {
-    font-size: 24px;
-  }
-}
-
 @media (width >= 601px) {
-  .cards.tiles .cards-tile h2 {
+  .cards.tiles .cards-card-body h2 {
     font-size: 32px;
   }
 }
