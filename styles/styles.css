@@ -775,7 +775,7 @@ main > .section[data-layout]:last-child {
     .article-list-control-icon, .browse-by-more-icon, .browse-by-sort-icon, .browse-by-sort-check,
     .section-nav-check) {
     forced-color-adjust: none;
-    background-color: CanvasText;
+    background-color: CanvasText !important;
   }
 
   .hero.carousel .hero-pill-track {
@@ -784,6 +784,6 @@ main > .section[data-layout]:last-child {
 
   .hero.carousel .hero-pill-fill {
     forced-color-adjust: none;
-    background-color: Highlight;
+    background-color: Highlight !important;
   }
 }
