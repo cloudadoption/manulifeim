@@ -61,7 +61,7 @@
   font-size: 24px;
   font-weight: 300;
   line-height: 1.25;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-white);
 }
 
@@ -97,7 +97,7 @@
 .promo .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) li {
   font-size: 16px;
   line-height: 1.75;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-white);
 }
 
@@ -129,7 +129,7 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-white);
   text-decoration: none;
 }

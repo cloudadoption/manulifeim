@@ -55,7 +55,7 @@
   font-size: 24px;
   font-weight: 700;
   line-height: 1.25;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 
@@ -67,7 +67,7 @@
   margin-top: 8px;
   font-size: 14px;
   line-height: 1.5;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text-muted);
 }
 
@@ -99,7 +99,7 @@
   overflow: hidden;
   font-size: 16px;
   line-height: 1.75;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 
@@ -202,7 +202,7 @@ html[quick-edit] .team .team-content > :nth-child(n+3) li {
   font-size: 16px;
   font-weight: 700;
   line-height: 1.75;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 /* stylelint-enable no-descending-specificity */

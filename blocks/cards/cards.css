@@ -83,7 +83,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   margin: 0 0 16px;
   font-size: 14px;
   line-height: 1.5;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 
@@ -101,7 +101,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   font-size: 24px;
   font-weight: 400;
   line-height: 1.25;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 
@@ -134,7 +134,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
   text-decoration: none;
 }
@@ -200,7 +200,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   margin: 0;
   font-size: 12px;
   line-height: 1.33;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-primary);
 }
 
@@ -285,7 +285,7 @@ html[quick-edit] .cards > [data-config] {
   font-size: 24px;
   font-weight: 400;
   line-height: 1.25;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 
@@ -306,7 +306,7 @@ html[quick-edit] .cards > [data-config] {
   margin-bottom: 0;
   font-size: 16px;
   line-height: 1.75;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 

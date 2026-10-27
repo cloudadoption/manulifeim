@@ -13,7 +13,7 @@
   font-size: 40px;
   font-weight: 300;
   line-height: 1.25;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 
@@ -44,7 +44,7 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
   text-decoration: none;
 }
@@ -126,7 +126,7 @@ main > .section.feature-container:has(.feature.marketing) > .feature-wrapper {
   margin: 0;
   font-size: 16px;
   line-height: 1.75;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-white);
 }
 
@@ -213,7 +213,7 @@ main > .section.feature-container:has(.feature.marketing) > .feature-wrapper {
   align-items: center;
   font-size: 12px;
   line-height: 1.33;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-primary);
 }
 
@@ -254,7 +254,7 @@ main > .section.feature-container:has(.feature.marketing) > .feature-wrapper {
   margin: 16px 0 0;
   font-size: 16px;
   line-height: 1.75;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 
@@ -318,7 +318,7 @@ main > .section > .feature-wrapper:has(> .feature.banner) {
   font-size: 24px;
   font-weight: 300;
   line-height: 1.25;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 

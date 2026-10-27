@@ -11,7 +11,7 @@
   flex: 1;
   font-size: 32px;
   line-height: 125%;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 
@@ -111,7 +111,7 @@
   margin: 0;
   font-size: 12px;
   line-height: 1.5;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-header-mobile);
 }
 
@@ -120,7 +120,7 @@
   font-size: 24px;
   font-weight: 300;
   line-height: 1.25;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 
@@ -177,7 +177,7 @@
   margin: 0;
   font-size: 12px;
   line-height: 150%;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 
@@ -193,7 +193,7 @@
 .article-list .article-list-description {
   font-size: 14px;
   line-height: 140%;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 

@@ -53,7 +53,7 @@ main > .section > .disclosure-wrapper {
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 
@@ -92,7 +92,7 @@ main > .section > .disclosure-wrapper {
   text-align: left;
   font-size: 16px;
   line-height: 1.75;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 
@@ -180,5 +180,5 @@ main > .section > .disclosure-wrapper {
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
 }

@@ -34,7 +34,7 @@
   padding: 0 0 48px;
   font-size: 16px;
   line-height: 1.75;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 
@@ -66,7 +66,7 @@
 .figure .figure-content h3,
 .figure .figure-content h4 {
   line-height: 1.25;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 
@@ -126,7 +126,7 @@
   margin-top: 24px;
   font-size: 14px;
   line-height: 150%;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing);
   color: var(--color-text);
 }
 
