@@ -3,6 +3,18 @@ async (page) => {
   // in the page (same origin). Returns {pages, images} for ingest.mjs.
   page.setDefaultTimeout(15000);
   const q = await (await page.request.get('http://localhost:3000/tools/importer/snapshots/_queue.json', { timeout: 5000 })).json();
+  // warm session: homepage + attestation first when the browser is not on the site yet
+  if (!page.url().startsWith('https://www.manulifeim.com/')) {
+    const w = await page.goto('https://www.manulifeim.com/institutional/tw/en', { waitUntil: 'domcontentloaded', timeout: 30000 });
+    if (!w || w.status() !== 200) return { pages: [{ url: 'https://www.manulifeim.com/institutional/tw/en', status: w ? w.status() : 0, blocked: true, at: new Date().toISOString() }], images: [] };
+    await page.waitForLoadState('load', { timeout: 20000 }).catch(() => {});
+    const agree = page.getByRole('button', { name: 'I agree' });
+    if (await agree.isVisible().catch(() => false)) await agree.click();
+    const reject = page.getByRole('button', { name: 'Reject optional cookies' });
+    await reject.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+    if (await reject.isVisible().catch(() => false)) await reject.click();
+    await page.waitForTimeout(20000);
+  }
   const out = [];
   const imgs = [];
   const imgQueue = [...(q.images || [])];
@@ -70,6 +82,5 @@ async (page) => {
     const wait = gap - (Date.now() - started);
     if (wait > 0) await page.waitForTimeout(wait);
   }
-  await page.goto('about:blank');
   return { pages: out, images: imgs };
 }
