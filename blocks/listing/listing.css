@@ -187,6 +187,13 @@ main > .section > .listing-wrapper {
 }
 
 /* ---------- viewpoints (.viewpointList) ---------- */
+
+/* "N listings" (Count row, live /viewpoints/all .viewpointsList2__listing) */
+.listing .listing-vp-count {
+  margin: 0 0 16px;
+  padding: 24px 24px 0;
+}
+
 .listing .listing-vp-list {
   padding: 0 24px;
 }
@@ -1065,6 +1072,10 @@ main > .section > .listing-wrapper {
   .listing .listing-empty {
     padding: 32px;
     font-size: 32px;
+  }
+
+  .listing .listing-vp-count {
+    padding: 64px 64px 0;
   }
 
   .listing .listing-vp-list {

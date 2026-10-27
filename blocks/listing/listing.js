@@ -12,6 +12,7 @@
  * | Sort    | newest | oldest | title | name                                             |
  * | Empty   | Sorry, no results match this criteria                                      |
  * | Sidebar | rich text shown left of the list (press: Media relations)                  |
+ * | Count   | {count} listings  (viewpoints: result count line above the list)           |
  *
  * URL query parameters (kept in the URL with history.replaceState):
  *   viewpoints   ?tag= ?assetManager= ?author= ?category= ?page=
@@ -38,7 +39,7 @@ const URL_KEYS = {
   documents: ['q', 'type', 'topic', 'audience'],
   people: [],
 };
-const CONFIG_KEYS = ['source', 'filter', 'limit', 'sort', 'empty', 'sidebar', 'title'];
+const CONFIG_KEYS = ['source', 'filter', 'limit', 'sort', 'empty', 'sidebar', 'title', 'count'];
 const DEFAULT_EMPTY = 'Sorry, no results match this criteria';
 const CS_SORTS = [['newest', 'Newest'], ['oldest', 'Oldest']];
 
@@ -464,6 +465,12 @@ export default async function decorate(block) {
       } else if (f.assetManager) {
         setPageHeading(block, filterLabel(items, 'assetManager', f.assetManager[0]));
       }
+    }
+    if (config.count) {
+      // live /viewpoints/all: "9 listings" (count of the filtered results, all pages)
+      const n = String(filtered.length);
+      const label = config.count.includes('{count}') ? config.count.replaceAll('{count}', n) : `${n} ${config.count}`;
+      parts.push(el('p', { class: 'listing-vp-count', role: 'status' }, label));
     }
     if (!result.items.length) parts.push(emptyState(config, 'listing-empty listing-vp-empty'));
     else parts.push(el('ul', { class: 'listing-vp-list' }, result.items.map(viewpointItem)));
