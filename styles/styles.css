@@ -635,6 +635,68 @@ main > .section.narrow > div > * {
   margin-inline: auto;
 }
 
+/* title-row (live richTitle): a section heading with an optional link at the right; the
+   live component has no column-container side padding */
+main > .section.title-row > .default-content-wrapper {
+  padding-inline: var(--spacing-section-x);
+}
+
+main > .section.title-row > .default-content-wrapper > * {
+  margin: 16px 0 0;
+}
+
+main > .section.title-row > .default-content-wrapper > :is(h1, h2, h3, h4, h5, h6) {
+  padding-right: 24px;
+  font-size: 40px;
+  font-weight: 300;
+  line-height: var(--line-height-heading);
+  letter-spacing: var(--letter-spacing);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+main > .section.title-row > .default-content-wrapper > :is(h1, h2, h3, h4, h5, h6) :is(em, i) {
+  font-family: var(--font-family-serif);
+  font-style: italic;
+}
+
+main > .section.title-row > .default-content-wrapper > :is(h1, h2, h3, h4, h5, h6) :is(b, strong) {
+  font-weight: 700;
+}
+
+main > .section.title-row > .default-content-wrapper > :is(h1, h2, h3, h4, h5, h6) :is(sup, sub) {
+  font-size: 0.7em;
+}
+
+main > .section.title-row a.link-cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: var(--letter-spacing);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+main > .section.title-row a.link-cta::before {
+  content: "";
+  position: relative;
+  top: -1px;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+  background-color: currentcolor;
+  mask: url("../icons/arrow-right-circle.svg") center / contain no-repeat;
+}
+
+main > .section.title-row a.link-cta:hover,
+main > .section.title-row a.link-cta:focus {
+  text-decoration: underline;
+}
+
 /* divider: top rule 1px #e0e0e0, 32px above and below (64px from 601px) */
 main > .section.divider::before {
   content: "";
@@ -672,6 +734,23 @@ main > .section[data-layout]:last-child {
 
   main > .section.divider::before {
     margin: 64px 0;
+  }
+
+  /* title-row: heading left, link right, centred on one line */
+  main > .section.title-row > .default-content-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  main > .section.title-row > .default-content-wrapper > :is(h1, h2, h3, h4, h5, h6) {
+    flex: 1;
+    font-size: 48px;
+  }
+
+  main > .section.title-row > .default-content-wrapper > .link-cta-wrapper {
+    flex: none;
+    padding: 0 24px;
   }
 }
 
