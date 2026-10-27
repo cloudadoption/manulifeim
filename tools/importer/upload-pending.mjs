@@ -5,7 +5,8 @@
  *
  *   node tools/importer/upload-pending.mjs [--limit 60] [--list]
  *
- * Run check-images.mjs first so tools/importer/reports/live-images.json is current.
+ * Run check-images.mjs and check-content.mjs first so tools/importer/reports/live-images.json
+ * and content-mismatch.json are current (pages listed in either are skipped).
  */
 import {
   readFileSync, existsSync, readdirSync, statSync,
@@ -18,6 +19,9 @@ const li = args.indexOf('--limit');
 const limit = li === -1 ? 60 : Number(args[li + 1]);
 const up = existsSync('tools/importer/reports/da-upload.json') ? JSON.parse(readFileSync('tools/importer/reports/da-upload.json', 'utf-8')) : {};
 const live = JSON.parse(readFileSync('tools/importer/reports/live-images.json', 'utf-8')).hits || {};
+// pages whose content does not belong to their snapshot (wrong import source)
+const MISMATCH = 'tools/importer/reports/content-mismatch.json';
+const wrong = existsSync(MISMATCH) ? JSON.parse(readFileSync(MISMATCH, 'utf-8')) : {};
 
 const all = [];
 (function walk(d) {
@@ -29,13 +33,13 @@ const all = [];
   });
 }('content'));
 
-const todo = all.filter((p) => !live[p]).filter((p) => {
+const todo = all.filter((p) => !live[p] && !wrong[p]).filter((p) => {
   const r = up[p];
   if (!r) return true;
   const mtime = statSync(`content${p}.plain.html`).mtimeMs;
   return !(r.upload < 300 && r.preview < 300) || Date.parse(r.at) < mtime - 1000;
 });
-console.log(`${all.length} pages, ${Object.keys(live).length} waiting for images, ${todo.length} to upload`);
+console.log(`${all.length} pages, ${Object.keys(live).length} waiting for images, ${Object.keys(wrong).length} with wrong content, ${todo.length} to upload`);
 if (args.includes('--list')) {
   console.log(todo.join('\n'));
 } else if (todo.length) {
