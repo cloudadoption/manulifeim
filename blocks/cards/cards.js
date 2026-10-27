@@ -81,15 +81,22 @@ function decorateAuthors(li) {
   });
 }
 
-/** Author line for an index item: photo / **Name**, Position <br> Company. */
+/**
+ * Author line for an index item (generated, so it can use live's spans): photo /
+ * "Name, " position / company on its own line.
+ */
 function authorItem(author) {
   const li = el('li');
   const pic = author.image ? toPicture(author.image, author.name || '', '100') : null;
   if (pic) li.append(el('p', '', pic));
-  const text = el('p', '', el('strong', '', author.name || ''));
-  if (author.title) text.append(`, ${author.title}`);
-  if (author.company) text.append(el('br'), el('span', 'cards-author-company', author.company));
-  li.append(text);
+  const name = author.title || author.company ? `${author.name},\u00a0` : author.name;
+  li.append(el(
+    'p',
+    'cards-author-text',
+    el('span', 'cards-author-name', name || ''),
+    author.title ? el('span', 'cards-author-position', author.title) : null,
+    author.company ? el('span', 'cards-author-company', author.company) : null,
+  ));
   return li;
 }
 

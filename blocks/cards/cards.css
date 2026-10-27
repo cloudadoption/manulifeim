@@ -213,6 +213,20 @@ main > .section:has(.hero.overlap) + .section .cards {
   color: var(--color-header-mobile, #424559);
 }
 
+/* generated author lines (index cards): name, position and company as wrapping items */
+.cards .cards-author-text {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.cards .cards-author-name {
+  white-space: pre-wrap;
+}
+
+.cards .cards-author-text .cards-author-company {
+  width: 100%;
+}
+
 /* config rows (news Source / Limit): hidden on pages, editable in Canvas */
 .cards > [data-config] {
   display: none;
