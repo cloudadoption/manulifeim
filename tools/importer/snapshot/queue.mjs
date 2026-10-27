@@ -5,7 +5,7 @@
  * server, so the capture code never changes between batches.
  *
  *   node tools/importer/snapshot/queue.mjs [--size 25] [--budget 540] [--gap 20-30] [--group article]
- *   (--gap: seconds between page starts, min-max)
+ *   (--gap: seconds between page starts, min-max; --images-first p1,p2: their images first)
  *
  * Order: one sample page per template group, then live_status 200 rows, then unchecked rows.
  * Rows already in _state.json (any outcome) are skipped, so a page is never fetched twice.
@@ -60,7 +60,10 @@ const queue = {
   budgetMs, minGapMs: minGap, maxGapMs: maxGap, urls: batch.map((r) => `${ORIGIN}${r.live_path}`), remaining: ordered.length - batch.length };
 // images still to download are fetched in the gaps between pages (same-origin, in the page)
 const images = readJson(`${SNAP_DIR}/_images.json`, {});
-queue.images = Object.keys(images).filter((u) => !images[u].file && !images[u].status).slice(0, Number(opt('images', 300)));
+const firstPages = (opt('images-first', '') || '').split(',').filter(Boolean);
+const pending = Object.keys(images).filter((u) => !images[u].file && !images[u].status);
+const first = pending.filter((u) => images[u].pages.some((p) => firstPages.includes(p)));
+queue.images = [...first, ...pending.filter((u) => !first.includes(u))].slice(0, Number(opt('images', 300)));
 writeFileSync(`${SNAP_DIR}/_queue.json`, JSON.stringify(queue, null, 2));
 console.log(`queued ${batch.length} pages and ${queue.images.length} images, remaining after batch ${queue.remaining}`);
 if (!existsSync(`${SNAP_DIR}/_state.json`)) console.log('(no state yet)');
