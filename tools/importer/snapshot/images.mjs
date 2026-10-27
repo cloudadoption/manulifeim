@@ -9,23 +9,28 @@
  *
  * The sidecars map original image URLs to /media-da/<name>; run-bulk-import rewrites img src
  * with them when it imports from a snapshot.
+ * Ingest names files by their bytes (not the URL extension) and applies the Edge Delivery
+ * rules of media.mjs (GIF -> PNG, SVG > 40 KB -> PNG at 2x); fix-media.mjs does the same for
+ * files stored before.
  */
 import { readFileSync, unlinkSync, readdirSync } from 'fs';
 import { createHash } from 'crypto';
 import {
   SNAP_DIR, MEDIA_DIR, readJson, writeFile, snapshotFile,
 } from './lib.mjs';
+import { sniffType, fixMediaFile, MIME } from './media.mjs';
 
 const IMAGES = `${SNAP_DIR}/_images.json`;
 const [cmd, arg, val] = process.argv.slice(2);
 const images = readJson(IMAGES, {});
 
-const mediaName = (url) => {
+// <stem>-<url hash>.<ext>; ext from the sniffed type, else from the URL
+const mediaName = (url, type) => {
   const { pathname } = new URL(url);
   const base = decodeURIComponent(pathname.split('/').pop());
   const m = base.match(/^(.*?)(\.[a-z0-9]+)?$/i);
   const stem = m[1].toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'image';
-  const ext = (m[2] || '.bin').toLowerCase().replace('.jpeg', '.jpg');
+  const ext = type ? `.${type}` : (m[2] || '.bin').toLowerCase().replace('.jpeg', '.jpg');
   const hash = createHash('sha1').update(url).digest('hex').slice(0, 8);
   return `${stem}-${hash}${ext}`;
 };
@@ -41,11 +46,23 @@ if (cmd === 'queue') {
   let stored = 0;
   batch.forEach((rec) => {
     const entry = images[rec.url] || { pages: [] };
-    if (rec.status === 200 && rec.b64) {
-      const name = mediaName(rec.url);
-      writeFile(`${MEDIA_DIR}/${name}`, Buffer.from(rec.b64, 'base64'));
+    const bytes = rec.status === 200 && rec.b64 ? Buffer.from(rec.b64, 'base64') : null;
+    const type = bytes && sniffType(bytes);
+    if (bytes && !type) {
+      entry.status = 'not-image';
+      entry.error = `bytes are not an image (${rec.type || 'no content type'})`;
+      rec.status = 'not-image';
+    } else if (bytes) {
+      let name = mediaName(rec.url, type);
+      writeFile(`${MEDIA_DIR}/${name}`, bytes);
+      const fix = fixMediaFile(MEDIA_DIR, name);
+      if (fix?.error) console.log(`  ${fix.action} failed for ${name}: ${fix.error}`);
+      if (fix?.to) {
+        name = fix.to;
+        entry.convertedFrom = type;
+      }
       entry.file = `/media-da/${name}`;
-      entry.type = rec.type;
+      entry.type = MIME[name.split('.').pop()] || rec.type;
       stored += 1;
     } else {
       entry.status = rec.status || 'error';

@@ -80,6 +80,7 @@ export default function storeRecords(batch) {
       });
       stored += 1;
     }
+    if (entry.status == null && state[livePath]?.status == null && state[livePath]) entry.retried = true;
     state[livePath] = entry;
     appendFileSync(`${SNAP_DIR}/_log.jsonl`, `${JSON.stringify({ path: livePath, ...entry })}\n`);
   });

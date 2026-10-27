@@ -11,6 +11,14 @@
  *   parsers          one per PAGE_TEMPLATE.blocks[].name, on the live component selectors
  *   afterTransform   metadata (append) -> sections (flatten: <hr> + Section Metadata) -> links
  * Result path: the page's eds_path from pages.csv (link-map.json).
+ *
+ * Several documents (like import-chrome.js): the browse-by parser moves the author rows
+ * (~210 photos; a page may hold at most 200 images) to fragment documents
+ *   <parent>/fragments/<page>-authors-N   e.g. /institutional/tw/en/fragments/viewpoints-authors-1
+ * transform() returns [page, ...fragments]. The excat bulk importer writes only one result
+ * per URL (the first), so a `doc` query parameter selects one document per run:
+ *   https://www.manulifeim.com/institutional/tw/en/viewpoints?doc=authors-1   (page | authors-N)
+ * The snapshot lookup ignores the query, so every URL reads the page snapshot.
  */
 import PAGE_TEMPLATES from './page-templates.json';
 
@@ -51,6 +59,7 @@ import cleanupTransformer from './transformers/cleanup.js';
 import sectionsTransformer from './transformers/sections.js';
 import linksTransformer from './transformers/links.js';
 
+import { FRAGMENT_PLACEHOLDER } from './parsers/browse-by.js';
 import { documentPathFor, normalizePath, LIVE_ORIGIN } from './utils/links.js';
 
 const TEMPLATE_NAME = 'viewpoints';
@@ -158,13 +167,14 @@ export default {
 
     const pageBlocks = findBlocksOnPage(document, PAGE_TEMPLATE);
     const parsed = [];
+    const fragments = []; // filled by parsers that move content to fragment documents
     pageBlocks.forEach((block) => {
       if (!block.element.isConnected) return;
       const parser = parsers[block.name];
       if (!parser) return;
       try {
         parser(block.element, {
-          document, url, params, livePath,
+          document, url, params, livePath, fragments,
         });
         parsed.push(block.name);
       } catch (e) {
@@ -175,21 +185,53 @@ export default {
     executeTransformers('afterTransform', main, run);
 
     const path = documentPathFor(livePath);
+    const parent = path.replace(/\/[^/]*$/, '');
+    const name = path.split('/').pop();
+    fragments.forEach((f) => {
+      f.path = `${parent}/fragments/${name}-${f.id}`;
+      // links + image src rules for the fragment body (the transformer only reads document.body)
+      linksTransformer('afterTransform', f.element, { ...run, document: { body: f.element } });
+      main.querySelectorAll(`a[href="${FRAGMENT_PLACEHOLDER}${f.id}"]`).forEach((a) => {
+        a.setAttribute('href', f.path);
+        a.textContent = f.path;
+      });
+    });
     const unmigrated = [...ctx.unmigrated.keys()];
-
-    return [{
-      element: main,
-      path,
+    const report = {
+      title: (ctx.metadata && ctx.metadata.Title) || document.title,
+      template: PAGE_TEMPLATE.name,
+      'live-path': livePath,
+      'eds-path': path,
+      blocks: [...new Set(parsed)].join(', '),
+      sections: ctx.sections || 0,
+      'unmigrated-link-count': unmigrated.length,
+      'unmigrated-links': JSON.stringify(unmigrated),
+      fragments: fragments.map((f) => f.path).join(', '),
+    };
+    const docs = [{ id: 'page', element: main, path, report }, ...fragments.map((f) => ({
+      id: f.id,
+      element: f.element,
+      path: f.path,
       report: {
-        title: (ctx.metadata && ctx.metadata.Title) || document.title,
-        template: PAGE_TEMPLATE.name,
-        'live-path': livePath,
-        'eds-path': path,
-        blocks: [...new Set(parsed)].join(', '),
-        sections: ctx.sections || 0,
-        'unmigrated-link-count': unmigrated.length,
-        'unmigrated-links': JSON.stringify(unmigrated),
+        ...report,
+        title: `${report.title} (${f.id})`,
+        'eds-path': f.path,
+        blocks: 'browse-by',
+        sections: 1,
+        images: f.images,
+        fragments: '',
       },
-    }];
+    }))];
+
+    let wanted = '';
+    try {
+      wanted = new URL((params && params.originalURL) || url, LIVE_ORIGIN).searchParams.get('doc') || '';
+    } catch (e) {
+      // no doc selection
+    }
+    const ids = wanted.split(',').map((s) => s.trim()).filter(Boolean);
+    const selected = ids.length ? docs.filter((d) => ids.includes(d.id)) : docs;
+    if (!selected.length) throw new Error(`[import-${TEMPLATE_NAME}] unknown doc "${wanted}" (${docs.map((d) => d.id).join(', ')})`);
+    return selected.map((d) => ({ element: d.element, path: d.path, report: d.report }));
   },
 };

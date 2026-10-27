@@ -9,6 +9,7 @@ async (page) => {
   const t0 = Date.now();
   let errors = 0;
   let imgBlocked = false;
+  let img403 = 0;
   for (const url of q.urls) {
     if (Date.now() - t0 > q.budgetMs) break;
     const started = Date.now();
@@ -61,7 +62,9 @@ async (page) => {
         } catch (e) { return { url: u, status: 0, error: String(e.message || e) }; }
       }, iu).catch((e) => ({ url: iu, status: 0, error: String(e.message || e) }));
       imgs.push(got);
-      if ([403, 429].includes(got.status)) imgBlocked = true;
+      // single assets can be 403 on live itself; three in a row means we are blocked
+      img403 = [403, 429].includes(got.status) ? img403 + 1 : 0;
+      if (img403 >= 3) imgBlocked = true;
       await page.waitForTimeout(1500);
     }
     const wait = gap - (Date.now() - started);

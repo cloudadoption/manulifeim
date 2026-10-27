@@ -27,7 +27,9 @@ const [minGap, maxGap] = opt('gap', '5-10').split('-').map((n) => Number(n) * 10
 
 const rows = parseCsv(readFileSync('tools/migration-scope/pages.csv', 'utf-8'));
 const state = readState();
-const todo = rows.filter((r) => !state[r.live_path] && ['200', 'unchecked'].includes(r.live_status))
+// pages that timed out (no status) get one more try
+const retry = (s) => s && s.status == null && !s.retried;
+const todo = rows.filter((r) => (!state[r.live_path] || retry(state[r.live_path])) && ['200', 'unchecked'].includes(r.live_status))
   .filter((r) => !group || r.template_group === group);
 
 const sampled = new Set(Object.keys(state).map((p) => state[p].group));
@@ -39,10 +41,19 @@ todo.forEach((r) => {
   }
 });
 const rest = todo.filter((r) => !samples.includes(r));
+// round-robin across template groups so every group fills up early
+const roundRobin = (list) => {
+  const byGroup = {};
+  list.forEach((r) => { (byGroup[r.template_group] = byGroup[r.template_group] || []).push(r); });
+  const queues = Object.values(byGroup);
+  const out = [];
+  while (queues.some((q) => q.length)) queues.forEach((q) => { if (q.length) out.push(q.shift()); });
+  return out;
+};
 const ordered = [
   ...samples,
-  ...rest.filter((r) => r.live_status === '200'),
-  ...rest.filter((r) => r.live_status !== '200'),
+  // unchecked rows get their status from the capture itself
+  ...roundRobin(rest),
 ];
 const batch = ordered.slice(0, size);
 const queue = {

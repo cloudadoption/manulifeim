@@ -6,6 +6,7 @@
  *
  *   node tools/importer/dry-run.mjs [--md] [--html] [--out DIR] [--template NAME] <live path | snapshot file>...
  *   node tools/importer/dry-run.mjs --all [--template NAME] [--limit N]   every snapshot in _state.json
+ *   --doc ID  select one document of a multi-document script (adds ?doc=ID, e.g. authors-1)
  *   --bundle  run tools/importer/import-<template>.bundle.js (the esbuild output) instead of the sources
  *
  * Loads the snapshot HTML with jsdom, exposes the real @adobe/helix-importer as
@@ -82,8 +83,9 @@ const opt = (n, d) => {
 const OUT = opt('--out', '/tmp/mim-dry-run');
 const forcedTemplate = opt('--template');
 const limit = Number(opt('--limit', '0'));
+const docId = opt('--doc');
 const quiet = flag('--quiet');
-const valueArgs = new Set(['--out', '--template', '--limit']);
+const valueArgs = new Set(['--out', '--template', '--limit', '--doc']);
 const targets = args.filter((a, i) => !a.startsWith('--') && !valueArgs.has(args[i - 1]));
 
 const state = existsSync(join(SNAP_ROOT, '_state.json')) ? JSON.parse(readFileSync(join(SNAP_ROOT, '_state.json'), 'utf-8')) : {};
@@ -250,7 +252,7 @@ for (const { livePath, file } of list) {
   const { document } = dom.window;
   globalThis.WebImporter = helix;
   const srcText = sourceMainText(document);
-  const url = `${ORIGIN}${livePath}`;
+  const url = `${ORIGIN}${livePath}${docId ? `?doc=${encodeURIComponent(docId)}` : ''}`;
   let captured = null;
   let result;
   try {

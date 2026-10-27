@@ -5,6 +5,12 @@
  *
  *   node tools/importer/da-upload.mjs [--no-preview] [--force] <eds path> ...
  *   node tools/importer/da-upload.mjs --all [--limit N]     every content/**.plain.html not yet uploaded
+ *   node tools/importer/da-upload.mjs --reupload-fixed      pages listed in reports/media-fixes.json
+ *
+ * Guards (page skipped, nothing sent): an <img> still on www.manulifeim.com (check-images.mjs;
+ * override with --allow-live-images), more than 200 distinct images, or a /media-da file
+ * Edge Delivery would reject (wrong extension, GIF, SVG > 40 KB: run
+ * tools/importer/snapshot/fix-media.mjs first).
  *
  * Per page: uploads the /media-da/ images it uses to DA (once), rewrites their src in the local
  * content/<path>.plain.html to the DA media URL (so the local file is exactly what DA gets),
@@ -17,6 +23,8 @@ import {
 } from 'fs';
 import { execFileSync } from 'child_process';
 import { join } from 'path';
+import { liveImages, imageNames, PAGE_IMAGE_LIMIT } from './check-images.mjs';
+import { mediaProblem } from './snapshot/media.mjs';
 
 const ORG = 'cloudadoption';
 const SITE = 'manulifeim';
@@ -27,6 +35,7 @@ const REPORTS = 'tools/importer/reports';
 mkdirSync(REPORTS, { recursive: true });
 const pagesFile = `${REPORTS}/da-upload.json`;
 const mediaFile = `${REPORTS}/da-media.json`;
+const fixesFile = `${REPORTS}/media-fixes.json`;
 const pages = existsSync(pagesFile) ? JSON.parse(readFileSync(pagesFile, 'utf-8')) : {};
 const media = existsSync(mediaFile) ? JSON.parse(readFileSync(mediaFile, 'utf-8')) : {};
 const save = () => {
@@ -47,10 +56,12 @@ function curl(argv) {
 
 const norm = (h) => h.replace(/\s+/g, ' ').replace(/> </g, '><').trim();
 
-function uploadMedia(name) {
+function uploadMedia(name, onDa) {
   if (media[name]?.status === 201 || media[name]?.status === 200) return true;
   const file = `content/media-da/${name}`;
   if (!existsSync(file)) {
+    // already referenced by its DA URL and not kept locally: nothing to upload
+    if (onDa) return true;
     media[name] = { status: 'missing' };
     return false;
   }
@@ -63,9 +74,22 @@ function uploadPage(path) {
   const file = `content${path}.plain.html`;
   if (!existsSync(file)) return { path, error: 'no local file' };
   let html = readFileSync(file, 'utf-8');
-  // images: upload once, then point the local copy at the DA media URL
+  const live = liveImages(html);
+  if (live.length && !flag('allow-live-images')) {
+    return { path, skipped: `${live.length} image(s) still on the live site, e.g. ${live[0]} (download them, or --allow-live-images)` };
+  }
+  const distinct = imageNames(html).length;
+  if (distinct > PAGE_IMAGE_LIMIT) {
+    return { path, skipped: `${distinct} distinct images, preview fails over ${PAGE_IMAGE_LIMIT} (move some to a fragment, e.g. split-browse-by.mjs)` };
+  }
   const names = [...new Set([...html.matchAll(/\/media-da\/([^"'\s?)]+)/g)].map((m) => m[1]))];
-  const failed = names.filter((n) => !html.includes(`${DA_MEDIA}${n}`) && !uploadMedia(n));
+  const bad = names.filter((n) => existsSync(`content/media-da/${n}`))
+    .map((n) => [n, mediaProblem(`content/media-da/${n}`)]).filter(([, pr]) => pr);
+  if (bad.length) {
+    return { path, skipped: `media Edge Delivery rejects: ${bad.map(([n, pr]) => `${n} (${pr.action})`).join(', ')}; run tools/importer/snapshot/fix-media.mjs` };
+  }
+  // images: upload once (new names too, e.g. after fix-media), then point the local copy at the DA media URL
+  const failed = names.filter((n) => !uploadMedia(n, html.includes(`${DA_MEDIA}${n}`)));
   html = html.replace(/(["'(\s])\/media-da\//g, `$1${DA_MEDIA}`);
   writeFileSync(file, html);
 
@@ -105,13 +129,26 @@ function listAll(dir = 'content', out = []) {
   return out;
 }
 
+const fixes = existsSync(fixesFile) ? JSON.parse(readFileSync(fixesFile, 'utf-8')) : { reupload: [] };
+const reupload = flag('reupload-fixed') ? (fixes.reupload || []) : [];
 let todo = flag('all') ? listAll() : args.filter((a) => a.startsWith('/'));
 if (!flag('force')) todo = todo.filter((p) => !(pages[p]?.upload < 300 && (flag('no-preview') || pages[p]?.preview < 300)));
-todo = todo.slice(0, limit);
+todo = [...new Set([...reupload, ...todo])].slice(0, limit);
 let ok = 0;
+let skipped = 0;
 todo.forEach((p, i) => {
   const rec = uploadPage(p);
+  if (rec.skipped) {
+    // the previous record (if any) stays: the page was not sent
+    skipped += 1;
+    console.log(`[${i + 1}/${todo.length}] ${p} SKIPPED: ${rec.skipped}`);
+    return;
+  }
   pages[p] = rec;
+  if (reupload.includes(p) && rec.upload < 300) {
+    fixes.reupload = fixes.reupload.filter((x) => x !== p);
+    writeFileSync(fixesFile, `${JSON.stringify(fixes, null, 1)}\n`);
+  }
   save();
   const good = rec.upload < 300 && (flag('no-preview') || rec.preview < 300);
   if (good) ok += 1;
@@ -122,4 +159,4 @@ todo.forEach((p, i) => {
   }
 });
 const all = Object.values(pages);
-console.log(`done ${ok}/${todo.length}; total uploaded ${all.filter((r) => r.upload < 300).length}, previewed ${all.filter((r) => r.preview < 300).length}`);
+console.log(`done ${ok}/${todo.length}${skipped ? `, skipped ${skipped}` : ''}; total uploaded ${all.filter((r) => r.upload < 300).length}, previewed ${all.filter((r) => r.preview < 300).length}`);
