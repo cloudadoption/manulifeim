@@ -55,6 +55,10 @@ indices:
       authorDetails:
         select: head > meta[name="author-details"]
         value: attribute(el, "content")
+      # media-bus URLs of the rendered author box photos (metadata photos are DA source URLs)
+      authorPhotos:
+        select: main .author img
+        values: attribute(el, "src")
       assetManager:
         select: head > meta[name="asset-manager"]
         value: attribute(el, "content")
