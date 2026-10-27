@@ -1,11 +1,10 @@
 /* cards: default (image cards) | tiles (+one/two/three/four, overlap, facts) | news | separate */
-/* stylelint-disable no-descending-specificity */
 
 .cards {
   --cards-border: var(--color-border);
 }
 
-.cards:not(.tiles, .news, .separate) {
+.cards.teaser {
   --cards-border: var(--color-border-strong);
 }
 
@@ -15,27 +14,25 @@
   list-style: none;
 }
 
-/* one white card holding all cells (all variants except separate) */
-.cards:not(.separate) .cards-list {
-  display: block;
+/* one white card holding all cells (every variant but separate): a grid whose 1px rules
+   are drawn as right / bottom box-shadows on the cells, clipped by the container at its
+   outer edge (so the last column and row never show one, a lone last cell does) */
+.cards:is(.teaser, .tiles, .news) .cards-list {
+  --cards-columns: 1;
+
+  display: grid;
+  grid-template-columns: repeat(var(--cards-columns), minmax(0, 1fr));
   overflow: hidden;
   background-color: var(--color-white);
   box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
 }
 
-.cards:not(.separate) .cards-list > li {
+.cards:is(.teaser, .tiles, .news) .cards-list > li {
   box-sizing: border-box;
-  display: block;
-  width: 100%;
-  max-width: 100%;
+  min-width: 0;
   margin: 0;
   overflow: hidden;
-  border: none;
-  border-bottom: 1px solid var(--cards-border);
-}
-
-.cards:not(.separate) .cards-list > li:last-child {
-  border-bottom: none;
+  box-shadow: 1px 0 0 var(--cards-border), 0 1px 0 var(--cards-border);
 }
 
 .cards.overlap,
@@ -48,12 +45,12 @@ main > .section:has(.hero.overlap) + .section .cards {
    li > .cards-card-image + .cards-card-body (the authored cells); in the body: date
    (paragraphs before the title), title, authors list, text, link paragraph */
 
-.cards:not(.tiles) .cards-list > li {
+.cards:is(.teaser, .news, .separate) .cards-list > li {
   display: flex;
   flex-direction: column;
 }
 
-.cards:not(.tiles) .cards-card-image {
+.cards:is(.teaser, .news, .separate) .cards-card-image {
   padding: 24px 24px 0;
 }
 
@@ -62,14 +59,14 @@ main > .section:has(.hero.overlap) + .section .cards {
   margin: 0;
 }
 
-.cards:not(.tiles) .cards-card-image img {
+.cards:is(.teaser, .news, .separate) .cards-card-image img {
   display: block;
   width: 100%;
   height: 185px;
   object-fit: cover;
 }
 
-.cards:not(.tiles) .cards-card-body {
+.cards:is(.teaser, .news, .separate) .cards-card-body {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -80,7 +77,7 @@ main > .section:has(.hero.overlap) + .section .cards {
 }
 
 /* text */
-.cards:not(.tiles) .cards-card-body > :is(p, div, .prosemirror-editor) {
+.cards:is(.teaser, .news, .separate) .cards-card-body > :is(p, div, .prosemirror-editor) {
   margin: 0 0 16px;
   font-size: 14px;
   line-height: 1.5;
@@ -89,14 +86,14 @@ main > .section:has(.hero.overlap) + .section .cards {
 }
 
 /* date: the paragraphs before the title */
-.cards:not(.tiles) .cards-card-body > :is(p, .prosemirror-editor):has(~ :is(h1, h2, h3, h4, h5, h6)) {
+.cards:is(.teaser, .news, .separate) .cards-card-body > :is(p, .prosemirror-editor):has(~ :is(h1, h2, h3, h4, h5, h6)) {
   width: 100%;
   margin: 0 0 16px;
   font-size: 12px;
   line-height: 1.33;
 }
 
-.cards:not(.tiles) .cards-card-body > :is(h1, h2, h3, h4, h5, h6) {
+.cards:is(.teaser, .news, .separate) .cards-card-body > :is(h1, h2, h3, h4, h5, h6) {
   width: 100%;
   margin: 16px 0;
   font-size: 24px;
@@ -106,22 +103,22 @@ main > .section:has(.hero.overlap) + .section .cards {
   color: var(--color-text);
 }
 
-.cards:not(.tiles) .cards-card-body > :is(h1, h2, h3, h4, h5, h6) :is(em, i) {
+.cards:is(.teaser, .news, .separate) .cards-card-body > :is(h1, h2, h3, h4, h5, h6) :is(em, i) {
   font-family: var(--font-family-serif, "Manulife JH Serif", "Times New Roman", serif);
   font-style: italic;
 }
 
-.cards:not(.tiles) .cards-card-body > :is(h1, h2, h3, h4, h5, h6) a:any-link {
+.cards:is(.teaser, .news, .separate) .cards-card-body > :is(h1, h2, h3, h4, h5, h6) a:any-link {
   color: var(--color-text);
   text-decoration: none;
 }
 
-.cards:not(.tiles) .cards-card-body > :is(h1, h2, h3, h4, h5, h6) a:hover {
+.cards:is(.teaser, .news, .separate) .cards-card-body > :is(h1, h2, h3, h4, h5, h6) a:hover {
   color: var(--color-text-muted);
 }
 
 /* link: a plain link alone in its paragraph, pushed to the bottom of the card */
-.cards:not(.tiles) .cards-card-body > .link-cta-wrapper {
+.cards:is(.teaser, .news, .separate) .cards-card-body > .link-cta-wrapper {
   display: flex;
   flex-grow: 1;
   align-items: flex-end;
@@ -159,35 +156,35 @@ main > .section:has(.hero.overlap) + .section .cards {
 }
 
 /* authors: the authored list, [photo] **Name**, Position <br> Company per item */
-.cards:not(.tiles) .cards-card-body > :is(ul, ol) {
+.cards:is(.teaser, .news, .separate) .cards-card-body > :is(ul, ol) {
   margin: 0 0 16px;
   padding: 0;
   list-style: none;
 }
 
-.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li {
+.cards:is(.teaser, .news, .separate) .cards-card-body > :is(ul, ol) > li {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li + li {
+.cards:is(.teaser, .news, .separate) .cards-card-body > :is(ul, ol) > li + li {
   margin-top: 16px;
 }
 
-.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li > :is(p, picture, .prosemirror-editor):has(img),
-.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li > picture {
+.cards:is(.teaser, .news, .separate) .cards-card-body > :is(ul, ol) > li > :is(p, picture, .prosemirror-editor):has(img),
+.cards:is(.teaser, .news, .separate) .cards-card-body > :is(ul, ol) > li > picture {
   flex: none;
   margin: 0 8px 0 0;
 }
 
-.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li > .image-hidden {
+.cards:is(.teaser, .news, .separate) .cards-card-body > :is(ul, ol) > li > .image-hidden {
   width: 1px;
   height: 1px;
   overflow: hidden;
 }
 
-.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li img {
+.cards:is(.teaser, .news, .separate) .cards-card-body > :is(ul, ol) > li img {
   display: block;
   width: 40px;
   height: 40px;
@@ -196,7 +193,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   object-fit: cover;
 }
 
-.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li > :is(p, .prosemirror-editor):not(:has(img)) {
+.cards:is(.teaser, .news, .separate) .cards-card-body > :is(ul, ol) > li > :is(p, .prosemirror-editor):not(:has(img)) {
   width: 100%;
   margin: 0;
   font-size: 12px;
@@ -205,7 +202,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   color: var(--color-primary);
 }
 
-.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li strong {
+.cards:is(.teaser, .news, .separate) .cards-card-body > :is(ul, ol) > li strong {
   font-weight: inherit;
 }
 
@@ -240,9 +237,11 @@ html[quick-edit] .cards > [data-config] {
 
 /* ---------- news ---------- */
 
+/* stylelint-disable no-descending-specificity -- teaser, tile and author rules style different elements; order follows the variant sections */
 .cards.news .cards-list > li {
   padding: 24px;
 }
+/* stylelint-enable no-descending-specificity */
 
 .cards.news .cards-card-body {
   padding: 0;
@@ -250,9 +249,11 @@ html[quick-edit] .cards > [data-config] {
 
 /* ---------- tiles: li.cards-tile > (image cell) + body cell ---------- */
 
+/* stylelint-disable no-descending-specificity -- teaser, tile and author rules style different elements; order follows the variant sections */
 .cards.tiles .cards-list > li {
   padding: 48px;
 }
+/* stylelint-enable no-descending-specificity */
 
 .cards.tiles .cards-card-image,
 .cards.tiles .cards-card-image :is(p, picture),
@@ -337,6 +338,7 @@ html[quick-edit] .cards > [data-config] {
   flex-wrap: wrap;
 }
 
+/* stylelint-disable no-descending-specificity -- teaser, tile and author rules style different elements; order follows the variant sections */
 .cards.separate .cards-list > li {
   box-sizing: border-box;
   flex: 1 1 100%;
@@ -347,6 +349,7 @@ html[quick-edit] .cards > [data-config] {
   background-color: var(--color-white);
   box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
 }
+/* stylelint-enable no-descending-specificity */
 
 .cards.separate .cards-card-image {
   padding: 0;
@@ -356,10 +359,12 @@ html[quick-edit] .cards > [data-config] {
   padding: 0;
 }
 
+/* stylelint-disable no-descending-specificity -- teaser, tile and author rules style different elements; order follows the variant sections */
 .cards.separate .cards-card-body > :is(ul, ol) > li img {
   width: 64px;
   height: 64px;
 }
+/* stylelint-enable no-descending-specificity */
 
 .cards.separate.three .cards-list {
   margin: 0 -12px;
@@ -373,9 +378,11 @@ html[quick-edit] .cards > [data-config] {
   padding: 0;
 }
 
+/* stylelint-disable no-descending-specificity -- teaser, tile and author rules style different elements; order follows the variant sections */
 .cards.separate.three .cards-card-image img {
   height: auto;
 }
+/* stylelint-enable no-descending-specificity */
 
 .cards.separate.three .cards-card-body {
   padding: 24px;
@@ -387,11 +394,10 @@ html[quick-edit] .cards > [data-config] {
   }
 }
 
-/* ---------- grids >= 801px ---------- */
+/* ---------- grids: 1 column, 2 from 801px, 3 / 4 from 1101px ---------- */
 @media (width >= 801px) {
-  .cards:not(.separate) .cards-list:is(.cols-2, .cols-3, .cols-4) {
-    display: flex;
-    flex-wrap: wrap;
+  .cards:is(.teaser, .tiles, .news) .cards-list:is(.cols-2, .cols-3, .cols-4) {
+    --cards-columns: 2;
   }
 
   .cards.separate .cards-list > li {
@@ -411,50 +417,6 @@ html[quick-edit] .cards > [data-config] {
     max-width: none;
     margin: 0 12px 24px;
   }
-
-  /* two columns */
-  .cards:not(.separate) .cards-list.cols-2 > li {
-    flex: 0 0 50%;
-    max-width: 50%;
-    border: none;
-    border-bottom: 1px solid var(--cards-border);
-  }
-
-  .cards:not(.separate) .cards-list.cols-2 > li:nth-child(2n) {
-    border-left: 1px solid var(--cards-border);
-  }
-
-  .cards:not(.separate) .cards-list.cols-2 > li:nth-child(odd):last-child {
-    border-right: 1px solid var(--cards-border);
-  }
-
-  .cards:not(.separate) .cards-list.cols-2 > li:last-child,
-  .cards:not(.separate) .cards-list.cols-2 > li:nth-child(odd):nth-last-child(2) {
-    border-bottom: none;
-  }
-}
-
-/* three / four columns become two columns between 801 and 1100 */
-@media (801px <= width <= 1100px) {
-  .cards:not(.separate) .cards-list:is(.cols-3, .cols-4) > li {
-    flex: 0 0 50%;
-    max-width: 50%;
-    border: none;
-    border-bottom: 1px solid var(--cards-border);
-  }
-
-  .cards:not(.separate) .cards-list:is(.cols-3, .cols-4) > li:nth-child(2n) {
-    border-left: 1px solid var(--cards-border);
-  }
-
-  .cards:not(.separate) .cards-list:is(.cols-3, .cols-4) > li:nth-child(odd):last-child {
-    border-right: 1px solid var(--cards-border);
-  }
-
-  .cards:not(.separate) .cards-list:is(.cols-3, .cols-4) > li:last-child,
-  .cards:not(.separate) .cards-list:is(.cols-3, .cols-4) > li:nth-child(odd):nth-last-child(2) {
-    border-bottom: none;
-  }
 }
 
 @media (width >= 1101px) {
@@ -462,55 +424,11 @@ html[quick-edit] .cards > [data-config] {
     flex-basis: calc(33.33% - 24px);
   }
 
-  .cards:not(.separate) .cards-list.cols-3 > li {
-    flex: 0 0 33.3333%;
-    max-width: 33.3333%;
-    border: 1px solid var(--cards-border);
-    border-top: none;
-    border-right: none;
+  .cards:is(.teaser, .tiles, .news) .cards-list.cols-3 {
+    --cards-columns: 3;
   }
 
-  .cards:not(.separate) .cards-list.cols-3 > li:last-child {
-    border-right: 1px solid var(--cards-border);
-    border-bottom: none;
-  }
-
-  .cards:not(.separate) .cards-list.cols-3 > li:last-child:nth-child(3n) {
-    border-right: none;
-  }
-
-  .cards:not(.separate) .cards-list.cols-3 > li:nth-child(3n+1) {
-    border-left: none;
-  }
-
-  .cards:not(.separate) .cards-list.cols-3 > li:nth-child(3n+1):nth-last-child(-n+3),
-  .cards:not(.separate) .cards-list.cols-3 > li:nth-child(3n+1):nth-last-child(-n+3) ~ li {
-    border-bottom: none;
-  }
-
-  .cards:not(.separate) .cards-list.cols-4 > li {
-    flex: 0 0 25%;
-    max-width: 25%;
-    border: 1px solid var(--cards-border);
-    border-top: none;
-    border-right: none;
-  }
-
-  .cards:not(.separate) .cards-list.cols-4 > li:last-child {
-    border-right: 1px solid var(--cards-border);
-    border-bottom: none;
-  }
-
-  .cards:not(.separate) .cards-list.cols-4 > li:last-child:nth-child(4n) {
-    border-right: none;
-  }
-
-  .cards:not(.separate) .cards-list.cols-4 > li:nth-child(4n+1) {
-    border-left: none;
-  }
-
-  .cards:not(.separate) .cards-list.cols-4 > li:nth-child(4n+1):nth-last-child(-n+4),
-  .cards:not(.separate) .cards-list.cols-4 > li:nth-child(4n+1):nth-last-child(-n+4) ~ li {
-    border-bottom: none;
+  .cards:is(.teaser, .tiles, .news) .cards-list.cols-4 {
+    --cards-columns: 4;
   }
 }
