@@ -154,8 +154,10 @@ main > .section.link-list-container:has(.link-list.inline) > .link-list-wrapper 
     margin-bottom: 0;
   }
 
-  .link-list.inline .link-list-links li {
-    display: inline-block;
+  /* a flex row: the authored list has whitespace between its items */
+  .link-list.inline .link-list-links :is(ul, ol) {
+    display: flex;
+    flex-wrap: wrap;
   }
 
   .link-list.inline .link-list-links li:not(:first-child) {
