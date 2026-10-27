@@ -402,7 +402,8 @@ function buildBanner(section) {
     list.append(el('div', { class: 'header-banner-item' }, text));
   });
   const close = el('button', { type: 'button', class: 'header-banner-close', 'aria-label': 'Close alert message' }, icon('close'));
-  const banner = el('aside', { class: 'header-banner' }, el('div', { class: 'header-banner-inner' }, list, close));
+  // a labelled region, not an aside: a complementary landmark may not sit inside the banner
+  const banner = el('div', { class: 'header-banner', role: 'region', 'aria-label': 'Site notice' }, el('div', { class: 'header-banner-inner' }, list, close));
   close.addEventListener('click', () => {
     banner.remove();
     try {
