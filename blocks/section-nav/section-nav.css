@@ -18,7 +18,7 @@ main > .section.section-nav-container > .section-nav-wrapper {
   align-items: center;
   height: 80px;
   padding: 8px 24px;
-  background: var(--color-white, #fff);
+  background: var(--color-white);
 }
 
 .section-nav .section-nav-list {
@@ -51,7 +51,7 @@ main > .section.section-nav-container > .section-nav-wrapper {
 }
 
 .section-nav.anchors .section-nav-inner {
-  border-bottom: 1px solid var(--color-border, #ededed);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .section-nav.anchors .section-nav-mobile {
@@ -72,7 +72,7 @@ main > .section.section-nav-container > .section-nav-wrapper {
   font-size: 16px;
   line-height: 125%;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   text-decoration: none;
   overflow-wrap: normal;
   transition: color 0.4s ease-in-out, border-color 0.4s ease-in-out;
@@ -82,12 +82,12 @@ main > .section.section-nav-container > .section-nav-wrapper {
 .section-nav .section-nav-trigger:focus,
 .section-nav .section-nav-trigger:active,
 .section-nav .section-nav-trigger.active {
-  color: var(--color-primary, #06854d);
+  color: var(--color-primary);
   text-decoration: none;
 }
 
 .section-nav .section-nav-trigger.active {
-  border-bottom-color: var(--color-primary, #06854d);
+  border-bottom-color: var(--color-primary);
   font-weight: 700;
 }
 
@@ -101,14 +101,14 @@ main > .section.section-nav-container > .section-nav-wrapper {
   margin: 0;
   padding: 16px 48px 16px 16px;
   overflow: hidden;
-  border: 1px solid var(--color-text-subtle, #8e90a2);
+  border: 1px solid var(--color-text-subtle);
   border-radius: 0;
-  background-color: var(--color-white, #fff);
+  background-color: var(--color-white);
   font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -129,20 +129,20 @@ main > .section.section-nav-container > .section-nav-wrapper {
 }
 
 .section-nav .section-nav-select-trigger::before {
-  border-top-color: var(--color-border-strong, #e0e0e0);
+  border-top-color: var(--color-border-strong);
 }
 
 .section-nav .section-nav-select-trigger::after {
   margin-top: -7px;
-  border-top-color: var(--color-white, #fff);
+  border-top-color: var(--color-white);
 }
 
 .section-nav .section-nav-select-trigger:hover,
 .section-nav .section-nav-select-trigger:focus,
 .section-nav .section-nav-mobile.open .section-nav-select-trigger {
   z-index: 301;
-  border-color: var(--color-primary, #06854d);
-  outline: 1px solid var(--color-primary, #06854d);
+  border-color: var(--color-primary);
+  outline: 1px solid var(--color-primary);
   box-shadow: none;
 }
 
@@ -160,7 +160,7 @@ main > .section.section-nav-container > .section-nav-wrapper {
   overflow: hidden auto;
   visibility: hidden;
   opacity: 0;
-  background: var(--color-white, #fff);
+  background: var(--color-white);
   box-shadow: var(--shadow-bar, 0 1px 4px rgb(0 0 0 / 16%));
   transition: opacity 0.3s, top 0.3s;
 }
@@ -187,7 +187,7 @@ main > .section.section-nav-container > .section-nav-wrapper {
   font-size: 16px;
   line-height: 1.75;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   text-align: left;
   text-decoration: none;
   transition: background-color 0.3s, color 0.3s;
@@ -198,8 +198,8 @@ main > .section.section-nav-container > .section-nav-wrapper {
 .section-nav .section-nav-dropdown-item:active {
   outline: none;
   box-shadow: none;
-  background-color: var(--color-primary, #06854d);
-  color: var(--color-white, #fff);
+  background-color: var(--color-primary);
+  color: var(--color-white);
   font-weight: 600;
   text-decoration: none;
 }
@@ -244,22 +244,22 @@ main > .section.section-nav-container:has(.section-nav.links) {
   align-items: center;
   height: 80px;
   padding: 0 24px;
-  border-bottom: 3px solid var(--color-white, #fff);
+  border-bottom: 3px solid var(--color-white);
   font-size: 16px;
   line-height: 1.75;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   transition: color 0.4s ease-in-out, border-color 0.4s ease-in-out;
 }
 
 .section-nav.links .section-nav-item.active {
-  border-bottom-color: var(--color-primary, #06854d);
+  border-bottom-color: var(--color-primary);
 }
 
 .section-nav.links .section-nav-link {
   font-size: 14px;
   line-height: 140%;
   letter-spacing: -0.02em;
-  color: var(--color-text-muted, #5e6073);
+  color: var(--color-text-muted);
   text-decoration: none;
   white-space: normal;
   overflow-wrap: normal;
@@ -267,12 +267,12 @@ main > .section.section-nav-container:has(.section-nav.links) {
 
 .section-nav.links .section-nav-item:hover .section-nav-link,
 .section-nav.links .section-nav-link:focus {
-  color: var(--color-primary, #06854d);
+  color: var(--color-primary);
 }
 
 .section-nav.links .section-nav-item.active .section-nav-link {
   font-weight: 700;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 @media (width >= 601px) {
@@ -307,6 +307,6 @@ main > .section.section-nav-container:has(.section-nav.links) {
 
 /* keyboard focus for the dropdown links (their outline is removed above) */
 .section-nav .section-nav-dropdown-item:focus-visible {
-  outline: 2px solid var(--color-text, #282b3e);
+  outline: 2px solid var(--color-text);
   outline-offset: -2px;
 }

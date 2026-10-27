@@ -2,7 +2,7 @@
 
 .table.card .table-main {
   padding: 48px;
-  background-color: var(--color-white, #fff);
+  background-color: var(--color-white);
   box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
 }
 
@@ -12,7 +12,7 @@
   font-weight: 300;
   line-height: 1.25;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 /* the authored title (a heading, or a bold paragraph) inside the title wrapper */
@@ -50,7 +50,7 @@
 .table tr {
   display: block;
   margin: 0 -24px;
-  border-bottom: 1px solid var(--color-border-strong, #e0e0e0);
+  border-bottom: 1px solid var(--color-border-strong);
 }
 
 .table tr:last-child {
@@ -68,7 +68,7 @@
   font-weight: 400;
   line-height: 175%;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   text-align: left;
   vertical-align: middle;
 }
@@ -86,7 +86,7 @@
 }
 
 .table td a:hover {
-  color: var(--color-primary, #06854d);
+  color: var(--color-primary);
 }
 
 .table td ul,
@@ -160,7 +160,7 @@
   margin-top: 24px;
   font-size: 12px;
   letter-spacing: -0.02em;
-  color: var(--color-header-mobile, #424559);
+  color: var(--color-header-mobile);
 }
 
 .table .table-caption p {

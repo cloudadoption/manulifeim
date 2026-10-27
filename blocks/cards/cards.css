@@ -2,11 +2,11 @@
 /* stylelint-disable no-descending-specificity */
 
 .cards {
-  --cards-border: var(--color-border, #ededed);
+  --cards-border: var(--color-border);
 }
 
 .cards:not(.tiles, .news, .separate) {
-  --cards-border: var(--color-border-strong, #e0e0e0);
+  --cards-border: var(--color-border-strong);
 }
 
 .cards .cards-list {
@@ -19,7 +19,7 @@
 .cards:not(.separate) .cards-list {
   display: block;
   overflow: hidden;
-  background-color: var(--color-white, #fff);
+  background-color: var(--color-white);
   box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
 }
 
@@ -85,7 +85,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   font-size: 14px;
   line-height: 1.5;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 /* date: the paragraphs before the title */
@@ -103,7 +103,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   font-weight: 400;
   line-height: 1.25;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 .cards:not(.tiles) .cards-card-body > :is(h1, h2, h3, h4, h5, h6) :is(em, i) {
@@ -112,12 +112,12 @@ main > .section:has(.hero.overlap) + .section .cards {
 }
 
 .cards:not(.tiles) .cards-card-body > :is(h1, h2, h3, h4, h5, h6) a:any-link {
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   text-decoration: none;
 }
 
 .cards:not(.tiles) .cards-card-body > :is(h1, h2, h3, h4, h5, h6) a:hover {
-  color: var(--color-text-muted, #5e6073);
+  color: var(--color-text-muted);
 }
 
 /* link: a plain link alone in its paragraph, pushed to the bottom of the card */
@@ -136,7 +136,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   font-weight: 700;
   line-height: 1.5;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   text-decoration: none;
 }
 
@@ -154,7 +154,7 @@ main > .section:has(.hero.overlap) + .section .cards {
 
 .cards a.link-cta:hover,
 .cards a.link-cta:focus {
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   text-decoration: underline;
 }
 
@@ -202,7 +202,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   font-size: 12px;
   line-height: 1.33;
   letter-spacing: -0.02em;
-  color: var(--color-primary, #06854d);
+  color: var(--color-primary);
 }
 
 .cards:not(.tiles) .cards-card-body > :is(ul, ol) > li strong {
@@ -210,7 +210,7 @@ main > .section:has(.hero.overlap) + .section .cards {
 }
 
 .cards .cards-author-company {
-  color: var(--color-header-mobile, #424559);
+  color: var(--color-header-mobile);
 }
 
 /* generated author lines (index cards): name, position and company as wrapping items */
@@ -283,7 +283,7 @@ html[quick-edit] .cards > [data-config] {
   font-weight: 400;
   line-height: 1.25;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 .cards.tiles .cards-card-body > :first-child {
@@ -304,7 +304,7 @@ html[quick-edit] .cards > [data-config] {
   font-size: 16px;
   line-height: 1.75;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 .cards.tiles .cards-card-body p a:any-link:not(.link-cta) {
@@ -313,7 +313,7 @@ html[quick-edit] .cards > [data-config] {
 }
 
 .cards.tiles .cards-card-body p a:hover:not(.link-cta) {
-  color: var(--color-primary, #06854d);
+  color: var(--color-primary);
 }
 
 .cards.tiles .cards-card-body > .link-cta-wrapper {
@@ -344,7 +344,7 @@ html[quick-edit] .cards > [data-config] {
   max-width: 100%;
   margin: 0 0 24px;
   padding: 24px;
-  background-color: var(--color-white, #fff);
+  background-color: var(--color-white);
   box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
 }
 

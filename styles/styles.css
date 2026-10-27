@@ -93,24 +93,10 @@
   --width-case-study-sidebar: 521px;
 
   /* boilerplate aliases, kept for blocks that still use them */
-  --background-color: var(--color-white);
-  --light-color: var(--color-page-bg);
-  --dark-color: var(--color-header-mobile);
-  --text-color: var(--color-text);
-  --link-color: var(--color-text);
-  --link-hover-color: var(--color-primary);
   --body-font-family: var(--font-family-sans);
   --heading-font-family: var(--font-family-sans);
   --body-font-size-m: var(--font-size-body);
   --body-font-size-s: var(--font-size-small);
-  --body-font-size-xs: var(--font-size-xs);
-  --heading-font-size-xxl: var(--font-size-display);
-  --heading-font-size-xl: var(--font-size-page-title);
-  --heading-font-size-l: var(--font-size-h2);
-  --heading-font-size-m: var(--font-size-h3);
-  --heading-font-size-s: var(--font-size-h3);
-  --heading-font-size-xs: var(--font-size-h4);
-  --nav-height: var(--header-height);
 }
 
 @media (width >= 601px) {

@@ -5,7 +5,7 @@
   max-width: 850px;
   margin: 0 auto;
   padding: 16px;
-  background-color: var(--color-white, #fff);
+  background-color: var(--color-white);
   box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
 }
 
@@ -15,12 +15,12 @@
   font-style: normal;
   line-height: 1.33;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 .form .form-asterisk {
   padding-right: 4px;
-  color: var(--color-error-required, #a00e18);
+  color: var(--color-error-required);
 }
 
 .form .form-form {
@@ -43,7 +43,7 @@
   font-weight: 400;
   line-height: 1.33;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   text-transform: none;
 }
 
@@ -52,23 +52,23 @@
   width: 100%;
   margin: 0;
   padding: 16px;
-  border: 1px solid var(--color-input-border, #dfe1df);
+  border: 1px solid var(--color-input-border);
   border-radius: 0;
-  background: var(--color-white, #fff);
+  background: var(--color-white);
   font-family: inherit;
   font-size: 16px;
   line-height: 1.75;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   transition: all 0.3s;
 }
 
 .form .form-field:hover,
 .form .form-field:focus {
-  border-color: var(--color-primary, #06854d);
+  border-color: var(--color-primary);
 }
 
 .form .form-field:focus {
-  outline: 1px solid var(--color-primary, #06854d);
+  outline: 1px solid var(--color-primary);
 }
 
 .form textarea.form-field {
@@ -83,7 +83,7 @@
 .form .form-select select.form-field {
   padding: 16px 48px 16px 16px;
   appearance: none;
-  border-color: var(--color-text-subtle, #8e90a2);
+  border-color: var(--color-text-subtle);
   cursor: pointer;
 }
 
@@ -101,12 +101,12 @@
 }
 
 .form .form-select::before {
-  border-top-color: var(--color-text-subtle, #8e90a2);
+  border-top-color: var(--color-text-subtle);
 }
 
 .form .form-select::after {
   margin-top: -7px;
-  border-top-color: var(--color-white, #fff);
+  border-top-color: var(--color-white);
 }
 
 /* checkbox */
@@ -129,16 +129,16 @@
   margin: 0;
   padding: 0;
   appearance: none;
-  border: 1px solid var(--color-border-strong, #e0e0e0);
-  background-color: var(--color-white, #fff);
+  border: 1px solid var(--color-border-strong);
+  background-color: var(--color-white);
   background-position: 50%;
   background-repeat: no-repeat;
   cursor: pointer;
 }
 
 .form .form-checkbox input.form-field:checked {
-  border-color: var(--color-primary, #06854d);
-  background-color: var(--color-primary, #06854d);
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 -2 16 16'%3E%3Cpath fill='%23fff' d='M14.24.861L5.75 9.321 1.76 5.286l-.948.937 4.934 4.99 9.436-9.406L14.24.86z'/%3E%3C/svg%3E");
 }
 
@@ -156,15 +156,15 @@
   height: 40px;
   margin-top: 16px;
   padding: 9px 48px;
-  border: 2px solid var(--color-primary, #06854d);
+  border: 2px solid var(--color-primary);
   border-radius: 0;
-  background-color: var(--color-primary, #06854d);
+  background-color: var(--color-primary);
   font-family: inherit;
   font-size: 14px;
   font-weight: 600;
   line-height: 1.4;
   letter-spacing: -0.02em;
-  color: var(--color-white, #fff);
+  color: var(--color-white);
   white-space: nowrap;
   cursor: pointer;
   transition: border-color 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out, top 0.1s ease-in-out;
@@ -172,9 +172,9 @@
 
 .form .form-button:hover,
 .form .form-button:focus {
-  border-color: var(--color-primary-dark, #046138);
-  background-color: var(--color-primary-dark, #046138);
-  color: var(--color-white, #fff);
+  border-color: var(--color-primary-dark);
+  background-color: var(--color-primary-dark);
+  color: var(--color-white);
 }
 
 .form .form-button:focus {
@@ -184,8 +184,8 @@
 
 .form .form-button:active {
   top: 2px;
-  border-color: var(--color-primary, #06854d);
-  background-color: var(--color-primary, #06854d);
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
 }
 
 .form .form-row + .form-row {

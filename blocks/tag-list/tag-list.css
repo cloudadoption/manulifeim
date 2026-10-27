@@ -22,7 +22,7 @@ html[quick-edit] .tag-list.padded {
   font-weight: 400;
   line-height: 1.25;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   vertical-align: middle;
 }
 
@@ -45,14 +45,14 @@ html[quick-edit] .tag-list.padded {
   font-size: 16px;
   line-height: 1.75;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   text-decoration: underline;
 }
 
 .tag-list li > a:hover,
 .tag-list li > a:focus,
 .tag-list li > a:active {
-  color: var(--color-primary, #06854d);
+  color: var(--color-primary);
 }
 
 /* config rows (Title, Base): hidden on pages, editable in Canvas */

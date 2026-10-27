@@ -10,7 +10,7 @@
 
 .link-list.card {
   padding: 24px;
-  background: var(--color-white, #fff);
+  background: var(--color-white);
   box-shadow: var(--shadow-bar, 0 1px 4px rgb(0 0 0 / 16%));
 }
 
@@ -20,7 +20,7 @@
   font-weight: 700;
   line-height: 1.25;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 .link-list .link-list-subtitle,
@@ -29,7 +29,7 @@
   font-size: 14px;
   line-height: 1.5;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 .link-list .link-list-item {
@@ -55,7 +55,7 @@
   font-weight: 700;
   line-height: 1.5;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   text-decoration: none;
 }
 
@@ -73,7 +73,7 @@
 
 .link-list :is(.link-list-item, .link-list-links) a:hover,
 .link-list :is(.link-list-item, .link-list-links) a:focus {
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   text-decoration: underline;
 }
 
@@ -94,8 +94,8 @@ main > .section.link-list-container:has(.link-list.inline) > .link-list-wrapper 
   max-width: none;
   margin: 0;
   padding: 24px;
-  border-bottom: 1px solid var(--color-border, #ededed);
-  background: var(--color-white, #fff);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-white);
 }
 
 .link-list.inline .link-list-title,
@@ -105,7 +105,7 @@ main > .section.link-list-container:has(.link-list.inline) > .link-list-wrapper 
   font-weight: 300;
   line-height: 1.25;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 .link-list.inline .link-list-title > :is(p, h1, h2, h3, h4, h5, h6, .prosemirror-editor) {

@@ -21,7 +21,7 @@ main > .section.hero-container > .hero-wrapper {
 }
 
 .hero .hero-content {
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 /* title */
@@ -97,10 +97,10 @@ main > .section.hero-container > .hero-wrapper {
   height: 56px;
   margin: 16px 16px 0 0;
   padding: 17px 22px;
-  border: 2px solid var(--color-primary, #06854d);
+  border: 2px solid var(--color-primary);
   border-radius: 0;
-  background-color: var(--color-primary, #06854d);
-  color: var(--color-white, #fff);
+  background-color: var(--color-primary);
+  color: var(--color-white);
   font-size: 16px;
   font-weight: 700;
   line-height: 1.25;
@@ -114,9 +114,9 @@ main > .section.hero-container > .hero-wrapper {
 
 .hero a.button:hover,
 .hero a.button:focus {
-  border-color: var(--color-primary-dark, #046138);
-  background-color: var(--color-primary-dark, #046138);
-  color: var(--color-white, #fff);
+  border-color: var(--color-primary-dark);
+  background-color: var(--color-primary-dark);
+  color: var(--color-white);
   text-decoration: none;
 }
 
@@ -127,8 +127,8 @@ main > .section.hero-container > .hero-wrapper {
 
 .hero a.button:active {
   top: 2px;
-  border-color: var(--color-primary, #06854d);
-  background-color: var(--color-primary, #06854d);
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
 }
 
 /* media cells: with or without the paragraph / editor layers around the picture
@@ -163,7 +163,7 @@ html[quick-edit] .hero > [data-config] {
   justify-content: center;
   height: 600px;
   overflow: hidden;
-  background: var(--color-white, #fff);
+  background: var(--color-white);
 }
 
 .hero.carousel > .hero-slide {
@@ -237,11 +237,11 @@ html[quick-edit] .hero > [data-config] {
   max-width: 1200px;
   padding: 24px;
   background-color: transparent;
-  color: var(--color-white, #fff);
+  color: var(--color-white);
 }
 
 .hero.carousel.light .hero-slide-content {
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 /* live slide titles start with <br>: one empty title line above the text */
@@ -252,22 +252,22 @@ html[quick-edit] .hero > [data-config] {
 }
 
 .hero.carousel a.button.secondary {
-  border-color: var(--color-white, #fff);
-  background-color: var(--color-white, #fff);
-  color: var(--color-primary-dark, #046138);
+  border-color: var(--color-white);
+  background-color: var(--color-white);
+  color: var(--color-primary-dark);
 }
 
 .hero.carousel a.button.secondary:hover,
 .hero.carousel a.button.secondary:focus {
-  border-color: var(--color-primary-dark, #046138);
-  background-color: var(--color-white, #fff);
-  color: var(--color-primary-dark, #046138);
+  border-color: var(--color-primary-dark);
+  background-color: var(--color-white);
+  color: var(--color-primary-dark);
 }
 
 .hero.carousel a.button.secondary:active {
-  border-color: var(--color-primary, #06854d);
-  background-color: var(--color-white, #fff);
-  color: var(--color-primary, #06854d);
+  border-color: var(--color-primary);
+  background-color: var(--color-white);
+  color: var(--color-primary);
 }
 
 /* controls */
@@ -290,20 +290,20 @@ html[quick-edit] .hero > [data-config] {
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: var(--color-carousel-ui, #000);
-  color: var(--color-carousel-ui-text, #666);
+  background: var(--color-carousel-ui);
+  color: var(--color-carousel-ui-text);
   cursor: pointer;
 }
 
 .hero.carousel .hero-prev:hover,
 .hero.carousel .hero-next:hover {
-  background: var(--color-carousel-ui-hover, #333);
-  color: var(--color-white, #fff);
+  background: var(--color-carousel-ui-hover);
+  color: var(--color-white);
 }
 
 .hero.carousel .hero-prev:focus-visible,
 .hero.carousel .hero-next:focus-visible {
-  outline: 2px solid var(--color-white, #fff);
+  outline: 2px solid var(--color-white);
   outline-offset: 2px;
 }
 
@@ -333,7 +333,7 @@ html[quick-edit] .hero > [data-config] {
   margin: 0 16px;
   padding: 0 8px;
   border-radius: 32px;
-  background-color: var(--color-carousel-ui, #000);
+  background-color: var(--color-carousel-ui);
 }
 
 .hero.carousel .hero-pill {
@@ -356,7 +356,7 @@ html[quick-edit] .hero > [data-config] {
 }
 
 .hero.carousel .hero-pill:focus-visible {
-  outline: 2px solid var(--color-white, #fff);
+  outline: 2px solid var(--color-white);
   outline-offset: -2px;
 }
 
@@ -366,7 +366,7 @@ html[quick-edit] .hero > [data-config] {
   justify-content: center;
   width: 8px;
   border-radius: 8px;
-  color: var(--color-white, #fff);
+  color: var(--color-white);
 }
 
 .hero.carousel .hero-pill.active .hero-pill-item {
@@ -383,19 +383,19 @@ html[quick-edit] .hero > [data-config] {
   width: 100%;
   height: 8px;
   border-radius: 10px;
-  background-color: var(--color-carousel-ui-text, #666);
+  background-color: var(--color-carousel-ui-text);
 }
 
 .hero.carousel .hero-pill.paused .hero-pill-track {
   padding: 8px;
-  background-color: var(--color-carousel-ui-text, #666);
+  background-color: var(--color-carousel-ui-text);
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='16' height='16' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff'%3E%3Crect x='4' y='4' width='16' height='16' rx='8' fill-opacity='.4'/%3E%3Cpath d='M16 12l-6 3.464V8.536L16 12z'/%3E%3C/g%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: 50%;
 }
 
 .hero.carousel .hero-pill.paused .hero-pill-track:hover {
-  background-color: var(--color-carousel-ui-hover, #333);
+  background-color: var(--color-carousel-ui-hover);
 }
 
 /* width is driven by the slide timer (Web Animations) */
@@ -406,7 +406,7 @@ html[quick-edit] .hero > [data-config] {
   max-width: 100%;
   height: 8px;
   border-radius: 10px;
-  background-color: var(--color-white, #fff);
+  background-color: var(--color-white);
 }
 
 .hero.carousel .hero-pill.paused .hero-pill-fill {
@@ -461,26 +461,26 @@ html[quick-edit] .hero > [data-config] {
   width: 100%;
   max-width: 1200px;
   padding: 24px;
-  background-color: var(--color-white, #fff);
+  background-color: var(--color-white);
 }
 
 .hero.banner a.button.secondary {
-  border-color: var(--color-primary, #06854d);
+  border-color: var(--color-primary);
   background-color: transparent;
-  color: var(--color-primary, #06854d);
+  color: var(--color-primary);
 }
 
 .hero.banner a.button.secondary:hover,
 .hero.banner a.button.secondary:focus {
-  border-color: var(--color-primary-dark, #046138);
+  border-color: var(--color-primary-dark);
   background-color: transparent;
-  color: var(--color-primary-dark, #046138);
+  color: var(--color-primary-dark);
 }
 
 .hero.banner a.button.secondary:active {
-  border-color: var(--color-primary, #06854d);
+  border-color: var(--color-primary);
   background-color: transparent;
-  color: var(--color-primary, #06854d);
+  color: var(--color-primary);
 }
 
 /* ---------------- page header ---------------- */
@@ -492,8 +492,8 @@ html[quick-edit] .hero > [data-config] {
   justify-content: center;
   min-height: 250px;
   padding: 64px 24px;
-  border-bottom: 1px solid var(--color-border, #ededed);
-  background-color: var(--color-white, #fff);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-white);
 }
 
 .hero.page-header > div {
@@ -579,17 +579,17 @@ html[quick-edit] .hero > [data-config] {
 .hero.page-header a.link-cta:hover,
 .hero.page-header a.link-cta:focus,
 .hero.page-header a.link-cta:active {
-  color: var(--color-primary-dark, #046138);
+  color: var(--color-primary-dark);
   text-decoration: underline;
 }
 
 .hero.page-header.dark {
-  background-color: var(--color-text, #282b3e);
-  color: var(--color-white, #fff);
+  background-color: var(--color-text);
+  color: var(--color-white);
 }
 
 .hero.page-header.dark .hero-content {
-  color: var(--color-white, #fff);
+  color: var(--color-white);
 }
 
 /* the section after a page header gets extra top padding (.followed-by-top-padding + *);
@@ -664,25 +664,25 @@ body:not(.template-case-study-list) main > .section.hero-container:has(.hero.pag
 
   .hero.carousel a.button.secondary,
   .hero.banner a.button.secondary {
-    border-color: var(--color-white, #fff);
-    background-color: var(--color-white, #fff);
-    color: var(--color-primary, #06854d);
+    border-color: var(--color-white);
+    background-color: var(--color-white);
+    color: var(--color-primary);
   }
 
   .hero.carousel a.button.secondary:hover,
   .hero.carousel a.button.secondary:focus,
   .hero.banner a.button.secondary:hover,
   .hero.banner a.button.secondary:focus {
-    border-color: var(--color-border-strong, #e0e0e0);
-    background-color: var(--color-border-strong, #e0e0e0);
-    color: var(--color-text, #282b3e);
+    border-color: var(--color-border-strong);
+    background-color: var(--color-border-strong);
+    color: var(--color-text);
   }
 
   .hero.carousel a.button.secondary:active,
   .hero.banner a.button.secondary:active {
-    border-color: var(--color-white, #fff);
-    background-color: var(--color-white, #fff);
-    color: var(--color-primary, #06854d);
+    border-color: var(--color-white);
+    background-color: var(--color-white);
+    color: var(--color-primary);
   }
 
   .hero.banner {
@@ -734,11 +734,11 @@ body:not(.template-case-study-list) main > .section.hero-container:has(.hero.pag
     width: 75%;
     padding: 48px 64px;
     background-color: transparent;
-    color: var(--color-white, #fff);
+    color: var(--color-white);
   }
 
   .hero.banner.light .hero-content {
-    color: var(--color-text, #282b3e);
+    color: var(--color-text);
   }
 
   .hero.banner.overlap {

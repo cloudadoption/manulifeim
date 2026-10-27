@@ -36,8 +36,8 @@ main > .section > .disclosure-wrapper {
 }
 
 .disclosure .disclosure-trigger:focus-visible {
-  box-shadow: 0 0 0 2px var(--color-text, #282b3e);
-  outline: 2px solid var(--color-white, #fff);
+  box-shadow: 0 0 0 2px var(--color-text);
+  outline: 2px solid var(--color-white);
   outline-offset: 2px;
 }
 
@@ -54,7 +54,7 @@ main > .section > .disclosure-wrapper {
   font-weight: 700;
   line-height: 1.5;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 .disclosure .disclosure-label {
@@ -93,7 +93,7 @@ main > .section > .disclosure-wrapper {
   font-size: 16px;
   line-height: 1.75;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 .disclosure .disclosure-content > * {
@@ -142,7 +142,7 @@ main > .section > .disclosure-wrapper {
 
 .disclosure .disclosure-content a:hover,
 .disclosure .disclosure-content a:focus {
-  color: var(--color-primary, #06854d);
+  color: var(--color-primary);
 }
 
 .disclosure .disclosure-content ul,
