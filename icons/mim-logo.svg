@@ -1,5 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
-  <!-- placeholder for /content/dam/mim-institutional/icons/mim-logo.svg (green tile, white M) -->
-  <rect width="80" height="80" fill="#06854d"></rect>
-  <path fill="#fff" d="M22 57V23h9.5L40 38.2 48.5 23H58v34h-8.6V37.6L40 54.2l-9.4-16.6V57z"></path>
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="80" height="80" fill="#00A758"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M54 49L48 55V31L54 25V49ZM32 49L26 55V31L32 25V49ZM43 49L37 55V31L43 25V49Z" fill="white"/>
 </svg>
