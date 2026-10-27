@@ -731,12 +731,13 @@ main > .section[data-layout]:last-child {
     width: calc(33.333% - 16px);
   }
 
+  /* a single wrapper (content next to an empty live column) is the first column */
   main > .section[data-layout="8-4"] > div:first-child,
-  main > .section[data-layout="4-8"] > div:last-child {
+  main > .section[data-layout="4-8"] > div:not(:first-child) {
     width: calc(66.667% - 16px);
   }
 
-  main > .section[data-layout="8-4"] > div:last-child,
+  main > .section[data-layout="8-4"] > div:not(:first-child),
   main > .section[data-layout="4-8"] > div:first-child {
     width: calc(33.333% - 16px);
   }
