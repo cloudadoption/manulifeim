@@ -1,0 +1,502 @@
+{
+  "generated": "2026-10-27",
+  "method": "local dev server (localhost:3000, local code + preview content) vs offline mirror (localhost:3000/tools/importer/snapshots/mirror), full-page screenshots and computed styles at 1440 and 390 (spot checks at 700/1000)",
+  "global_fixes": [
+    {
+      "file": "icons/mim-logo.svg",
+      "fix": "rail home tile was a placeholder 'M'; now the live stylized-M logo (mim-logo-0b6b66cd.svg)"
+    },
+    {
+      "file": "blocks/header/header.css",
+      "fix": "site banner item line-height 1 -> bar 57px as live (main started 4px low on every page at >=601px)"
+    },
+    {
+      "file": "blocks/footer/footer.css",
+      "fix": "primary/secondary footer menus 16px apart <=800px (rule lost to `footer .footer ul {margin:0}`)"
+    },
+    {
+      "file": "styles/styles.css",
+      "fix": "global `header {}` (min-height, dark bg) scoped to `body > header` - it leaked into block <header> elements (team cards)"
+    },
+    {
+      "file": "styles/styles.css",
+      "fix": "default content of component-root pages (live column-container) gets the 24px extra side padding <=800px; page titles / flow templates excluded"
+    },
+    {
+      "file": "scripts/listing-core.js",
+      "fix": "index titles drop the ' | Manulife Investment Management' / '- ... Mgmt' <title> suffix"
+    }
+  ],
+  "pages": [
+    {
+      "page": 1,
+      "eds_path": "/institutional/tw/en",
+      "mirror": "mirror/institutional/tw/en.html",
+      "template": "home",
+      "widths": [
+        1440,
+        390
+      ],
+      "status": {
+        "1440": "minor",
+        "390": "minor"
+      },
+      "fixed": [
+        {
+          "file": "blocks/disclosure/disclosure.js",
+          "fix": "whole-paragraph <sup> footnotes get the live <small> wrapper (11px AUM footnote)"
+        },
+        {
+          "file": "blocks/disclosure/disclosure.css",
+          "fix": "disclosure wrapper top padding 0 (live .disclosures 8px)"
+        },
+        {
+          "file": "blocks/cards/cards.js",
+          "fix": "news cards from the index show date/title/link only (no summary)"
+        }
+      ],
+      "remaining": [
+        {
+          "cause": "content/re-import",
+          "issue": "hero slide h1 starts with <br> on live (text 52px lower) - hero-carousel parser drops it",
+          "parser": "hero-carousel"
+        },
+        {
+          "cause": "content/re-import",
+          "issue": "AUM approval code '5796846' is <small> on live (13px), plain p in EDS",
+          "parser": "disclosure"
+        },
+        {
+          "cause": "data not captured yet",
+          "issue": "latest viewpoints / latest news come from the index: other items than live (Aug 3 / Mar 31 press releases not indexed)"
+        },
+        {
+          "cause": "accepted",
+          "issue": "header search box: Coveo web component renders on live, not in the static mirror; carousel autoplay; author photos hidden on live by JS fallback state"
+        }
+      ]
+    },
+    {
+      "page": 2,
+      "eds_path": "/institutional/tw/en/about-us",
+      "mirror": "mirror/institutional/tw/en/about-us.html",
+      "template": "plain",
+      "widths": [
+        1440,
+        390
+      ],
+      "status": {
+        "1440": "minor",
+        "390": "minor"
+      },
+      "fixed": [
+        {
+          "file": "blocks/feature/feature.css",
+          "fix": "banner (featureBanner) is full width of main with no section padding and keeps the 250px image at natural width (text column squeezed as live)"
+        },
+        {
+          "file": "blocks/feature/feature.css",
+          "fix": "banner title margin used :last-of-type (h2 got 16px) -> only the last title line"
+        },
+        {
+          "file": "blocks/promo/promo.css",
+          "fix": "double promo content 60% wide at every width (live), also when stacked <=600px"
+        }
+      ],
+      "remaining": [
+        {
+          "cause": "content/re-import",
+          "issue": "hero h1 has a trailing <p>&nbsp;</p> on live (title 44px higher in EDS)",
+          "parser": "hero-banner"
+        },
+        {
+          "cause": "content/re-import",
+          "issue": "'Some of our memberships' h3 sits in a 6-6 column with an empty column on live (50% wide at 1000px); flattened to full width",
+          "parser": "columns / page-model expandColumns"
+        },
+        {
+          "cause": "data not captured yet",
+          "issue": "Latest news from the index"
+        }
+      ]
+    },
+    {
+      "page": 3,
+      "eds_path": "/institutional/tw/en/pension-barometer",
+      "mirror": "mirror/institutional/tw/en/Pension-Barometer.html",
+      "template": "plain",
+      "widths": [
+        1440,
+        390
+      ],
+      "status": {
+        "1440": "mismatch",
+        "390": "minor"
+      },
+      "fixed": [
+        {
+          "file": "blocks/cards/cards.css",
+          "fix": "cards after an overlap hero are raised above it (the three tiles were hidden under the hero image)"
+        },
+        {
+          "file": "blocks/columns/columns.css",
+          "fix": "16px between rich-text blocks inside columns (live .text.parbase)"
+        },
+        {
+          "file": "blocks/form/form.css",
+          "fix": "submit right-aligned >=601px (live reCAPTCHA sits left of it)"
+        }
+      ],
+      "remaining": [
+        {
+          "cause": "content/re-import",
+          "issue": "nested promo ('Latest asset allocation views', 'Portfolio review'), the form and the 'Asset and liability assumptions' disclosure sit inside 6-6 / 8-4 columns on live; EDS shows them full width below (blocks cannot nest)",
+          "parser": "columns / page-model expandColumns"
+        },
+        {
+          "cause": "content/re-import",
+          "issue": "'Q4 2025' is <sub><sup><strong> on live (31px bold); EDS keeps only <sup> (45px light)",
+          "parser": "hero-banner"
+        },
+        {
+          "cause": "content/re-import",
+          "issue": "table column widths (th width=20%/15%) not imported",
+          "parser": "table"
+        },
+        {
+          "cause": "content/re-import",
+          "issue": "marketoForm success text 'Thank you for reaching out...' imported as visible paragraph",
+          "parser": "form (marketoForm)"
+        },
+        {
+          "cause": "content/re-import",
+          "issue": "footnote line '1 Liability assumptions. 2 Asset assumptions.' loses <small>"
+        },
+        {
+          "cause": "accepted",
+          "issue": "charts are inline SVG sized by JS on live (mirror shows them unsized); reCAPTCHA"
+        }
+      ]
+    },
+    {
+      "page": 4,
+      "eds_path": "/institutional/tw/en/viewpoints/fixed-income",
+      "mirror": "mirror/institutional/tw/en/viewpoints/fixed-income.html",
+      "template": "viewpoints",
+      "widths": [
+        1440,
+        390
+      ],
+      "status": {
+        "1440": "minor",
+        "390": "minor"
+      },
+      "fixed": [
+        {
+          "file": "blocks/listing/listing.css",
+          "fix": "viewpoint list titles 24px at every width (were 32px)"
+        },
+        {
+          "file": "styles/styles.css",
+          "fix": "viewpoints page title in a white band with 1px #ededed rule (live title--viewpoints)"
+        }
+      ],
+      "remaining": [
+        {
+          "cause": "data not captured yet",
+          "issue": "index has fewer items (10 vs 13 pages), some teaser images missing, author photos referenced from DA media 404"
+        },
+        {
+          "cause": "data not captured yet",
+          "issue": "index title = page <title>, not the live teaser headline (e.g. 'Rising government bond yields' vs 'Why global government bond yields have risen')",
+          "parser": "query.yaml"
+        }
+      ]
+    },
+    {
+      "page": 5,
+      "eds_path": "/institutional/tw/en/viewpoints/alternative-credit/abc-mac-how-multiasset-credit-strategies-offer-dynamic-performance",
+      "mirror": "mirror/institutional/tw/en/viewpoints/alternative-credit/ABC-MAC-how-multiasset-credit-strategies-offer-dynamic-performance.html",
+      "template": "viewpoint",
+      "widths": [
+        1440,
+        390
+      ],
+      "status": {
+        "1440": "minor",
+        "390": "minor"
+      },
+      "fixed": [
+        {
+          "file": "blocks/link-list/link-list.css",
+          "fix": "sidebar Category / Tags styled as live viewpoint-links (light 24px title, underlined 16px links, no arrows)"
+        },
+        {
+          "file": "styles/templates.css",
+          "fix": "figure cards span the 600px column (no extra 24px inset)"
+        },
+        {
+          "file": "styles/templates.css",
+          "fix": "link list ('Click here to go to the MCQS homepage') and disclosures span the content column as live"
+        },
+        {
+          "file": "styles/templates.css",
+          "fix": "related viewpoints / All Tags: 83% wide centred, no side padding (live viewpoints-footer)"
+        },
+        {
+          "file": "styles/templates.css",
+          "fix": "header wrapper margin 0 16px on mobile (h1 was 16px low)"
+        }
+      ],
+      "remaining": [
+        {
+          "cause": "content/re-import",
+          "issue": "Share block (LinkedIn/Facebook/X/mail/copy/download) missing: share-controls is in the importer DROP list; needs a block + re-import",
+          "parser": "page-model DROP / new share block"
+        },
+        {
+          "cause": "content/re-import",
+          "issue": "author name lacks the trailing comma ('Craig Scordellis,')",
+          "parser": "author"
+        },
+        {
+          "cause": "content/re-import",
+          "issue": "spacer <p>&nbsp;</p> before some h2 dropped (sections ~40px tighter)"
+        },
+        {
+          "cause": "accepted",
+          "issue": "author photo hidden on live (JS fallback state)"
+        }
+      ]
+    },
+    {
+      "page": 6,
+      "eds_path": "/institutional/tw/en/about-us/press-releases",
+      "mirror": "mirror/institutional/tw/en/about-us/press-releases.html",
+      "template": "press-release-root",
+      "widths": [
+        1440,
+        390
+      ],
+      "status": {
+        "1440": "minor",
+        "390": "minor"
+      },
+      "fixed": [
+        {
+          "file": "blocks/hero/hero.css",
+          "fix": "no 64px gap between the page header and the sticky category bar"
+        },
+        {
+          "file": "blocks/section-nav/section-nav.js",
+          "fix": "mobile categories use the live cc-select ('Select..' + list) instead of a grey native select"
+        },
+        {
+          "file": "blocks/hero/hero.css",
+          "fix": "press root header padding 32px <=600px (live heroHeader)"
+        }
+      ],
+      "remaining": [
+        {
+          "cause": "data not captured yet",
+          "issue": "index has 26 press releases (live ~70, 7 pages); first item (Deriva Energy) has no date in the index"
+        },
+        {
+          "cause": "accepted",
+          "issue": "mirror shows the JS sticky copy of the category bar at the top"
+        }
+      ]
+    },
+    {
+      "page": 7,
+      "eds_path": "/institutional/tw/en/about-us/press-releases/2020-investment-outlook",
+      "mirror": "mirror/institutional/tw/en/about-us/press-releases/2020-investment-outlook.html",
+      "template": "press-release",
+      "widths": [
+        1440,
+        390
+      ],
+      "status": {
+        "1440": "minor",
+        "390": "minor"
+      },
+      "fixed": [
+        {
+          "file": "styles/templates.css",
+          "fix": "body after the title gets the column-container 24px side margin <=800px"
+        }
+      ],
+      "remaining": [
+        {
+          "cause": "content/re-import",
+          "issue": "spacer paragraphs (after the date, before Media Contact) dropped; '- End -' loses its centre alignment",
+          "parser": "press-release"
+        }
+      ]
+    },
+    {
+      "page": 8,
+      "eds_path": "/institutional/tw/en/strategies/equity/asia-best-select",
+      "mirror": "mirror/institutional/tw/en/strategies/equity/asia-best-select.html",
+      "template": "plain",
+      "widths": [
+        1440,
+        390
+      ],
+      "status": {
+        "1440": "minor",
+        "390": "minor"
+      },
+      "fixed": [
+        {
+          "file": "styles/styles.css",
+          "fix": "team card name/title no longer in a dark 50px band on mobile (global header rule leak)"
+        }
+      ],
+      "remaining": [
+        {
+          "cause": "accepted",
+          "issue": "strategy data panel dropped on purpose (live: 'No strategy data for share class S0001')"
+        },
+        {
+          "cause": "content/re-import",
+          "issue": "Philosophy is in an 8-col column on live (66% wide); full width in EDS",
+          "parser": "columns / page-model expandColumns"
+        },
+        {
+          "cause": "content/re-import",
+          "issue": "Vehicles intro is h4 with inline font-weight:normal on live; bold in EDS"
+        },
+        {
+          "cause": "accepted",
+          "issue": "team bios truncated + Read more by JS on live; 'Important information' captured open"
+        }
+      ]
+    },
+    {
+      "page": 9,
+      "eds_path": "/institutional/tw/en/strategies/private-markets/agriculture/team",
+      "mirror": "mirror/institutional/tw/en/strategies/private-markets/agriculture/team.html",
+      "template": "plain",
+      "widths": [
+        1440,
+        390
+      ],
+      "status": {
+        "1440": "minor",
+        "390": "minor"
+      },
+      "fixed": [
+        {
+          "file": "blocks/section-nav/section-nav.css",
+          "fix": "anchor labels no longer break mid-word ('Resourc e plannin g'); global a {overflow-wrap:anywhere} overridden"
+        },
+        {
+          "file": "blocks/section-nav/section-nav.js",
+          "fix": "scroll spy ignored the 0-height (not yet loaded) sections, so the last item was active at the top; re-runs when sections load"
+        }
+      ],
+      "remaining": [
+        {
+          "cause": "content/re-import",
+          "issue": "empty first <p> in each live bio (16px) dropped"
+        },
+        {
+          "cause": "accepted",
+          "issue": "bio truncation height is JS on live"
+        }
+      ]
+    },
+    {
+      "page": 10,
+      "eds_path": "/institutional/tw/en/sustainable-investing-case-studies",
+      "mirror": "mirror/institutional/tw/en/sustainable-investing-case-studies.html",
+      "template": "case-study-list",
+      "widths": [
+        1440,
+        390
+      ],
+      "status": {
+        "1440": "minor",
+        "390": "minor"
+      },
+      "fixed": [
+        {
+          "file": "blocks/hero/hero.css",
+          "fix": "title margin 0 / weight 400, banner padding 24px 16px <=600px, no 64px follower padding (live .caseStudyList .heroHeader2)"
+        },
+        {
+          "file": "blocks/listing/listing.css",
+          "fix": "case-study card titles 24px (were 32px)"
+        },
+        {
+          "file": "blocks/listing/listing.js",
+          "fix": "Topic/Theme filter bar is opt-in (`Filters | on`); the TW live app renders only the result count and sort"
+        }
+      ],
+      "remaining": [
+        {
+          "cause": "data not captured yet",
+          "issue": "18 case studies in the index vs 62 on live"
+        },
+        {
+          "cause": "accepted",
+          "issue": "card image heights differ by ~10px (image renditions); progressive loading is JS on both"
+        }
+      ]
+    },
+    {
+      "page": 11,
+      "eds_path": "/institutional/tw/en/sustainable-investing-case-studies/environmental/developing-our-high-benefit-climate-methodology",
+      "mirror": "mirror/institutional/tw/en/sustainable-investing-case-studies/environmental/Developing-our-high-benefit-climate-methodology-.html",
+      "template": "case-study-detail",
+      "widths": [
+        1440,
+        390
+      ],
+      "status": {
+        "1440": "match",
+        "390": "match"
+      },
+      "fixed": [
+        {
+          "file": "styles/templates.css",
+          "fix": "sidebar padding / rules were drawn twice (section + block): double vertical line at 1440, image overflowing, two bottom rules on mobile; the block alone draws the live aside"
+        },
+        {
+          "file": "styles/templates.css",
+          "fix": "body text +24px side padding <=800px (live column-container)"
+        }
+      ],
+      "remaining": [
+        {
+          "cause": "content/re-import",
+          "issue": "empty description <p> under the h1 dropped (body 12-16px higher)"
+        }
+      ]
+    }
+  ],
+  "dropped": {
+    "strategy_data_panel": "strategies/*: live only shows 'No strategy data for share class \"S0001\"' - dropped on purpose",
+    "live_404": [
+      "/institutional/tw/en/authors",
+      "/institutional/tw/en/cqs",
+      "/institutional/tw/en/viewpoints/private-markets/private-equity-credit-investing-middle-market"
+    ],
+    "dead_images": [
+      {
+        "page": "/institutional/tw/en/institutional-pension-plan-sponsor",
+        "image": "https://www.manulifeim.com/content/dam/mim-institutional/global/viewpoints/pm-1590950-viewpoint--pere-q-a-(maggie-coleman,-marc-feliciano)/PM-1590950-Viewpoint-PERE-QA-Maggie-Coleman_Marc-Feliciano_1200x628.jpg"
+      },
+      {
+        "page": "/institutional/tw/en/viewpoints/all",
+        "image": "https://www.manulifeim.com/content/dam/mim-institutional/global/viewpoints/pm-1590950-viewpoint--pere-q-a-(maggie-coleman,-marc-feliciano)/PM-1590950-Viewpoint-PERE-QA-Maggie-Coleman_Marc-Feliciano_1200x628.jpg"
+      },
+      {
+        "page": "/institutional/tw/en/insurance-solutions",
+        "image": "https://www.manulifeim.com/content/dam/mim-institutional/global/assets/landing-pages/iinv-813850-insurance-solutions-2026-web-update/IINV-813850_Insurance-solutions-2026_traditional_fixed-income-strategies-to-more-complex-solutions_graphic_v11_800px.svg"
+      }
+    ]
+  },
+  "lint": "npm run lint: clean; node --test tools/importer/test/listing.test.mjs: 14/14"
+}
