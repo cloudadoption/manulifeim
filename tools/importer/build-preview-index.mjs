@@ -78,10 +78,10 @@ function row(path, doc, headers, props) {
   if (out.authorDetails) {
     try {
       const authors = JSON.parse(out.authorDetails);
-      const imgs = [...doc.querySelectorAll('main img')];
+      const imgs = [...doc.querySelectorAll('main img')].filter((i) => !/^about:/.test(i.getAttribute('src') || ''));
       authors.forEach((a) => {
         const img = imgs.find((i) => (i.getAttribute('alt') || '').trim() === (a.name || '').trim());
-        if (img) a.photo = new URL(img.getAttribute('src'), `${PREVIEW}${path}`).pathname;
+        if (img && !/\/error$/.test(img.getAttribute('src'))) a.photo = new URL(img.getAttribute('src'), `${PREVIEW}${path}`).pathname;
         else if (/content\.da\.live/.test(a.photo || '')) a.photo = '';
       });
       out.authorDetails = JSON.stringify(authors);
