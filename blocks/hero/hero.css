@@ -140,6 +140,23 @@ main > .section.hero-container > .hero-wrapper {
   animation-duration: 1.5s;
 }
 
+/* authoring (Canvas): slides stacked and all visible, nothing animates */
+.hero.carousel.static .hero-slider {
+  height: auto;
+}
+
+.hero.carousel.static .hero-slides {
+  flex-direction: column;
+  width: 100%;
+}
+
+.hero.carousel.static .hero-slide {
+  position: relative;
+  display: block;
+  opacity: 1;
+  animation: none;
+}
+
 @keyframes hero-fade {
   0% { opacity: 0.4; }
   100% { opacity: 1; }

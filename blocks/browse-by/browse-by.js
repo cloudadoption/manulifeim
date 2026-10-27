@@ -22,6 +22,7 @@
 /* eslint-enable max-len */
 import { toClassName } from '../../scripts/aem.js';
 import { parseDate, hideOnError } from '../../scripts/block-utils.js';
+import { pageSignal } from '../../scripts/authoring.js';
 
 const TAB_TITLES = {
   authors: 'Browse articles by author',
@@ -199,7 +200,7 @@ function buildSort(onSort) {
   });
   document.addEventListener('click', (e) => {
     if (!wrap.contains(e.target)) close();
-  });
+  }, { signal: pageSignal() });
   wrap.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       close();

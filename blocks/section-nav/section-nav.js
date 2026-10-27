@@ -13,6 +13,7 @@
  *   The item matching the current path is active.
  */
 import { toClassName } from '../../scripts/aem.js';
+import isAuthoring, { pageSignal } from '../../scripts/authoring.js';
 
 function readSectionMeta(section) {
   const meta = {
@@ -113,7 +114,7 @@ function buildDropdown(items, onSelect) {
   }));
   document.addEventListener('click', (e) => {
     if (!wrap.contains(e.target)) close();
-  });
+  }, { signal: pageSignal() });
   wrap.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       close();
@@ -170,6 +171,12 @@ function buildAnchors(block) {
     // eslint-disable-next-line no-use-before-define
     dropdown.setActive(Math.max(i, 0));
   };
+  // authoring (Canvas): plain list of links, no mobile dropdown and no scroll-spy
+  if (isAuthoring()) {
+    inner.append(nav);
+    block.replaceChildren(inner);
+    return;
+  }
   const dropdown = buildDropdown(items, (i) => setActive(i));
   inner.append(dropdown.el, nav);
   block.replaceChildren(inner);
@@ -196,10 +203,14 @@ function buildAnchors(block) {
       window.requestAnimationFrame(update);
     }
   };
-  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('scroll', schedule, { passive: true, signal: pageSignal() });
   // sections load (and grow) after the nav is decorated
   const main = block.closest('main');
-  if (main && window.ResizeObserver) new ResizeObserver(schedule).observe(main);
+  if (main && window.ResizeObserver) {
+    const ro = new ResizeObserver(schedule);
+    ro.observe(main);
+    pageSignal().addEventListener('abort', () => ro.disconnect());
+  }
   update();
 }
 
@@ -254,7 +265,8 @@ function buildLinks(block) {
   nav.className = 'section-nav-onpage';
   nav.setAttribute('aria-label', 'Categories');
   nav.append(ul);
-  wrapper.append(mobile, nav);
+  if (isAuthoring()) wrapper.append(nav);
+  else wrapper.append(mobile, nav);
   block.replaceChildren(wrapper);
 }
 

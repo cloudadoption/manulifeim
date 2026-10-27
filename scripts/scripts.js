@@ -1,3 +1,5 @@
+// first: sets html[quick-edit] before any decoration
+import isAuthoring, { renewPageSignal } from './authoring.js';
 import {
   loadHeader,
   loadFooter,
@@ -92,6 +94,7 @@ function isAttestationAccepted() {
  * Opens the "Select a location" region selector (header region button, `#region-select` links).
  */
 export async function openRegionSelector() {
+  if (isAuthoring()) return;
   // eslint-disable-next-line import/no-cycle
   const { showRegionSelector } = await import('../blocks/attestation/attestation.js');
   await showRegionSelector();
@@ -236,9 +239,13 @@ export function decorateMain(main) {
  */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
-  // blur the page before first paint until the disclaimer is accepted (modal loads after LCP)
-  const attestationPending = !isAttestationAccepted();
+  // blur the page before first paint until the disclaimer is accepted (modal loads after LCP);
+  // never in authoring, nor on the nav/footer/fragment documents
+  const chromePath = /^\/(nav|footer)$|\/fragments\//.test(window.location.pathname);
+  const attestationPending = !isAuthoring() && !chromePath && !isAttestationAccepted();
   if (attestationPending) document.body.classList.add('attestation-blur');
+  // the class survives the body swaps Canvas does between edits
+  else document.body.classList.remove('attestation-blur');
   const template = decorateTemplateAndTheme();
   const templateStyles = STYLED_TEMPLATES.includes(template)
     ? loadCSS(`${window.hlx.codeBasePath}/styles/templates.css`).catch(() => {})
@@ -269,16 +276,16 @@ async function loadEager(doc) {
  * @param {Element} doc The container element
  */
 async function loadLazy(doc) {
-  loadHeader(doc.querySelector('body > header'));
-
+  const header = doc.querySelector('body > header');
+  const footer = doc.querySelector('body > footer');
   const main = doc.querySelector('main');
-  await loadSections(main);
+  await Promise.all([main && loadSections(main), header && loadHeader(header)]);
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
 
-  loadFooter(doc.querySelector('body > footer'));
+  if (footer) await loadFooter(footer);
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
@@ -291,16 +298,32 @@ async function loadLazy(doc) {
 function loadDelayed() {
   import('./consent-check.js');
   // load anything that can be postponed to the latest here
-  // showcase notice ("not an official Manulife website"), well after LCP
-  window.setTimeout(() => {
-    import('./showcase-notice.js').then(({ default: showShowcaseNotice }) => showShowcaseNotice());
-  }, 3500);
+  // showcase notice ("not an official Manulife website"), well after LCP; not in authoring
+  if (!isAuthoring()) {
+    window.setTimeout(() => {
+      import('./showcase-notice.js').then(({ default: showShowcaseNotice }) => showShowcaseNotice());
+    }, 3500);
+  }
 }
 
-async function loadPage() {
-  await loadEager(document);
-  await loadLazy(document);
+/**
+ * Decorates and loads the page. Exported for the quick-edit plugin, which calls it again on the
+ * same document after each structural edit in Canvas.
+ * @param {Document} doc
+ */
+export async function loadPage(doc = document) {
+  renewPageSignal();
+  await loadEager(doc);
+  await loadLazy(doc);
   loadDelayed();
 }
 
+if (isAuthoring()) {
+  // literal specifier: preview.da.live then stops appending its own quick-edit bootstrap
+  // eslint-disable-next-line import/no-unresolved
+  import('https://da.live/nx/public/plugins/quick-edit/quick-edit.js')
+    .then(({ default: loadQuickEdit }) => loadQuickEdit(undefined, loadPage))
+    // eslint-disable-next-line no-console
+    .catch((e) => console.warn('quick-edit unavailable', e));
+}
 loadPage();

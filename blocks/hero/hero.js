@@ -19,6 +19,8 @@
  * Without a variant the block renders as `banner`.
  */
 
+import isAuthoring from '../../scripts/authoring.js';
+
 function toClassList(block) {
   return [...block.classList];
 }
@@ -172,7 +174,9 @@ function buildCarousel(block) {
   slidesWrap.append(...slideEls);
   slider.append(slidesWrap);
 
-  if (slideEls.length < 2) {
+  // one slide, or authoring in Canvas: all slides stacked, no controls and no timer
+  if (slideEls.length < 2 || isAuthoring()) {
+    if (slideEls.length > 1) block.classList.add('static');
     slideEls[0]?.classList.add('active');
     block.replaceChildren(slider);
     return;

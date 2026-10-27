@@ -16,6 +16,7 @@ import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 // eslint-disable-next-line import/no-cycle
 import { openRegionSelector } from '../../scripts/scripts.js';
+import { pageSignal } from '../../scripts/authoring.js';
 
 const desktop = window.matchMedia('(width >= 801px)');
 const hoverDesktop = window.matchMedia('(hover: hover) and (width >= 801px)');
@@ -452,9 +453,9 @@ export default async function decorate(block) {
       e.preventDefault();
       openRegionSelector();
     }
-  });
+  }, { signal: pageSignal() });
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeAll(block);
-  });
-  desktop.addEventListener('change', () => closeAll(block));
+  }, { signal: pageSignal() });
+  desktop.addEventListener('change', () => closeAll(block), { signal: pageSignal() });
 }

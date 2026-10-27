@@ -31,6 +31,7 @@ import {
   pageWindow, groupValues, resourceType, facetCounts, formatLongDate, isoDate, baseName,
   slugify,
 } from '../../scripts/listing-core.js';
+import { pageSignal } from '../../scripts/authoring.js';
 
 const VARIANTS = ['viewpoints', 'press', 'case-studies', 'documents', 'people'];
 const URL_KEYS = {
@@ -369,7 +370,7 @@ function dropdown(options, current, onChange, label) {
     if (!wrap.isConnected) document.removeEventListener('click', outside);
     else if (!wrap.contains(e.target)) close();
   };
-  document.addEventListener('click', outside);
+  document.addEventListener('click', outside, { signal: pageSignal() });
   wrap.append(trigger, list);
   return wrap;
 }
