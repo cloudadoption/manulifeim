@@ -199,10 +199,16 @@ function decorateButtons(main) {
       if (new URL(a.href).href === new URL(text, window.location).href) return;
     } catch { /* continue */ }
 
-    // require authored formatting for buttonization
+    // require authored formatting for buttonization; a plain link alone in its paragraph is a
+    // CTA link: blocks that show it with an arrow style `.<block> a.link-cta` (default content
+    // keeps the plain link look)
     const strong = a.closest('strong');
     const em = a.closest('em');
-    if (!strong && !em) return;
+    if (!strong && !em) {
+      p.classList.add('link-cta-wrapper');
+      a.classList.add('link-cta');
+      return;
+    }
 
     p.className = 'button-wrapper';
     a.className = 'button';

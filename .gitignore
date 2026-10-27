@@ -19,3 +19,6 @@ tools/importer/bd-snapshots
 tools/importer/*.bundle.js
 tools/importer/urls-*.txt
 tools/importer/reports/
+
+# visual-diff job file (local)
+tools/visual-diff/_job.json

@@ -10,3 +10,4 @@ tools/migration-scope/
 tools/reports/
 tools/importer/snapshots/
 tools/importer/
+tools/visual-diff/
