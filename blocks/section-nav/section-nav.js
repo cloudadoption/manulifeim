@@ -64,13 +64,14 @@ function collectAuthoredLinks(block) {
   return items;
 }
 
+/* disclosure pattern: a toggle button with aria-expanded; the links stay in the normal tab
+   order (the closed list is visibility: hidden) and the current one has aria-current */
 function buildDropdown(items, onSelect) {
   const wrap = document.createElement('div');
   wrap.className = 'section-nav-mobile';
   const trigger = document.createElement('button');
   trigger.type = 'button';
   trigger.className = 'section-nav-select-trigger';
-  trigger.setAttribute('aria-haspopup', 'listbox');
   trigger.setAttribute('aria-expanded', 'false');
   const id = `section-nav-dropdown-${Math.random().toString(36).slice(2, 8)}`;
   trigger.setAttribute('aria-controls', id);
@@ -85,7 +86,6 @@ function buildDropdown(items, onSelect) {
     a.className = 'section-nav-dropdown-item';
     a.href = item.href;
     a.dataset.index = i;
-    a.tabIndex = -1;
     const check = document.createElement('span');
     check.className = 'section-nav-check';
     check.setAttribute('aria-hidden', 'true');
@@ -100,12 +100,10 @@ function buildDropdown(items, onSelect) {
   const close = () => {
     wrap.classList.remove('open');
     trigger.setAttribute('aria-expanded', 'false');
-    links.forEach((l) => { l.tabIndex = -1; });
   };
   const open = () => {
     wrap.classList.add('open');
     trigger.setAttribute('aria-expanded', 'true');
-    links.forEach((l) => { l.tabIndex = 0; });
   };
   trigger.addEventListener('click', () => (wrap.classList.contains('open') ? close() : open()));
   links.forEach((a, i) => a.addEventListener('click', () => {
@@ -126,7 +124,10 @@ function buildDropdown(items, onSelect) {
     el: wrap,
     setActive(i) {
       trigger.textContent = items[i]?.label || '';
-      links.forEach((l, j) => l.setAttribute('aria-selected', i === j ? 'true' : 'false'));
+      links.forEach((l, j) => {
+        if (i === j) l.setAttribute('aria-current', 'location');
+        else l.removeAttribute('aria-current');
+      });
     },
   };
 }
@@ -165,7 +166,7 @@ function buildAnchors(block) {
     current = i;
     triggers.forEach((t, j) => {
       t.classList.toggle('active', i === j);
-      if (i === j) t.setAttribute('aria-current', 'true');
+      if (i === j) t.setAttribute('aria-current', 'location');
       else t.removeAttribute('aria-current');
     });
     // eslint-disable-next-line no-use-before-define
