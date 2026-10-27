@@ -53,7 +53,7 @@ export const BLOCKS = [
   { name: 'feature-banner', instances: ['.featureBanner'] },
   { name: 'promo', instances: ['.simpleBanner'] },
   { name: 'article-list', instances: ['.latestViewpoints'] },
-  { name: 'listing', instances: ['.list.viewpointsList', '.pressReleaseRoot__content', '.caseStudyList__app', '.resources-listing', '.teamListing'] },
+  { name: 'listing', instances: ['.list.viewpointsList', '.viewpointsList2__content', '.pressReleaseRoot__content', '.caseStudyList__app', '.resources-listing', '.teamListing'] },
   { name: 'browse-by', instances: ['.browseBar'] },
   { name: 'tag-list', instances: ['.viewpoint-tags__component-wrapper'] },
   { name: 'link-list-inline', instances: ['.moreInsights'] },

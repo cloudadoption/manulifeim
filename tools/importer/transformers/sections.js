@@ -22,7 +22,7 @@ function mainOf(document) {
   return document.querySelector('main#main-content') || document.querySelector('main') || document.body;
 }
 
-/* component-root templates: home, plain, viewpoints, press-release, search */
+/* component-root templates: home, plain, viewpoints (landing, categories), press-release, search */
 function componentRootModel(document, main, opts) {
   const root = main.querySelector(':scope > .component-root, :scope > div') || main;
   return toSections(itemsFor(document, [...root.children]), opts);
@@ -129,7 +129,23 @@ function pressRootModel(document, main) {
   return toSections(itemsFor(document, elements), {});
 }
 
+/* viewpoints/all (route viewpointsList, React ViewpointsList, .viewpointsList2): header h1 |
+   filter tabs (UI, rebuilt by the block, dropped) | "N listings" + list -> one Listing
+   (viewpoints) block. The live list is rendered from another site's index (links to
+   /institutional/kr/en), so no item is kept: the block reads the tw/en viewpoints index. */
+function viewpointsListModel(document, main) {
+  const root = main.querySelector('.viewpointsList2');
+  if (!root) return componentRootModel(document, main, {});
+  const items = [];
+  const h1 = root.querySelector('.viewpointsList2__header h1, h1.viewpointsList2__title');
+  if (h1) items.push(...itemsFor(document, [h1]));
+  const content = root.querySelector('.viewpointsList2__content');
+  if (content) items.push({ type: 'block', el: content, name: 'listing' });
+  return toSections(items, {});
+}
+
 const MODELS = {
+  viewpoints: (d, m) => (m.querySelector('.viewpointsList2') ? viewpointsListModel(d, m) : componentRootModel(d, m, {})),
   viewpoint: articleModel,
   'case-study-detail': caseStudyDetailModel,
   'case-study-list': caseStudyListModel,

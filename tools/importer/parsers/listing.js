@@ -5,7 +5,8 @@
  * config-only `Listing (<variant>)` block; the block reads the query index on EDS
  * (tools/importer/query.yaml, QUERY-INDEX.md) and renders filters, sort and paging itself.
  *
- *   .list.viewpointsList        viewpoints category pages, /viewpoints/all  -> Listing (viewpoints)
+ *   .list.viewpointsList        viewpoints category pages                    -> Listing (viewpoints)
+ *   .viewpointsList2__content   /viewpoints/all (React, "N listings" + list) -> Listing (viewpoints)
  *   .pressReleaseRoot__content  press listing (sidebar + pressItems + pages) -> Listing (press)
  *   .caseStudyList__app         case-study list and theme pages (React)     -> Listing (case-studies)
  *   .resources-listing          resources / documents / fact sheets (React) -> Listing (documents)
@@ -18,6 +19,7 @@
  *   | Limit   | 10                                                            |  (page size)
  *   | Sort    | newest                                                        |  (opt)
  *   | Empty   | Sorry, no results match this criteria                         |  (opt)
+ *   | Count   | {count} listings                                              |  (opt, viewpoints)
  *   | Sidebar | rich text (press: Media relations)                            |  (opt)
  */
 import { block } from '../utils/dom.js';
@@ -43,6 +45,10 @@ function viewpointsRows(element, livePath) {
   if (slug && slug !== 'all') rows.push(['Filter', `category=${slug}`]);
   rows.push(['Limit', String(element.querySelectorAll('.viewpointList__item').length > 10 ? element.querySelectorAll('.viewpointList__item').length : 10)]);
   rows.push(['Sort', 'newest']);
+  // /viewpoints/all: the live "9 listings" line, the number becomes the filtered result count
+  const count = element.querySelector('.viewpointsList2__listing');
+  const countText = count ? count.textContent.replace(/\s+/g, ' ').trim() : '';
+  if (/\d/.test(countText)) rows.push(['Count', countText.replace(/[\d,.]+/, '{count}')]);
   return rows;
 }
 

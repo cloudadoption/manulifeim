@@ -117,6 +117,7 @@
           "name": "listing",
           "instances": [
             ".list.viewpointsList",
+            ".viewpointsList2__content",
             ".pressReleaseRoot__content",
             ".caseStudyList__app",
             ".resources-listing",
@@ -611,6 +612,7 @@
           "name": "listing",
           "instances": [
             ".list.viewpointsList",
+            ".viewpointsList2__content",
             ".pressReleaseRoot__content",
             ".caseStudyList__app",
             ".resources-listing",
@@ -825,6 +827,7 @@
           "name": "listing",
           "instances": [
             ".list.viewpointsList",
+            ".viewpointsList2__content",
             ".pressReleaseRoot__content",
             ".caseStudyList__app",
             ".resources-listing",
@@ -1722,6 +1725,7 @@
           "name": "listing",
           "instances": [
             ".list.viewpointsList",
+            ".viewpointsList2__content",
             ".pressReleaseRoot__content",
             ".caseStudyList__app",
             ".resources-listing",
@@ -1927,6 +1931,7 @@
           "name": "listing",
           "instances": [
             ".list.viewpointsList",
+            ".viewpointsList2__content",
             ".pressReleaseRoot__content",
             ".caseStudyList__app",
             ".resources-listing",
@@ -2291,6 +2296,7 @@
           "name": "listing",
           "instances": [
             ".list.viewpointsList",
+            ".viewpointsList2__content",
             ".pressReleaseRoot__content",
             ".caseStudyList__app",
             ".resources-listing",
@@ -2500,6 +2506,7 @@
           "name": "listing",
           "instances": [
             ".list.viewpointsList",
+            ".viewpointsList2__content",
             ".pressReleaseRoot__content",
             ".caseStudyList__app",
             ".resources-listing",
@@ -2766,6 +2773,7 @@
           "name": "listing",
           "instances": [
             ".list.viewpointsList",
+            ".viewpointsList2__content",
             ".pressReleaseRoot__content",
             ".caseStudyList__app",
             ".resources-listing",
@@ -2971,6 +2979,7 @@
           "name": "listing",
           "instances": [
             ".list.viewpointsList",
+            ".viewpointsList2__content",
             ".pressReleaseRoot__content",
             ".caseStudyList__app",
             ".resources-listing",
