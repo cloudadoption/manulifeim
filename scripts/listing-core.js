@@ -109,6 +109,19 @@ function sitePath(url) {
 }
 
 /**
+ * Resolves a rendered media src ("./media_….jpg?width=…") against the page path, without query.
+ * @param {string} src
+ * @param {string} pagePath
+ * @returns {string}
+ */
+export function resolveMedia(src, pagePath) {
+  if (!src) return '';
+  const base = `https://x${pagePath.replace(/[^/]*$/, '')}`;
+  const url = new URL(src, base);
+  return url.origin === 'https://x' ? url.pathname : url.href.split('?')[0];
+}
+
+/**
  * Normalises a raw query-index row into the item shape the blocks use.
  * @param {object} row
  * @returns {object}
@@ -129,13 +142,20 @@ export function normalizeEntry(row) {
   if (!Array.isArray(authors)) {
     authors = splitValues(e.authors, '|').map((name) => ({ name }));
   }
-  authors = authors.filter((a) => a && a.name).map((a) => ({
-    name: String(a.name).trim(),
-    title: a.title || '',
-    company: a.company || '',
-    image: a.photo || a.image || '',
-    slug: a.slug || slugify(baseName(a.name)),
-  }));
+  // photos in the page metadata are DA source URLs (need a login); the index also carries the
+  // media-bus URLs of the rendered author box images (authorPhotos, same order as the authors)
+  const photos = splitValues(e.authorPhotos).map((src) => resolveMedia(src, path));
+  authors = authors.filter((a) => a && a.name).map((a, i) => {
+    let image = a.photo || a.image || '';
+    if (/^https?:\/\/content\.da\.live\//.test(image)) image = photos[i] || '';
+    return {
+      name: String(a.name).trim(),
+      title: a.title || '',
+      company: a.company || '',
+      image,
+      slug: a.slug || slugify(baseName(a.name)),
+    };
+  });
   let ts = Number(e.publicationTimestamp) || 0;
   if (!ts) ts = isoToSeconds(e.publicationDate || e['publication-date'] || e.date);
   const lastModified = Number(e.lastModified) || 0;
