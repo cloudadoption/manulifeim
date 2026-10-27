@@ -1,22 +1,35 @@
-/* figure (landingImage2): card, top, left, right */
+/* figure (landingImage2): card, top, left, right
+   Cells in place: .figure-content (text rows), .figure-image, .figure-caption; rows are
+   display: contents and the block is the 600px column (the card for `card`). */
 
 .figure {
-  margin: 32px 16px;
-}
-
-.figure .figure-inner {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 32px max(16px, calc((100% - 600px) / 2));
 }
 
-.figure.card .figure-card {
+.figure > div {
+  display: contents;
+}
+
+.figure.card {
   padding: 24px;
   background-color: var(--color-white, #fff);
   box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
 }
 
+/* top: image (and caption) above the text */
+.figure.top {
+  display: flex;
+  flex-direction: column;
+}
+
+.figure.top :is(.figure-image, .figure-caption) {
+  order: -1;
+}
+
 .figure .figure-content {
   box-sizing: border-box;
+  display: block;
   width: 100%;
   padding: 0 0 48px;
   font-size: 16px;
@@ -82,26 +95,29 @@
   color: var(--color-primary, #06854d);
 }
 
-.figure .figure-image-inner {
+.figure .figure-image {
+  display: block;
   margin: 0;
 }
 
-.figure.no-text .figure-image-inner {
+.figure.no-text .figure-image {
   text-align: center;
 }
 
-.figure .figure-image-inner picture {
+.figure .figure-image :is(p, picture) {
   display: block;
+  margin: 0;
 }
 
-.figure .figure-image-inner img {
+.figure .figure-image img {
   display: block;
   width: 100%;
   height: auto;
   margin: 0 auto;
 }
 
-.figure .figure-picture-mobile + .figure-picture {
+/* a second picture in the image cell is the small-screen image */
+.figure.has-mobile-media .figure-image > :first-child {
   display: none;
 }
 
@@ -114,12 +130,18 @@
   color: var(--color-text, #282b3e);
 }
 
+.figure .figure-caption > :is(p, .prosemirror-editor) {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+
 @media (width >= 601px) {
   .figure {
-    margin: 48px 24px;
+    margin: 48px max(24px, calc((100% - 600px) / 2));
   }
 
-  .figure.card .figure-card {
+  .figure.card {
     padding: 48px;
   }
 
@@ -129,41 +151,62 @@
 }
 
 @media (width >= 801px) {
-  .figure .figure-picture-mobile {
-    display: none;
-  }
-
-  .figure .figure-picture-mobile + .figure-picture {
+  .figure.has-mobile-media .figure-image > :first-child {
     display: block;
   }
 
-  .figure:is(.left, .right) .figure-inner {
-    max-width: 800px;
+  .figure.has-mobile-media .figure-image > :last-child {
+    display: none;
   }
 
-  .figure:is(.left, .right) .figure-card {
-    display: flex;
+  /* text beside the image; image and caption stay together, centred against the text */
+  .figure:is(.left, .right) {
+    display: grid;
+    grid-template-rows: 1fr auto auto 1fr;
+    grid-template-columns: 1fr 1fr;
     align-items: center;
-  }
-
-  .figure.left .figure-card {
-    flex-direction: row-reverse;
+    max-width: 800px;
+    margin-inline: max(24px, calc((100% - 800px) / 2));
   }
 
   .figure:is(.left, .right) .figure-content {
-    width: 50%;
+    grid-row: 1 / span 4;
+    grid-column: 1;
     padding: 32px 64px;
   }
 
-  .figure:is(.left, .right) .figure-image-inner {
-    width: 50%;
+  .figure:is(.left, .right) .figure-image {
+    grid-row: 2;
+    grid-column: 2;
   }
 
-  .figure.card:is(.left, .right) .figure-card {
+  .figure:is(.left, .right) .figure-caption {
+    grid-row: 3;
+    grid-column: 2;
+  }
+
+  .figure.left .figure-content {
+    grid-column: 2;
+  }
+
+  .figure.left :is(.figure-image, .figure-caption) {
+    grid-column: 1;
+  }
+
+  .figure.card:is(.left, .right) {
     padding: 0;
   }
 
-  .figure.card:is(.left, .right) .figure-image-inner {
-    padding: 24px;
+  /* live pads image + caption together (one <figure>) */
+  .figure.card:is(.left, .right) .figure-image {
+    padding: 24px 24px 0;
+  }
+
+  .figure.card:is(.left, .right):not(:has(.figure-caption)) .figure-image {
+    padding-bottom: 24px;
+  }
+
+  .figure.card:is(.left, .right) .figure-caption {
+    padding: 0 24px 24px;
   }
 }
