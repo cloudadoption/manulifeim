@@ -360,7 +360,7 @@ Acceptance: `npm test` passes on a fresh clone (`git clone`, `npm ci`, `npm test
 2. Batch 1 ships first and on its own, before any block restructuring.
 3. Title migration (batch 5b) is approved: change the 26 DA pages, preview them; publishing to aem.live is done by the steering side, never by the migration agent.
 4. `listing people` and `cards separate`: keep until the page capture is complete (people and case-study pages are still in the capture queue); delete then if still unused in DA.
-5. Tests: keep the existing listing test and make it portable (batch 5.6). No further test infrastructure for now.
+5. Tests may be committed in this repo. Make the existing listing test portable (batch 5.6) and add a test with each batch where logic can be tested without a browser (e.g. readRows, isMediaCell, isAuthoring, the carousel state machine). `npm test` must pass on a fresh clone.
 
 ## 6. Uncertainties
 
