@@ -130,7 +130,15 @@ function buildCarousel(block) {
     const pic = row.querySelector('picture');
     const img = document.createElement('div');
     img.className = 'hero-image';
-    if (pic) img.append(pic);
+    if (pic) {
+      // hidden slides never enter the viewport, so lazy images would still be loading when
+      // the slide fades in (grey hero): load all slide images up front, the first one first
+      pic.querySelectorAll('img').forEach((im) => {
+        im.loading = 'eager';
+        if (i === 0) im.fetchPriority = 'high';
+      });
+      img.append(pic);
+    }
     const gradient = document.createElement('div');
     gradient.className = 'hero-gradient';
 

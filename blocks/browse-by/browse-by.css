@@ -112,6 +112,11 @@
   --browse-by-mask: 240px;
 }
 
+/* rows still coming from fragment documents: keep the masked height (no layout shift) */
+.browse-by .browse-by-tab-content.loading .browse-by-mask {
+  min-height: var(--browse-by-mask);
+}
+
 .browse-by .browse-by-item-list {
   display: flex;
   flex-flow: row wrap;

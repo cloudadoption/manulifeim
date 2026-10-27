@@ -13,6 +13,11 @@
  * Author rows: optional photo, link (name), subtitle (company), article count, last posted
  * date (ISO). Count and date feed the "Most articles" / "Recently posted" sort.
  * Tabs appear in the order of first use. "View more" / "View less" toggles the mask.
+ *
+ * Long lists (a page may hold at most 200 images) live in fragment documents:
+ * | Authors    | [/institutional/tw/en/fragments/viewpoints-authors-1](/institutional/tw/en/fragments/viewpoints-authors-1) |
+ * Any row link to a /fragments/ path is a source: its Browse By rows (same shape as above,
+ * tab cell ignored) are fetched when the tab is first shown and added to the tab.
  */
 /* eslint-enable max-len */
 import { toClassName } from '../../scripts/aem.js';
@@ -23,6 +28,8 @@ const TAB_TITLES = {
   categories: 'Browse articles by category',
   tags: 'Browse articles by tag',
 };
+
+const FRAGMENT = /\/fragments\//;
 
 const SORTS = [
   { order: 'name', label: 'Alphabetical' },
@@ -57,6 +64,37 @@ function parseRow(row) {
     }
   });
   return item;
+}
+
+/** Fragment document paths linked from a row ([] for a normal item row). */
+function fragmentSources(row) {
+  return [...row.children].slice(1).flatMap((cell) => [...cell.querySelectorAll('a[href]')])
+    .map((a) => {
+      try {
+        const url = new URL(a.getAttribute('href'), window.location.href);
+        return url.pathname.replace(/(\.plain)?\.html$/, '');
+      } catch (e) {
+        return '';
+      }
+    })
+    .filter((path) => FRAGMENT.test(path));
+}
+
+/** Rows of the Browse By block(s) in a fragment document; media URLs rebased to it. */
+async function fetchFragmentRows(path) {
+  const resp = await fetch(`${path}.plain.html`);
+  if (!resp.ok) throw new Error(`${path}: ${resp.status}`);
+  // inert document: no image requests before the URLs are rebased
+  const doc = new DOMParser().parseFromString(await resp.text(), 'text/html');
+  const base = new URL(path, window.location.href);
+  doc.querySelectorAll('img[src^="./media_"]').forEach((img) => {
+    img.src = new URL(img.getAttribute('src'), base).href;
+  });
+  doc.querySelectorAll('source[srcset^="./media_"]').forEach((source) => {
+    source.srcset = new URL(source.getAttribute('srcset'), base).href;
+  });
+  const blocks = [...doc.querySelectorAll('.browse-by')];
+  return blocks.flatMap((b) => [...b.children]).map((row) => document.adoptNode(row));
 }
 
 function buildItem(item, isAuthor) {
@@ -200,11 +238,19 @@ export default function decorate(block) {
       title = cells[1].textContent.trim() || title;
       return;
     }
+    const id = toClassName(first);
+    const addTab = () => {
+      if (!tabs.has(id)) tabs.set(id, { label: first, items: [], sources: [] });
+      return tabs.get(id);
+    };
+    const sources = fragmentSources(row);
+    if (sources.length) {
+      addTab().sources.push(...sources);
+      return;
+    }
     const item = parseRow(row);
     if (!item.href) return;
-    const id = toClassName(item.tab);
-    if (!tabs.has(id)) tabs.set(id, { label: item.tab, items: [] });
-    tabs.get(id).items.push(item);
+    addTab().items.push(item);
   });
 
   const inner = document.createElement('div');
@@ -225,6 +271,7 @@ export default function decorate(block) {
   const uid = Math.random().toString(36).slice(2, 8);
   const panels = [];
   const buttons = [];
+  const loaders = [];
 
   const updateMore = (panel) => {
     const mask = panel.querySelector('.browse-by-mask');
@@ -248,11 +295,17 @@ export default function decorate(block) {
       panels[i].hidden = !active;
     });
     if (focus) buttons[index].focus();
+    if (loaders[index]) {
+      const load = loaders[index];
+      loaders[index] = null;
+      load();
+    }
     updateMore(panels[index]);
   };
 
   [...tabs.entries()].forEach(([id, tab], index) => {
-    const isAuthor = id === 'authors' || tab.items.some((it) => it.image || it.subtitle);
+    const isAuthor = id === 'authors' || tab.sources.length > 0
+      || tab.items.some((it) => it.image || it.subtitle);
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'browse-by-tab-button';
@@ -284,14 +337,37 @@ export default function decorate(block) {
     const list = document.createElement('ul');
     list.className = 'browse-by-item-list';
     tab.items.forEach((item) => list.append(buildItem(item, isAuthor)));
+    let order = 'name';
     if (isAuthor) {
-      sortItems(list, 'name');
-      tabHeader.append(buildSort((order) => {
+      sortItems(list, order);
+      tabHeader.append(buildSort((next) => {
+        order = next;
         sortItems(list, order);
         updateMore(panel);
       }));
     }
     mask.append(list);
+    if (tab.sources.length) {
+      // fragment rows: fetched the first time the tab is shown
+      loaders[index] = async () => {
+        panel.classList.add('loading');
+        panel.setAttribute('aria-busy', 'true');
+        const results = await Promise.allSettled(tab.sources.map(fetchFragmentRows));
+        results.forEach((r) => {
+          if (r.status === 'rejected') {
+            // eslint-disable-next-line no-console
+            console.warn('browse-by: fragment not loaded', r.reason);
+            return;
+          }
+          r.value.map(parseRow).filter((item) => item.href)
+            .forEach((item) => list.append(buildItem(item, isAuthor)));
+        });
+        if (isAuthor) sortItems(list, order);
+        panel.classList.remove('loading');
+        panel.removeAttribute('aria-busy');
+        updateMore(panel);
+      };
+    }
 
     const more = document.createElement('button');
     more.type = 'button';

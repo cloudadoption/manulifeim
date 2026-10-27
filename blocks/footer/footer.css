@@ -178,7 +178,8 @@ footer .footer-column :is(b, strong):first-of-type {
     margin-bottom: 0;
   }
 
-  footer .footer-menu-secondary {
+  /* .footer-menus beats `footer .footer ul { margin: 0 }` */
+  footer .footer-menus .footer-menu-secondary {
     margin-left: 48px;
   }
 
