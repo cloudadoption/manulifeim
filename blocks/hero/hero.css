@@ -244,6 +244,13 @@ html[quick-edit] .hero > [data-config] {
   color: var(--color-text, #282b3e);
 }
 
+/* live slide titles start with <br>: one empty title line above the text */
+.hero.carousel .hero-slide-content > :is(h1, h2, h3, h4, h5, h6)::before {
+  content: "";
+  display: block;
+  height: 1.25em;
+}
+
 .hero.carousel a.button.secondary {
   border-color: var(--color-white, #fff);
   background-color: var(--color-white, #fff);
