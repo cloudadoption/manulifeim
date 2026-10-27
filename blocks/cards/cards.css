@@ -53,7 +53,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   flex-direction: column;
 }
 
-.cards .cards-card-image {
+.cards:not(.tiles) .cards-card-image {
   padding: 24px 24px 0;
 }
 
@@ -62,7 +62,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   margin: 0;
 }
 
-.cards .cards-card-image img {
+.cards:not(.tiles) .cards-card-image img {
   display: block;
   width: 100%;
   height: 185px;
@@ -159,35 +159,35 @@ main > .section:has(.hero.overlap) + .section .cards {
 }
 
 /* authors: the authored list, [photo] **Name**, Position <br> Company per item */
-.cards .cards-card-body > :is(ul, ol) {
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) {
   margin: 0 0 16px;
   padding: 0;
   list-style: none;
 }
 
-.cards .cards-card-body > :is(ul, ol) > li {
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-.cards .cards-card-body > :is(ul, ol) > li + li {
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li + li {
   margin-top: 16px;
 }
 
-.cards .cards-card-body > :is(ul, ol) > li > :is(p, picture, .prosemirror-editor):has(img),
-.cards .cards-card-body > :is(ul, ol) > li > picture {
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li > :is(p, picture, .prosemirror-editor):has(img),
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li > picture {
   flex: none;
   margin: 0 8px 0 0;
 }
 
-.cards .cards-card-body > :is(ul, ol) > li > .image-hidden {
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li > .image-hidden {
   width: 1px;
   height: 1px;
   overflow: hidden;
 }
 
-.cards .cards-card-body > :is(ul, ol) > li img {
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li img {
   display: block;
   width: 40px;
   height: 40px;
@@ -196,7 +196,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   object-fit: cover;
 }
 
-.cards .cards-card-body > :is(ul, ol) > li > :is(p, .prosemirror-editor):not(:has(img)) {
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li > :is(p, .prosemirror-editor):not(:has(img)) {
   width: 100%;
   margin: 0;
   font-size: 12px;
@@ -205,7 +205,7 @@ main > .section:has(.hero.overlap) + .section .cards {
   color: var(--color-primary, #06854d);
 }
 
-.cards .cards-card-body > :is(ul, ol) > li strong {
+.cards:not(.tiles) .cards-card-body > :is(ul, ol) > li strong {
   font-weight: inherit;
 }
 
@@ -303,8 +303,13 @@ html[quick-edit] .cards > [data-config] {
 }
 
 .cards.tiles .cards-card-body > .link-cta-wrapper {
-  display: flex;
+  display: block;
   margin-top: 16px;
+}
+
+/* the tile link spans the tile (live a.cards-tile-link is display: flex) */
+.cards.tiles a.link-cta {
+  display: flex;
 }
 
 .cards.tiles .cards-card-body > .link-cta-wrapper:not(.link-cta-wrapper ~ .link-cta-wrapper) {
