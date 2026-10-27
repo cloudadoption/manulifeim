@@ -13,7 +13,7 @@
 
 .figure.card {
   padding: 24px;
-  background-color: var(--color-white, #fff);
+  background-color: var(--color-white);
   box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
 }
 
@@ -34,8 +34,8 @@
   padding: 0 0 48px;
   font-size: 16px;
   line-height: 1.75;
-  letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  letter-spacing: var(--letter-spacing);
+  color: var(--color-text);
 }
 
 .figure.top .figure-content {
@@ -66,8 +66,8 @@
 .figure .figure-content h3,
 .figure .figure-content h4 {
   line-height: 1.25;
-  letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  letter-spacing: var(--letter-spacing);
+  color: var(--color-text);
 }
 
 .figure .figure-content h2 {
@@ -92,7 +92,7 @@
 }
 
 .figure .figure-content a:hover {
-  color: var(--color-primary, #06854d);
+  color: var(--color-primary);
 }
 
 .figure .figure-image {
@@ -126,8 +126,8 @@
   margin-top: 24px;
   font-size: 14px;
   line-height: 150%;
-  letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  letter-spacing: var(--letter-spacing);
+  color: var(--color-text);
 }
 
 .figure .figure-caption > :is(p, .prosemirror-editor) {

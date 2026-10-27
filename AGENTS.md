@@ -23,7 +23,8 @@ Edge Delivery Services. Read a block first. Omissions are in the repo or known.
 
 ## Manulife replica: styles
 - Tokens: `styles/styles.css` `:root` (`--color-*`, `--shadow-*`, `--font-*`, `--font-size-*`, `--line-height-*`, `--spacing-*`, `--width-*`, `--header-height`, `--layout-rail-width`). Source values: `migration-work/analysis/design-tokens.md`. Use tokens, not hex.
-- Breakpoints are mobile-first and mirror live max-width 600/800/1100: `(width >= 601px)`, `(width >= 801px)`, `(width >= 1101px)`. Type steps up at 601; section padding and the 80px rail/header start at 801.
+- Breakpoints are mobile-first and mirror live max-width 600/800/1100: `(width >= 601px)`, `(width >= 801px)`, `(width >= 1101px)`. Type steps up at 601; section padding and the 80px rail/header start at 801. A few queries copy live component queries and stay: Layout and columns 961/1281 (column-container; 8-4 is 66% only from 1281), tag-list 321/800, article-list 800, browse-by 1001/1501, attestation 901, search 1440, score-bars < 900, hero image position 1100. The showcase notice (768) is the POC disclaimer, left as is.
+- Card grids: one grid with 1px gaps, filled by right/bottom box-shadows that the container clips. That keeps live's border spacing without nth-child border rules. The default cards variant is `.cards.teaser`, added by cards.js.
 - Fonts: `styles/fonts.css` (Manulife JH Sans 300/400/600/700, JH Serif italic); size-adjusted Arial/Times fallbacks in styles.css. `em` in headings = serif italic.
 - Every section wrapper gets the live component padding (32/64, 24/32, 16) via `:where()`, so a block's `.x-wrapper` rule overrides it without `!important`.
 - Buttons (decorateButtons): `**link**` = primary green, `_link_` = secondary white, `**_link_**` (`.button.accent`) = link with arrow.

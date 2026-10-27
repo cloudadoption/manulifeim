@@ -1,7 +1,6 @@
 /* promo (simpleBanner): green | navy | blue | gold | violet | white, double
    Rows are the items, cells .promo-image / .promo-content / .promo-colour (authored, in
    place); in the content: title, text paragraphs, arrow-link paragraphs. */
-/* stylelint-disable no-descending-specificity */
 
 .promo {
   display: block;
@@ -15,19 +14,19 @@
 .promo .promo-item {
   display: block;
   box-shadow: var(--shadow-bar, 0 1px 4px rgb(0 0 0 / 16%));
-  background: var(--color-primary, #06854d);
+  background: var(--color-primary);
 }
 
 .promo .promo-item:not(:first-child) {
   margin-top: 16px;
 }
 
-.promo .promo-item.promo-green { background: var(--color-primary, #06854d); }
-.promo .promo-item.promo-navy { background: var(--color-text, #282b3e); }
-.promo .promo-item.promo-blue { background: var(--color-blue, #0000c1); }
-.promo .promo-item.promo-gold { background: var(--color-gold, #a75900); }
-.promo .promo-item.promo-violet { background: var(--color-violet, #260b42); }
-.promo .promo-item.promo-white { background: var(--color-white, #fff); }
+.promo .promo-item.promo-green { background: var(--color-primary); }
+.promo .promo-item.promo-navy { background: var(--color-text); }
+.promo .promo-item.promo-blue { background: var(--color-blue); }
+.promo .promo-item.promo-gold { background: var(--color-gold); }
+.promo .promo-item.promo-violet { background: var(--color-violet); }
+.promo .promo-item.promo-white { background: var(--color-white); }
 
 .promo .promo-image {
   position: relative;
@@ -62,8 +61,8 @@
   font-size: 24px;
   font-weight: 300;
   line-height: 1.25;
-  letter-spacing: -0.02em;
-  color: var(--color-white, #fff);
+  letter-spacing: var(--letter-spacing);
+  color: var(--color-white);
 }
 
 .promo .promo-content > :is(h1, h2, h3, h4, h5, h6) :is(em, i) {
@@ -83,7 +82,7 @@
 /* text: the paragraphs (and lists) that are not arrow links; 24px below the last one */
 .promo .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) {
   margin: 0;
-  color: var(--color-white, #fff);
+  color: var(--color-white);
 }
 
 .promo .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) + :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) {
@@ -98,8 +97,8 @@
 .promo .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) li {
   font-size: 16px;
   line-height: 1.75;
-  letter-spacing: -0.02em;
-  color: var(--color-white, #fff);
+  letter-spacing: var(--letter-spacing);
+  color: var(--color-white);
 }
 
 .promo .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) sup {
@@ -107,7 +106,7 @@
 }
 
 .promo .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) a:any-link {
-  color: var(--color-white, #fff);
+  color: var(--color-white);
   text-decoration: underline;
   overflow-wrap: anywhere;
 }
@@ -130,8 +129,8 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
-  letter-spacing: -0.02em;
-  color: var(--color-white, #fff);
+  letter-spacing: var(--letter-spacing);
+  color: var(--color-white);
   text-decoration: none;
 }
 
@@ -149,7 +148,7 @@
 
 .promo a.link-cta:hover,
 .promo a.link-cta:focus {
-  color: var(--color-white, #fff);
+  color: var(--color-white);
   text-decoration: underline;
 }
 
@@ -158,7 +157,7 @@
 .promo .promo-white .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) li,
 .promo .promo-white .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) a:any-link,
 .promo .promo-white a.link-cta {
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 @media (width >= 601px) {

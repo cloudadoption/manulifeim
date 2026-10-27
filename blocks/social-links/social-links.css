@@ -26,7 +26,7 @@
   justify-content: space-between;
   padding: 24px 32px;
   border-radius: 0 0 3px 3px;
-  background: var(--color-white, #fff);
+  background: var(--color-white);
   text-decoration: none;
 }
 
@@ -45,8 +45,8 @@
   font-size: 12px;
   font-weight: 700;
   line-height: 1.33;
-  letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  letter-spacing: var(--letter-spacing);
+  color: var(--color-text);
 }
 
 .social-links .social-links-icon,

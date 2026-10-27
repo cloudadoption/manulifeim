@@ -144,6 +144,8 @@ function setColumns(block, ul, count) {
 
 export default async function decorate(block) {
   const cl = block.classList;
+  // the default variant gets a positive class like hero's `banner`
+  if (!['tiles', 'news', 'separate'].some((v) => cl.contains(v))) cl.add('teaser');
   const authoring = isAuthoring();
   const ul = el('ul', 'cards-list');
   const config = {};

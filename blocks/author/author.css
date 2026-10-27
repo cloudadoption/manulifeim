@@ -43,8 +43,8 @@
   margin: 0;
   font-size: 12px;
   line-height: 1.33;
-  letter-spacing: -0.02em;
-  color: var(--color-header-mobile, #424559);
+  letter-spacing: var(--letter-spacing);
+  color: var(--color-header-mobile);
 }
 
 /* name, then title */
@@ -52,7 +52,7 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
 }
 
 .author .author-text > :is(p, .prosemirror-editor):first-child strong {
@@ -83,8 +83,8 @@
   font-size: 12px;
   font-weight: 700;
   line-height: 1.5;
-  letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  letter-spacing: var(--letter-spacing);
+  color: var(--color-text);
   text-decoration: none;
 }
 
@@ -102,7 +102,7 @@
 
 .author .author-text a:hover,
 .author .author-text a:focus {
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   text-decoration: underline;
 }
 
@@ -116,7 +116,7 @@
   min-height: 144px;
   margin: 48px 0;
   padding: 16px;
-  background-color: var(--color-white, #fff);
+  background-color: var(--color-white);
   box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
 }
 
@@ -154,7 +154,7 @@
 }
 
 .author .author-logo-link a:focus-visible {
-  outline: 2px solid var(--color-text, #282b3e);
+  outline: 2px solid var(--color-text);
   outline-offset: -2px;
 }
 
@@ -178,7 +178,7 @@
   font-size: 12px;
   font-weight: 400;
   line-height: 1.33;
-  color: var(--color-primary, #06854d);
+  color: var(--color-primary);
   white-space: pre-wrap;
 }
 
@@ -188,5 +188,5 @@
 
 .author.inline .author-text > :is(p, .prosemirror-editor):nth-child(n+3):not(.link-cta-wrapper) {
   width: 100%;
-  color: var(--color-header-mobile, #424559);
+  color: var(--color-header-mobile);
 }

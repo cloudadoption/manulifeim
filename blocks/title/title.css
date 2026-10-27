@@ -16,8 +16,8 @@
   font-size: 40px;
   font-weight: 300;
   line-height: 1.25;
-  letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  letter-spacing: var(--letter-spacing);
+  color: var(--color-text);
 }
 
 .title .title-heading em,
@@ -48,8 +48,8 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
-  letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  letter-spacing: var(--letter-spacing);
+  color: var(--color-text);
   text-decoration: none;
 }
 
@@ -67,7 +67,7 @@
 
 .title a.title-link-anchor:hover,
 .title a.title-link-anchor:focus {
-  color: var(--color-text, #282b3e);
+  color: var(--color-text);
   text-decoration: underline;
 }
 
