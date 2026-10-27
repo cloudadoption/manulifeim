@@ -1,4 +1,8 @@
-/* hero: carousel | banner (+light, overlap, tall) | page-header (+dark) */
+/* hero: carousel | banner (+light, overlap, tall) | page-header (+dark)
+   Authored rows and cells are styled in place: the block is the old wrapper, banner and
+   page-header rows are display: contents, carousel rows are the slides. Tags inside the
+   content cell are selected by name; Canvas swaps an edited p / h for .prosemirror-editor,
+   hence :is(p, .prosemirror-editor). */
 /* stylelint-disable no-descending-specificity */
 
 /* full-bleed: the hero section has no section padding */
@@ -16,51 +20,74 @@ main > .section.hero-container > .hero-wrapper {
   position: relative;
 }
 
-.hero .hero-title {
+.hero .hero-content {
+  color: var(--color-text, #282b3e);
+}
+
+/* title */
+.hero .hero-content :is(h1, h2, h3, h4, h5, h6) {
   margin: 0 0 8px;
   font-size: 48px;
   font-weight: 300;
   line-height: 1.25;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: inherit;
 }
 
-.hero .hero-title em,
-.hero .hero-title i {
+.hero .hero-content :is(h1, h2, h3, h4, h5, h6) :is(em, i) {
   font-family: var(--font-family-serif, "Manulife JH Serif", "Times New Roman", serif);
   font-style: italic;
 }
 
-.hero .hero-title b,
-.hero .hero-title strong {
+.hero .hero-content :is(h1, h2, h3, h4, h5, h6) :is(b, strong) {
   font-weight: 700;
 }
 
-.hero .hero-title sup,
-.hero .hero-title sub {
+.hero .hero-content :is(sup, sub) {
   font-size: 0.7em;
   vertical-align: super;
 }
 
-.hero .hero-title sub {
+.hero .hero-content sub {
   vertical-align: sub;
 }
 
-.hero .hero-title p {
-  margin: 0;
-  font-size: inherit;
-}
-
-.hero .hero-subtitle {
+/* subtitle: every paragraph of the content cell (overrides follow) */
+.hero .hero-content > :is(p, .prosemirror-editor) {
   margin: 8px 0 0;
   font-size: 16px;
   line-height: 1.75;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: inherit;
+}
+
+/* eyebrow ("Q4 2025"): the paragraph right before the title; live puts it on the title's
+   first line (inside the h1, then <br>), so it takes the title's line box */
+.hero .hero-content > :is(p, .prosemirror-editor):has(+ :is(h1, h2, h3, h4, h5, h6)):not(:has(picture)) {
+  margin: 0;
+  font-size: 48px;
+  font-weight: 300;
+  line-height: 1.25;
+}
+
+.hero .hero-content > :is(p, .prosemirror-editor):has(+ :is(h1, h2, h3, h4, h5, h6)) :is(b, strong) {
+  font-weight: 700;
 }
 
 /* buttons (primary large / secondary white) */
-.hero a.hero-link {
+.hero .hero-content .hero-buttons {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+}
+
+/* the button paragraphs are flex boxes, so the link keeps its own margins (no line box) */
+.hero .hero-content .hero-buttons > * {
+  display: flex;
+  margin: 0;
+}
+
+.hero a.button {
   position: relative;
   top: 0;
   box-sizing: border-box;
@@ -85,29 +112,52 @@ main > .section.hero-container > .hero-wrapper {
   transition: border-color 0.3s, background-color 0.3s, color 0.3s, top 0.1s;
 }
 
-.hero a.hero-link:hover,
-.hero a.hero-link:focus {
+.hero a.button:hover,
+.hero a.button:focus {
   border-color: var(--color-primary-dark, #046138);
   background-color: var(--color-primary-dark, #046138);
   color: var(--color-white, #fff);
   text-decoration: none;
 }
 
-.hero a.hero-link:focus {
+.hero a.button:focus {
   box-shadow: none;
   outline-offset: -4px;
 }
 
-.hero a.hero-link:active {
+.hero a.button:active {
   top: 2px;
   border-color: var(--color-primary, #06854d);
   background-color: var(--color-primary, #06854d);
 }
 
+/* media cells: with or without the paragraph / editor layers around the picture
+   (.ProseMirror is the Canvas editor's own class name) */
+/* stylelint-disable selector-class-pattern */
+.hero .hero-media :is(p, .prosemirror-editor, .ProseMirror, picture),
+.hero .hero-slide-image :is(p, .prosemirror-editor, .ProseMirror, picture) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+/* stylelint-enable selector-class-pattern */
+
+/* config rows (Speed): hidden on pages, editable in Canvas */
+.hero > [data-config] {
+  display: none;
+}
+
+html[quick-edit] .hero > [data-config] {
+  display: flex;
+  gap: 16px;
+  padding: 8px 24px;
+  font-size: 14px;
+}
+
 /* ---------------- carousel ---------------- */
 
-.hero.carousel .hero-slider {
-  position: relative;
+.hero.carousel {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -116,11 +166,7 @@ main > .section.hero-container > .hero-wrapper {
   background: var(--color-white, #fff);
 }
 
-.hero.carousel .hero-slides {
-  display: flex;
-}
-
-.hero.carousel .hero-slide {
+.hero.carousel > .hero-slide {
   position: absolute;
   top: 0;
   left: 0;
@@ -132,7 +178,7 @@ main > .section.hero-container > .hero-wrapper {
   opacity: 0;
 }
 
-.hero.carousel .hero-slide.active {
+.hero.carousel > .hero-slide.active {
   z-index: 2;
   display: block;
   opacity: 1;
@@ -141,18 +187,15 @@ main > .section.hero-container > .hero-wrapper {
 }
 
 /* authoring (Canvas): slides stacked and all visible, nothing animates */
-.hero.carousel.static .hero-slider {
+.hero.carousel.static {
+  flex-direction: column;
   height: auto;
 }
 
-.hero.carousel.static .hero-slides {
-  flex-direction: column;
-  width: 100%;
-}
-
-.hero.carousel.static .hero-slide {
+.hero.carousel.static > .hero-slide {
   position: relative;
   display: block;
+  width: 100%;
   opacity: 1;
   animation: none;
 }
@@ -162,8 +205,10 @@ main > .section.hero-container > .hero-wrapper {
   100% { opacity: 1; }
 }
 
-.hero.carousel .hero-image img {
+.hero.carousel .hero-slide-image img {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   max-inline-size: 100%;
@@ -171,17 +216,19 @@ main > .section.hero-container > .hero-wrapper {
   object-position: center;
 }
 
-.hero.carousel .hero-gradient {
+/* gradient between the image and the text */
+.hero.carousel > .hero-slide::after {
+  content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(90deg, #000, transparent);
 }
 
-.hero.carousel.light .hero-gradient {
+.hero.carousel.light > .hero-slide::after {
   background: linear-gradient(90deg, #fff, hsl(0deg 0% 100% / 0%));
 }
 
-.hero.carousel .hero-content {
+.hero.carousel .hero-slide-content {
   position: absolute;
   top: 0;
   z-index: 1;
@@ -190,32 +237,27 @@ main > .section.hero-container > .hero-wrapper {
   max-width: 1200px;
   padding: 24px;
   background-color: transparent;
-}
-
-.hero.carousel .hero-title,
-.hero.carousel .hero-subtitle {
   color: var(--color-white, #fff);
 }
 
-.hero.carousel.light .hero-title,
-.hero.carousel.light .hero-subtitle {
+.hero.carousel.light .hero-slide-content {
   color: var(--color-text, #282b3e);
 }
 
-.hero.carousel a.hero-link-secondary {
+.hero.carousel a.button.secondary {
   border-color: var(--color-white, #fff);
   background-color: var(--color-white, #fff);
   color: var(--color-primary-dark, #046138);
 }
 
-.hero.carousel a.hero-link-secondary:hover,
-.hero.carousel a.hero-link-secondary:focus {
+.hero.carousel a.button.secondary:hover,
+.hero.carousel a.button.secondary:focus {
   border-color: var(--color-primary-dark, #046138);
   background-color: var(--color-white, #fff);
   color: var(--color-primary-dark, #046138);
 }
 
-.hero.carousel a.hero-link-secondary:active {
+.hero.carousel a.button.secondary:active {
   border-color: var(--color-primary, #06854d);
   background-color: var(--color-white, #fff);
   color: var(--color-primary, #06854d);
@@ -248,9 +290,14 @@ main > .section.hero-container > .hero-wrapper {
 
 .hero.carousel .hero-prev:hover,
 .hero.carousel .hero-next:hover {
-  outline: none;
   background: var(--color-carousel-ui-hover, #333);
   color: var(--color-white, #fff);
+}
+
+.hero.carousel .hero-prev:focus-visible,
+.hero.carousel .hero-next:focus-visible {
+  outline: 2px solid var(--color-white, #fff);
+  outline-offset: 2px;
 }
 
 .hero.carousel .hero-prev::before,
@@ -289,6 +336,11 @@ main > .section.hero-container > .hero-wrapper {
   justify-content: center;
   width: 40px;
   height: 32px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
   cursor: pointer;
 }
 
@@ -339,7 +391,9 @@ main > .section.hero-container > .hero-wrapper {
   background-color: var(--color-carousel-ui-hover, #333);
 }
 
+/* width is driven by the slide timer (Web Animations) */
 .hero.carousel .hero-pill-fill {
+  display: block;
   width: 0;
   min-width: 0;
   max-width: 100%;
@@ -348,53 +402,48 @@ main > .section.hero-container > .hero-wrapper {
   background-color: var(--color-white, #fff);
 }
 
-.hero.carousel .hero-pill.active .hero-pill-fill {
-  animation: hero-progress var(--hero-speed, 5s) linear forwards;
-}
-
 .hero.carousel .hero-pill.paused .hero-pill-fill {
   display: none;
 }
 
-@keyframes hero-progress {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .hero.carousel .hero-slide.active {
+  .hero.carousel > .hero-slide.active {
     animation: none;
   }
 }
 
 /* ---------------- banner ---------------- */
 
-.hero.banner .hero-wrap {
-  position: relative;
-  display: block;
-  height: auto;
+.hero.banner {
+  display: flex;
+  flex-direction: column;
 }
 
-.hero.banner.overlap .hero-wrap {
+.hero.banner > div {
+  display: contents;
+}
+
+.hero.banner.overlap {
   z-index: 1;
   margin-bottom: 0;
   padding-bottom: 0;
 }
 
-.hero.banner .hero-image-desktop img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top left;
+/* small screens: a 188px crop of the image above the text (the authored mobile image when
+   there is one) */
+.hero.banner .hero-media {
+  order: -1;
+  height: 188px;
 }
 
-.hero.banner .hero-image-mobile img {
+.hero.banner.has-mobile-media .hero-media-primary {
+  display: none;
+}
+
+.hero.banner .hero-media img {
   display: block;
   width: 100%;
-  height: 188px;
+  height: 100%;
   object-fit: cover;
 }
 
@@ -408,26 +457,20 @@ main > .section.hero-container > .hero-wrapper {
   background-color: var(--color-white, #fff);
 }
 
-.hero.banner .hero-buttons {
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: flex-start;
-}
-
-.hero.banner a.hero-link-secondary {
+.hero.banner a.button.secondary {
   border-color: var(--color-primary, #06854d);
   background-color: transparent;
   color: var(--color-primary, #06854d);
 }
 
-.hero.banner a.hero-link-secondary:hover,
-.hero.banner a.hero-link-secondary:focus {
+.hero.banner a.button.secondary:hover,
+.hero.banner a.button.secondary:focus {
   border-color: var(--color-primary-dark, #046138);
   background-color: transparent;
   color: var(--color-primary-dark, #046138);
 }
 
-.hero.banner a.hero-link-secondary:active {
+.hero.banner a.button.secondary:active {
   border-color: var(--color-primary, #06854d);
   background-color: transparent;
   color: var(--color-primary, #06854d);
@@ -435,56 +478,73 @@ main > .section.hero-container > .hero-wrapper {
 
 /* ---------------- page header ---------------- */
 
-.hero.page-header .hero-banner {
+.hero.page-header {
   box-sizing: border-box;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
   min-height: 250px;
   padding: 64px 24px;
   border-bottom: 1px solid var(--color-border, #ededed);
   background-color: var(--color-white, #fff);
 }
 
+.hero.page-header > div {
+  display: contents;
+}
+
+/* sized to their content like live's single flex item */
+.hero.page-header .hero-icon,
+.hero.page-header .hero-content {
+  align-self: flex-start;
+}
+
 /* press release root: live heroHeader (32px up to 600px; heroHeader2 elsewhere) */
-.template-press-release-root .hero.page-header .hero-banner {
+.template-press-release-root .hero.page-header {
   padding: 32px;
 }
 
-.hero.page-header .hero-icon img {
+.hero.page-header .hero-icon img,
+.hero.page-header .hero-content > :is(p, .prosemirror-editor):has(picture) img {
   display: block;
   width: 48px;
   height: 48px;
 }
 
-.hero.page-header .hero-title {
+.hero.page-header .hero-content :is(h1, h2, h3, h4, h5, h6) {
   margin: 16px 0 0;
   font-size: 40px;
 }
 
-.hero.page-header .hero-title.hero-title-first {
+.hero.page-header:not(.has-icon) .hero-content > :is(h1, h2, h3, h4, h5, h6):where(:first-child) {
   margin-top: 64px;
 }
 
 /* live .caseStudyList .heroHeader2__banner / __title */
-.template-case-study-list .hero.page-header .hero-banner {
+.template-case-study-list .hero.page-header {
   padding: 24px 16px;
 }
 
-.template-case-study-list .hero.page-header .hero-title {
+.template-case-study-list .hero.page-header .hero-content :is(h1, h2, h3, h4, h5, h6) {
   margin: 0;
   font-weight: 400;
 }
 
-.hero.page-header .hero-subtitle {
+.hero.page-header .hero-content > :is(p, .prosemirror-editor) {
   max-width: 600px;
   margin: 16px 0 0;
 }
 
-.hero.page-header .hero-cta-wrapper {
+.hero.page-header .hero-content > :is(p, .prosemirror-editor):has(picture) {
   margin: 0;
 }
 
-.hero.page-header a.hero-cta {
+.hero.page-header .hero-content > :is(p, .prosemirror-editor).link-cta-wrapper {
+  max-width: none;
+  margin: 0;
+}
+
+.hero.page-header a.link-cta {
   display: inline-flex;
   align-items: center;
   margin-top: 16px;
@@ -493,11 +553,11 @@ main > .section.hero-container > .hero-wrapper {
   font-weight: 700;
   line-height: 1.5;
   letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
+  color: inherit;
   text-decoration: none;
 }
 
-.hero.page-header a.hero-cta::after {
+.hero.page-header a.link-cta::after {
   content: "";
   position: relative;
   top: -1px;
@@ -509,21 +569,19 @@ main > .section.hero-container > .hero-wrapper {
   mask: url("../../icons/arrow-right.svg") center / contain no-repeat;
 }
 
-.hero.page-header a.hero-cta:hover,
-.hero.page-header a.hero-cta:focus,
-.hero.page-header a.hero-cta:active {
+.hero.page-header a.link-cta:hover,
+.hero.page-header a.link-cta:focus,
+.hero.page-header a.link-cta:active {
   color: var(--color-primary-dark, #046138);
   text-decoration: underline;
 }
 
-.hero.page-header.dark .hero-banner {
+.hero.page-header.dark {
   background-color: var(--color-text, #282b3e);
   color: var(--color-white, #fff);
 }
 
-.hero.page-header.dark .hero-title,
-.hero.page-header.dark .hero-subtitle,
-.hero.page-header.dark a.hero-cta {
+.hero.page-header.dark .hero-content {
   color: var(--color-white, #fff);
 }
 
@@ -536,95 +594,101 @@ body:not(.template-case-study-list) main > .section.hero-container:has(.hero.pag
 
 /* ---------------- >= 601px (live <= 800) ---------------- */
 @media (width >= 601px) {
-  .hero .hero-title {
+  .hero .hero-content :is(h1, h2, h3, h4, h5, h6) {
     margin-bottom: 16px;
   }
 
-  .hero.carousel .hero-title,
-  .hero.banner .hero-title {
+  .hero.carousel .hero-content :is(h1, h2, h3, h4, h5, h6),
+  .hero.banner .hero-content :is(h1, h2, h3, h4, h5, h6),
+  .hero.carousel .hero-content > :is(p, .prosemirror-editor):has(+ :is(h1, h2, h3, h4, h5, h6)):not(:has(picture)),
+  .hero.banner .hero-content > :is(p, .prosemirror-editor):has(+ :is(h1, h2, h3, h4, h5, h6)):not(:has(picture)) {
     font-size: 64px;
   }
 
-  .hero.page-header .hero-title {
+  .hero.page-header .hero-content :is(h1, h2, h3, h4, h5, h6) {
     font-size: 48px;
   }
 
-  .hero .hero-subtitle {
+  .hero .hero-content > :is(p, .prosemirror-editor) {
     margin-top: 24px;
   }
 
-  .hero.page-header .hero-subtitle {
+  .hero .hero-content > :is(p, .prosemirror-editor):has(+ :is(h1, h2, h3, h4, h5, h6)):not(:has(picture)) {
+    margin-top: 0;
+  }
+
+  .hero.page-header .hero-content > :is(p, .prosemirror-editor) {
     margin-top: 16px;
   }
 
-  .hero.carousel .hero-gradient {
+  .hero.carousel > .hero-slide::after {
     background: linear-gradient(90deg, #000, transparent 70%, transparent 0);
   }
 
-  .hero.carousel.light .hero-gradient {
+  .hero.carousel.light > .hero-slide::after {
     background: linear-gradient(90deg, #fff, hsl(0deg 0% 100% / 0%) 70%);
   }
 
-  .hero.banner.overlap .hero-wrap {
+  .hero.banner.overlap {
     margin-bottom: -144px;
     padding-bottom: 128px;
   }
 
-  .hero.banner .hero-buttons {
+  .hero.banner .hero-content .hero-buttons {
     flex-flow: row wrap;
   }
 
-  .hero.page-header .hero-banner,
-  .template-press-release-root .hero.page-header .hero-banner,
-  .template-case-study-list .hero.page-header .hero-banner {
+  .hero.page-header,
+  .template-press-release-root .hero.page-header,
+  .template-case-study-list .hero.page-header {
     padding: 64px;
   }
 }
 
 /* ---------------- >= 801px (live <= 1100) ---------------- */
 @media (width >= 801px) {
-  .hero a.hero-link {
+  .hero a.button {
     margin-top: 24px;
   }
 
-  .hero.carousel .hero-content {
+  .hero.carousel .hero-slide-content {
     padding: 48px 64px;
   }
 
-  .hero.carousel a.hero-link-secondary,
-  .hero.banner a.hero-link-secondary {
+  .hero.carousel a.button.secondary,
+  .hero.banner a.button.secondary {
     border-color: var(--color-white, #fff);
     background-color: var(--color-white, #fff);
     color: var(--color-primary, #06854d);
   }
 
-  .hero.carousel a.hero-link-secondary:hover,
-  .hero.carousel a.hero-link-secondary:focus,
-  .hero.banner a.hero-link-secondary:hover,
-  .hero.banner a.hero-link-secondary:focus {
+  .hero.carousel a.button.secondary:hover,
+  .hero.carousel a.button.secondary:focus,
+  .hero.banner a.button.secondary:hover,
+  .hero.banner a.button.secondary:focus {
     border-color: var(--color-border-strong, #e0e0e0);
     background-color: var(--color-border-strong, #e0e0e0);
     color: var(--color-text, #282b3e);
   }
 
-  .hero.carousel a.hero-link-secondary:active,
-  .hero.banner a.hero-link-secondary:active {
+  .hero.carousel a.button.secondary:active,
+  .hero.banner a.button.secondary:active {
     border-color: var(--color-white, #fff);
     background-color: var(--color-white, #fff);
     color: var(--color-primary, #06854d);
   }
 
-  .hero.banner .hero-wrap {
-    display: flex;
+  .hero.banner {
+    flex-direction: row;
     align-items: center;
     height: 600px;
   }
 
-  .hero.banner.tall .hero-wrap {
+  .hero.banner.tall {
     height: 848px;
   }
 
-  .hero.banner .hero-wrap::before {
+  .hero.banner::before {
     content: "";
     position: absolute;
     top: 0;
@@ -635,49 +699,60 @@ body:not(.template-case-study-list) main > .section.hero-container:has(.hero.pag
     background: linear-gradient(90deg, #000, transparent 80%);
   }
 
-  .hero.banner.light .hero-wrap::before {
+  .hero.banner.light::before {
     content: none;
   }
 
-  .hero.banner .hero-image-mobile {
+  .hero.banner .hero-media {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero.banner.has-mobile-media .hero-media-primary {
+    display: block;
+  }
+
+  .hero.banner .hero-media-mobile {
     display: none;
+  }
+
+  .hero.banner .hero-media img {
+    object-position: top left;
   }
 
   .hero.banner .hero-content {
     width: 75%;
     padding: 48px 64px;
     background-color: transparent;
-  }
-
-  .hero.banner .hero-title,
-  .hero.banner .hero-subtitle {
     color: var(--color-white, #fff);
   }
 
-  .hero.banner.light .hero-title,
-  .hero.banner.light .hero-subtitle {
+  .hero.banner.light .hero-content {
     color: var(--color-text, #282b3e);
   }
 
-  .hero.banner.overlap .hero-wrap {
+  .hero.banner.overlap {
     margin-bottom: -152px;
   }
 }
 
 @media (width >= 1100px) {
-  .hero.banner .hero-image-desktop img {
+  .hero.banner .hero-media img {
     object-position: top right;
   }
 }
 
 /* ---------------- >= 1101px (desktop) ---------------- */
 @media (width >= 1101px) {
-  .hero.carousel .hero-content,
+  .hero.carousel .hero-slide-content,
   .hero.banner .hero-content {
     width: 45%;
   }
 
-  .hero.banner.overlap .hero-wrap {
+  .hero.banner.overlap {
     margin-bottom: -160px;
   }
 

@@ -11,6 +11,13 @@ const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
   'August', 'September', 'October', 'November', 'December'];
 
 /**
+ * True for an authored cell that holds only an image (with or without its <p>).
+ * @param {Element} cell
+ * @returns {boolean}
+ */
+export const isMediaCell = (cell) => !!cell.querySelector('picture, img') && cell.textContent.trim() === '';
+
+/**
  * Parses a date from ISO strings, "Month D, YYYY", unix seconds / ms or
  * spreadsheet serial numbers.
  * @param {*} value

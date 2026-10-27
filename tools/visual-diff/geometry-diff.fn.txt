@@ -1,0 +1,91 @@
+async (page) => {
+  // Published-look regression check for code changes (Playwright MCP browser_run_code).
+  // Job: tools/visual-diff/_job.json on the dev server:
+  //   { "a": "https://main--manulifeim--cloudadoption.aem.page", "b": "https://<branch>--...",
+  //     "paths": ["/institutional/tw/en", ...], "widths": [1440, 768, 390], "tolerance": 2 }
+  // For each path and width it loads a, then b (one page at a time), makes every image load,
+  // records every visible h1-h6 / p / li / a / img / button in <main> and the footer (box,
+  // font size / weight / colour) keyed by tag + text (img: alt or file name, button: label)
+  // and reports what moved, resized, restyled, appeared or disappeared. Ends on about:blank.
+  page.setDefaultTimeout(15000);
+  const job = await (await page.request.get('http://localhost:3000/tools/visual-diff/_job.json', { timeout: 5000 })).json();
+  const tol = job.tolerance ?? 2;
+  const collect = () => {
+    const out = [];
+    document.querySelectorAll('main h1, main h2, main h3, main h4, main h5, main h6, main p, main li, main a, main img, main button, footer a, footer p')
+      .forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (!r.width || !r.height) return;
+        const cs = getComputedStyle(el);
+        if (cs.visibility === 'hidden') return;
+        let text;
+        if (el.tagName === 'IMG') text = el.getAttribute('alt') || (el.getAttribute('src') || '').split('/').pop().split('?')[0];
+        else if (el.tagName === 'BUTTON') text = el.getAttribute('aria-label') || el.textContent;
+        else text = el.textContent;
+        text = text.replace(/\s+/g, ' ').trim().slice(0, 40);
+        out.push({
+          k: `${el.tagName}|${text}`,
+          x: Math.round(r.x), y: Math.round(r.y + window.scrollY), w: Math.round(r.width), h: Math.round(r.height),
+          f: `${cs.fontSize}/${cs.fontWeight}/${cs.color}`,
+        });
+      });
+    return { items: out, height: document.documentElement.scrollHeight };
+  };
+  const load = async (base, path, width) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(`${base}${path}`, { waitUntil: 'load', timeout: 30000 });
+    await page.evaluate(() => localStorage.setItem('mim-inst-attestation-accepted-TW', 'true'));
+    await page.reload({ waitUntil: 'load', timeout: 30000 });
+    await page.evaluate(async () => {
+      for (let y = 0; y < document.documentElement.scrollHeight; y += 700) {
+        window.scrollTo(0, y);
+        await new Promise((r) => { setTimeout(r, 100); });
+      }
+      window.scrollTo(0, 0);
+      const imgs = [...document.querySelectorAll('main img, footer img')];
+      imgs.forEach((i) => { i.loading = 'eager'; });
+      await Promise.race([
+        Promise.all(imgs.map((i) => (i.complete ? null : new Promise((r) => { i.onload = r; i.onerror = r; })))),
+        new Promise((r) => { setTimeout(r, 8000); }),
+      ]);
+    });
+    await page.waitForTimeout(1500);
+    return page.evaluate(collect);
+  };
+  const report = [];
+  for (const path of job.paths) {
+    for (const width of job.widths) {
+      const A = await load(job.a, path, width);
+      const B = await load(job.b, path, width);
+      const byKey = (list) => {
+        const m = new Map();
+        list.forEach((i) => { if (!m.has(i.k)) m.set(i.k, []); m.get(i.k).push(i); });
+        return m;
+      };
+      const ma = byKey(A.items);
+      const mb = byKey(B.items);
+      const diffs = [];
+      ma.forEach((as, k) => {
+        const bs = mb.get(k) || [];
+        as.forEach((a, n) => {
+          const b = bs[n];
+          if (!b) { diffs.push(`- gone ${k} @${a.x},${a.y} ${a.w}x${a.h}`); return; }
+          const moved = Math.abs(a.x - b.x) > tol || Math.abs(a.y - b.y) > tol;
+          const sized = Math.abs(a.w - b.w) > tol || Math.abs(a.h - b.h) > tol;
+          if (moved || sized || a.f !== b.f) {
+            diffs.push(`~ ${k} ${a.x},${a.y} ${a.w}x${a.h} -> ${b.x},${b.y} ${b.w}x${b.h}${a.f !== b.f ? ` style ${a.f} -> ${b.f}` : ''}`);
+          }
+        });
+      });
+      mb.forEach((bs, k) => {
+        const as = ma.get(k) || [];
+        bs.slice(as.length).forEach((b) => diffs.push(`+ new ${k} @${b.x},${b.y} ${b.w}x${b.h}`));
+      });
+      report.push({
+        path: path.replace('/institutional/tw/en', '') || '/', width, hA: A.height, hB: B.height, n: A.items.length, diffs: diffs.length, first: diffs.slice(0, job.max ?? 8),
+      });
+    }
+  }
+  await page.goto('about:blank');
+  return report;
+}
