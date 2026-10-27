@@ -291,6 +291,10 @@ async function loadLazy(doc) {
 function loadDelayed() {
   import('./consent-check.js');
   // load anything that can be postponed to the latest here
+  // showcase notice ("not an official Manulife website"), well after LCP
+  window.setTimeout(() => {
+    import('./showcase-notice.js').then(({ default: showShowcaseNotice }) => showShowcaseNotice());
+  }, 3500);
 }
 
 async function loadPage() {

@@ -1,0 +1,61 @@
+/* Showcase notice (scripts/showcase-notice.js): native modal <dialog>, top layer */
+
+html.showcase-notice-open {
+  overflow: hidden;
+}
+
+dialog.showcase-notice {
+  box-sizing: border-box;
+  width: calc(100% - 32px);
+  max-width: 672px;
+  max-height: calc(100% - 32px);
+  margin: auto;
+  border: 0;
+  border-top: 6px solid var(--color-primary);
+  padding: 32px 24px 24px;
+  background-color: var(--color-white);
+  color: var(--color-text);
+  box-shadow: 0 12px 40px rgb(40 43 62 / 35%);
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-s);
+  line-height: 1.5;
+  overflow-y: auto;
+}
+
+dialog.showcase-notice::backdrop {
+  background-color: rgb(40 43 62 / 60%);
+}
+
+dialog.showcase-notice .showcase-notice-title {
+  margin: 0 0 16px;
+  font-family: var(--heading-font-family);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+dialog.showcase-notice .showcase-notice-text {
+  margin: 0 0 24px;
+}
+
+dialog.showcase-notice button.showcase-notice-button {
+  width: 100%;
+  height: auto;
+  white-space: normal;
+}
+
+dialog.showcase-notice button.showcase-notice-button:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+@media (width >= 768px) {
+  dialog.showcase-notice {
+    padding: 40px 40px 32px;
+    font-size: var(--body-font-size-m);
+  }
+
+  dialog.showcase-notice .showcase-notice-title {
+    font-size: 28px;
+  }
+}
