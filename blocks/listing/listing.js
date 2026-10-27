@@ -327,12 +327,13 @@ function dropdown(options, current, onChange, label) {
   const trigger = el(
     'button',
     {
-      type: 'button', class: 'listing-dropdown-trigger', 'aria-expanded': 'false', 'aria-haspopup': 'listbox', 'aria-controls': listId, 'aria-label': `${label}: ${currentLabel}`,
+      type: 'button', class: 'listing-dropdown-trigger', 'aria-expanded': 'false', 'aria-controls': listId, 'aria-label': `${label}: ${currentLabel}`,
     },
     el('span', { class: 'listing-dropdown-text' }, currentLabel),
     icon('arrow-down'),
   );
-  const list = el('ul', { class: 'listing-dropdown-list', id: listId, role: 'listbox' });
+  // disclosure pattern: a button toggling a plain list of buttons, the current one marked
+  const list = el('ul', { class: 'listing-dropdown-list', id: listId });
   list.hidden = true;
   const close = () => {
     list.hidden = true;
@@ -343,7 +344,7 @@ function dropdown(options, current, onChange, label) {
     const b = el(
       'button',
       {
-        type: 'button', class: 'listing-dropdown-option', role: 'option', 'aria-selected': value === current ? 'true' : 'false',
+        type: 'button', class: 'listing-dropdown-option', ...(value === current ? { 'aria-current': 'true' } : {}),
       },
       icon('checkmark'),
       text,
@@ -694,12 +695,13 @@ export default async function decorate(block) {
     });
 
     // type tabs with counts
-    const tabs = el('ul', { class: 'listing-tabs', role: 'tablist' });
+    // toggle buttons filtering one result list (not tabs)
+    const tabs = el('ul', { class: 'listing-tabs' });
     const types = facetCounts(withoutType, (it) => resourceType(it));
     const tab = (value, label, n) => {
       const active = (value || '') === (typeFilter[0] || (baseType ? baseType[0] : ''));
       const b = el('button', {
-        type: 'button', class: 'listing-tab-trigger', role: 'tab', 'aria-selected': active ? 'true' : 'false', 'aria-label': `${label} (${n}) results are currently displaying below`,
+        type: 'button', class: 'listing-tab-trigger', 'aria-pressed': active ? 'true' : 'false',
       }, `${label} (${n})`);
       b.addEventListener('click', () => {
         state.filters = { ...state.filters };
@@ -710,7 +712,7 @@ export default async function decorate(block) {
         // eslint-disable-next-line no-use-before-define
         render();
       });
-      return el('li', { class: `listing-tab${active ? ' active' : ''}`, role: 'presentation' }, b);
+      return el('li', { class: `listing-tab${active ? ' active' : ''}` }, b);
     };
     tabs.append(tab('', 'All Types', withoutType.length));
     const typeName = (t) => RESOURCE_TYPE_LABELS[t] || t;
@@ -743,7 +745,7 @@ export default async function decorate(block) {
     root.replaceChildren(el(
       'div',
       { class: 'listing-doc-inner' },
-      el('div', { class: 'listing-doc-filters' }, form, tabs),
+      el('div', { class: 'listing-doc-filters' }, form, el('div', { role: 'group', 'aria-label': 'Filter by type' }, tabs)),
       list,
       pager,
     ));

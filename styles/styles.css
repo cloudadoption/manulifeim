@@ -175,7 +175,6 @@
 /* base */
 html {
   box-sizing: border-box;
-  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -740,5 +739,51 @@ main > .section[data-layout]:last-child {
   main > .section[data-layout="8-4"] > div:not(:first-child),
   main > .section[data-layout="4-8"] > div:first-child {
     width: calc(33.333% - 16px);
+  }
+}
+
+/* motion: smooth anchor scrolling only when the user has not asked for less motion */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Windows high contrast / forced colours: controls get a visible border, and icons drawn as
+   CSS masks over currentcolor are painted in the text colour (the forced background would
+   hide them) */
+@media (forced-colors: active) {
+  .button,
+  button {
+    border: 1px solid ButtonText;
+  }
+
+  :is(a, button, summary)::before,
+  :is(a, button, summary)::after,
+  :is(.header-icon, .header-button-icon, .disclosure-main-icon, .disclosure-arrow-icon,
+    .attestation-icon, .listing-icon, .search-icon, .team-toggle-icon, .article-list-view-all-icon,
+    .article-list-control-icon, .browse-by-more-icon, .browse-by-sort-icon, .browse-by-sort-check,
+    .section-nav-check) {
+    forced-color-adjust: none;
+    background-color: CanvasText;
+  }
+
+  .hero.carousel .hero-pill-track {
+    border: 1px solid ButtonText;
+  }
+
+  .hero.carousel .hero-pill-fill {
+    forced-color-adjust: none;
+    background-color: Highlight;
   }
 }

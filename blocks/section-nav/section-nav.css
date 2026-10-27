@@ -215,7 +215,7 @@ main > .section.section-nav-container > .section-nav-wrapper {
   mask: url("../../icons/checkmark.svg") center / contain no-repeat;
 }
 
-.section-nav .section-nav-dropdown-item[aria-selected="true"] .section-nav-check {
+.section-nav .section-nav-dropdown-item[aria-current="location"] .section-nav-check {
   display: inline-block;
 }
 
@@ -303,4 +303,10 @@ main > .section.section-nav-container:has(.section-nav.links) {
   .section-nav.anchors .section-nav-list {
     display: flex;
   }
+}
+
+/* keyboard focus for the dropdown links (their outline is removed above) */
+.section-nav .section-nav-dropdown-item:focus-visible {
+  outline: 2px solid var(--color-text, #282b3e);
+  outline-offset: -2px;
 }

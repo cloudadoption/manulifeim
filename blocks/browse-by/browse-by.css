@@ -447,3 +447,9 @@
     max-width: 25%;
   }
 }
+
+/* keyboard focus for the controls whose outline is removed above */
+.browse-by :is(.browse-by-tab-button, .browse-by-link, .browse-by-more, .browse-by-sort-option):focus-visible {
+  outline: 2px solid var(--color-text, #282b3e);
+  outline-offset: -2px;
+}

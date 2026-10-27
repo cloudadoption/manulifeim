@@ -261,6 +261,8 @@ function buildBar(brand, tools, block) {
     caption.textContent = open ? closeLabel : openLabel;
     menuIcon.style.setProperty('--header-icon', `url("${window.hlx.codeBasePath}/icons/${open ? 'close' : 'mobile-menu'}.svg")`);
     document.body.style.overflowY = open ? 'hidden' : '';
+    // the page behind the open menu is out of reach for keyboard and screen readers
+    document.querySelectorAll('body > main, body > footer').forEach((e) => { e.inert = open; });
     if (open) bar.classList.remove('search-open');
   });
   buttons.append(menu);
