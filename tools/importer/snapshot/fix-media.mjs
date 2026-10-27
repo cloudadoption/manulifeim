@@ -14,9 +14,10 @@
  * markup changed (node tools/importer/da-upload.mjs --reupload-fixed).
  */
 import {
-  readdirSync, readFileSync, writeFileSync, statSync, existsSync,
+  readdirSync, readFileSync, writeFileSync, statSync, existsSync, copyFileSync,
 } from 'fs';
 import { join } from 'path';
+import { execFileSync } from 'child_process';
 import {
   SNAP_DIR, HOST_DIR, MEDIA_DIR, readJson, writeFile,
 } from './lib.mjs';
@@ -43,6 +44,18 @@ function walk(dir, test, out = []) {
 }
 
 const names = only.length ? only : readdirSync(MEDIA_DIR).filter((f) => !f.startsWith('.') && !/\.new-\d+\.png$|\.tmp-\d+\.png$/.test(f));
+// rasters over the 20 MB limit: scale down in place (same name, nothing else to rewrite)
+if (!dryRun) {
+  names.filter((n) => /\.(jpe?g|png|webp)$/i.test(n)).forEach((n) => {
+    const file = join(MEDIA_DIR, n);
+    if (statSync(file).size <= 20 * 1024 * 1024) return;
+    const tmp = `/tmp/fix-media-${process.pid}-${n}`;
+    execFileSync('convert', [file, '-resize', '3000x>', '-quality', '85', tmp]);
+    copyFileSync(tmp, file);
+    console.log(`resized ${n} to ${statSync(file).size} bytes`);
+  });
+}
+
 const results = names.map((n) => {
   try {
     return fixMediaFile(MEDIA_DIR, n, { dryRun, keepDir: ORIGINALS });
