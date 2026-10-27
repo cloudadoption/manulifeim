@@ -1,4 +1,6 @@
-/* author (author-container, manager-logo), inline */
+/* author (author-container, manager-logo), inline
+   Rows: .author-container / .author-manager-logo; cells: .author-photo + .author-text
+   (paragraphs: name, title, company, link) / .author-logo + .author-logo-link. */
 
 .author .author-container {
   display: flex;
@@ -37,33 +39,42 @@
   width: 100%;
 }
 
-.author .author-text p {
+.author .author-text > :is(p, .prosemirror-editor) {
   margin: 0;
-}
-
-.author .author-name {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  letter-spacing: -0.02em;
-  color: var(--color-text, #282b3e);
-}
-
-.author .author-title {
-  font-size: 14px;
-  line-height: 1.5;
-  letter-spacing: -0.02em;
-  color: var(--color-header-mobile, #424559);
-}
-
-.author .author-company {
   font-size: 12px;
   line-height: 1.33;
   letter-spacing: -0.02em;
   color: var(--color-header-mobile, #424559);
 }
 
-.author a.author-link {
+/* name, then title */
+.author .author-text > :is(p, .prosemirror-editor):first-child {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--color-text, #282b3e);
+}
+
+.author .author-text > :is(p, .prosemirror-editor):first-child strong {
+  font-weight: inherit;
+}
+
+/* live: "Craig Scordellis," above the title / company */
+.author .author-text > :is(p, .prosemirror-editor):first-child:has(+ :is(p, .prosemirror-editor):not(.link-cta-wrapper))::after {
+  content: ",";
+}
+
+.author .author-text > :is(p, .prosemirror-editor):nth-child(2):not(.link-cta-wrapper) {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* "Read bio": the link paragraph lays the link out as a flex item, like live */
+.author .author-text > .link-cta-wrapper {
+  display: flex;
+}
+
+.author .author-text a {
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
@@ -77,7 +88,7 @@
   text-decoration: none;
 }
 
-.author a.author-link::before {
+.author .author-text a::before {
   content: "";
   position: relative;
   top: -1px;
@@ -89,14 +100,15 @@
   mask: url("../../icons/arrow-right-circle.svg") center / contain no-repeat;
 }
 
-.author a.author-link:hover,
-.author a.author-link:focus {
+.author .author-text a:hover,
+.author .author-text a:focus {
   color: var(--color-text, #282b3e);
   text-decoration: underline;
 }
 
-/* asset manager logo */
+/* asset manager logo: the link covers the card, its text is only for screen readers */
 .author .author-manager-logo {
+  position: relative;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -108,16 +120,42 @@
   box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
 }
 
-.author .author-manager-logo a,
-.author .author-manager-logo picture {
+.author .author-logo,
+.author .author-logo picture {
   display: block;
   width: 100%;
 }
 
-.author .author-manager-logo img {
+.author .author-logo img {
   display: block;
   width: 100%;
   height: auto;
+}
+
+.author .author-logo-link {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* aem.page renders the link in a paragraph */
+.author .author-logo-link > :is(p, .prosemirror-editor) {
+  height: 100%;
+  margin: 0;
+}
+
+/* stylelint-disable-next-line no-descending-specificity -- the logo link, not a text link */
+.author .author-logo-link a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  font-size: 0;
+  color: transparent;
+}
+
+.author .author-logo-link a:focus-visible {
+  outline: 2px solid var(--color-text, #282b3e);
+  outline-offset: -2px;
 }
 
 /* inline: avatar 40px, "Name, Position" + company line */
@@ -130,30 +168,25 @@
   height: 40px;
 }
 
-.author.inline .author-personal-data {
-  display: flex;
+.author.inline .author-text {
   flex-flow: row wrap;
-  font-size: 12px;
-  line-height: 1.33;
-  letter-spacing: -0.02em;
-  color: var(--color-primary, #06854d);
 }
 
-.author.inline .author-personal-data .author-name {
-  font-size: inherit;
+.author.inline .author-text > :is(p, .prosemirror-editor),
+.author.inline .author-text > :is(p, .prosemirror-editor):first-child,
+.author.inline .author-text > :is(p, .prosemirror-editor):nth-child(2):not(.link-cta-wrapper) {
+  font-size: 12px;
   font-weight: 400;
-  line-height: inherit;
-  color: inherit;
+  line-height: 1.33;
+  color: var(--color-primary, #06854d);
   white-space: pre-wrap;
 }
 
-.author.inline .author-personal-data .author-title {
-  font-size: inherit;
-  line-height: inherit;
-  color: inherit;
+.author.inline .author-text > :is(p, .prosemirror-editor):first-child:has(+ :is(p, .prosemirror-editor):not(.link-cta-wrapper))::after {
+  content: ", ";
 }
 
-.author.inline .author-personal-data .author-company {
+.author.inline .author-text > :is(p, .prosemirror-editor):nth-child(n+3):not(.link-cta-wrapper) {
   width: 100%;
   color: var(--color-header-mobile, #424559);
 }

@@ -173,3 +173,12 @@ main > .section > .disclosure-wrapper {
 .disclosure .disclosure-content .default-content-wrapper > :not(:first-child) {
   margin-top: 16px;
 }
+
+/* Canvas: label and body cells as authored, both shown */
+.disclosure .disclosure-label-cell {
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}

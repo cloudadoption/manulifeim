@@ -10,80 +10,36 @@
  *
  * Rows before the image row = text, rows after it = caption.
  * An optional second picture in the image row is used as the mobile image (≤800px).
+ *
+ * The cells stay in place (Canvas edits them): `figure-content`, `figure-image`,
+ * `figure-caption`; CSS lays them out.
  */
+import { isMediaCell } from '../../scripts/block-utils.js';
+
 export default function decorate(block) {
-  const content = document.createElement('div');
-  content.className = 'figure-content';
-  const figure = document.createElement('figure');
-  figure.className = 'figure-image-inner';
-  const caption = document.createElement('figcaption');
-  caption.className = 'figure-caption';
-
   let imageSeen = false;
-  [...block.children].forEach((row) => {
-    const pictures = [...row.querySelectorAll('picture')];
-    const text = row.textContent.trim();
-    if (pictures.length && !imageSeen && !text) {
+  let text = false;
+  let caption = null;
+  [...block.querySelectorAll(':scope > div > div')].forEach((cell) => {
+    if (!imageSeen && isMediaCell(cell)) {
       imageSeen = true;
-      pictures.forEach((pic, i) => {
-        pic.classList.add(i === 0 ? 'figure-picture' : 'figure-picture-mobile');
+      cell.classList.add('figure-image');
+      if (cell.querySelectorAll('picture').length > 1) block.classList.add('has-mobile-media');
+    } else if (!imageSeen) {
+      cell.classList.add('figure-content');
+      [...cell.children].forEach((el) => {
+        if (el.tagName === 'P' && !el.textContent.trim() && !el.querySelector('picture')) el.remove();
       });
-      // mobile image first so it can hide the desktop one at ≤800px
-      if (pictures[1]) figure.append(pictures[1]);
-      figure.append(pictures[0]);
-      return;
-    }
-    if (pictures.length && !imageSeen) {
-      // mixed row: picture and text in one cell
-      imageSeen = true;
-      [...row.querySelectorAll(':scope > div > *')].forEach((el) => {
-        if (el.querySelector('picture') && !el.textContent.trim()) {
-          const pic = el.querySelector('picture');
-          pic.classList.add('figure-picture');
-          figure.append(pic);
-        } else if (figure.children.length) {
-          caption.append(...el.childNodes, ' ');
-        } else {
-          content.append(el);
-        }
-      });
-      return;
-    }
-    const cells = [...row.children];
-    if (!imageSeen) {
-      cells.forEach((c) => content.append(...c.childNodes));
-    } else {
-      cells.forEach((c) => {
-        const ps = [...c.querySelectorAll(':scope > p')];
-        if (ps.length) {
-          ps.forEach((p, i) => {
-            if (i > 0 || caption.childNodes.length) caption.append(document.createElement('br'));
-            caption.append(...p.childNodes);
-          });
-        } else {
-          caption.append(...c.childNodes);
-        }
-      });
+      text = text || !!cell.textContent.trim();
+    } else if (cell.textContent.trim()) {
+      cell.classList.add('figure-caption');
+      caption = caption || cell;
     }
   });
-
-  if (caption.textContent.trim()) figure.append(caption);
-  [...content.children].forEach((el) => {
-    if (el.tagName === 'P' && !el.textContent.trim() && !el.querySelector('picture')) el.remove();
-  });
-
-  const card = document.createElement('div');
-  card.className = 'figure-card';
-  if (block.classList.contains('top')) {
-    card.append(figure);
-    if (content.children.length) card.append(content);
-  } else {
-    if (content.children.length) card.append(content);
-    else block.classList.add('no-text');
-    card.append(figure);
+  if (!text) block.classList.add('no-text');
+  block.setAttribute('role', 'figure');
+  if (caption) {
+    caption.id = caption.id || `figure-caption-${Math.random().toString(36).slice(2, 8)}`;
+    block.setAttribute('aria-labelledby', caption.id);
   }
-  const inner = document.createElement('div');
-  inner.className = 'figure-inner';
-  inner.append(card);
-  block.replaceChildren(inner);
 }

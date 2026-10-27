@@ -1,11 +1,13 @@
-/* tag-list (viewpoint-tags) */
+/* tag-list (viewpoint-tags): the list is the authored one (or built from the index), its
+   items and links are styled by tag */
 
 .tag-list .tag-list-details {
   padding: 0;
 }
 
 /* in the article footer (live .viewpoints-footer .viewpoint-tags) */
-.tag-list.padded .tag-list-details {
+.tag-list.padded .tag-list-details,
+html[quick-edit] .tag-list.padded {
   padding: 16px;
 }
 
@@ -24,20 +26,20 @@
   vertical-align: middle;
 }
 
-.tag-list .tag-list-list {
+.tag-list :is(ul, ol) {
   margin: 24px 0 0;
   padding: 0;
   list-style: none;
   column-count: 1;
 }
 
-.tag-list .tag-list-item {
+.tag-list :is(ul, ol) > li {
   width: 100%;
   padding: 8px 0;
   break-inside: avoid;
 }
 
-.tag-list a.tag-list-link {
+.tag-list li > a {
   display: inline-block;
   padding-right: 16px;
   font-size: 16px;
@@ -47,30 +49,42 @@
   text-decoration: underline;
 }
 
-.tag-list a.tag-list-link:hover,
-.tag-list a.tag-list-link:focus,
-.tag-list a.tag-list-link:active {
+.tag-list li > a:hover,
+.tag-list li > a:focus,
+.tag-list li > a:active {
   color: var(--color-primary, #06854d);
 }
 
+/* config rows (Title, Base): hidden on pages, editable in Canvas */
+.tag-list > [data-config] {
+  display: none;
+}
+
+html[quick-edit] .tag-list > [data-config] {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+}
+
 @media (width >= 321px) {
-  .tag-list .tag-list-list {
+  .tag-list :is(ul, ol) {
     column-count: 2;
   }
 }
 
 @media (width >= 601px) {
-  .tag-list.padded .tag-list-details {
+  .tag-list.padded .tag-list-details,
+  html[quick-edit] .tag-list.padded {
     padding: 32px;
   }
 
-  .tag-list .tag-list-list {
+  .tag-list :is(ul, ol) {
     column-count: 3;
   }
 }
 
 @media (width >= 800px) {
-  .tag-list .tag-list-list {
+  .tag-list :is(ul, ol) {
     column-count: 4;
   }
 }

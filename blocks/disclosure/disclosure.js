@@ -10,15 +10,21 @@
  * The rich-text cell may hold only a link to /fragments/disclosures/{name}.
  * A single-cell row uses the label "Important disclosures".
  * `open` = always expanded, trigger disabled (homepage AUM footnote).
+ * The body cells move into the details element as they are (Canvas edits them in place).
  */
 /* eslint-enable max-len */
+import isAuthoring from '../../scripts/authoring.js';
+
 const DEFAULT_LABEL = 'Important disclosures';
 
-function buildTrigger(label, open) {
+/**
+ * Summary (or a static label row for `open`). The authored label nodes move into it; a
+ * one-cell row gets the default label as generated text.
+ */
+function buildTrigger(labelCell, open) {
   const trigger = document.createElement(open ? 'div' : 'summary');
   trigger.className = 'disclosure-trigger';
   if (open) trigger.classList.add('disclosure-trigger-disabled');
-  trigger.setAttribute('aria-label', label);
   const content = document.createElement('div');
   content.className = 'disclosure-trigger-content';
   const icon = document.createElement('span');
@@ -26,7 +32,15 @@ function buildTrigger(label, open) {
   icon.setAttribute('aria-hidden', 'true');
   const text = document.createElement('span');
   text.className = 'disclosure-label';
-  text.textContent = label;
+  if (labelCell && labelCell.textContent.trim()) {
+    // a one-paragraph label (as aem.page may render it) gives its inline content
+    const only = labelCell.children.length === 1 ? labelCell.firstElementChild : null;
+    const source = only && only.tagName === 'P' ? only : labelCell;
+    text.append(...source.childNodes);
+  } else {
+    text.textContent = DEFAULT_LABEL;
+  }
+  trigger.setAttribute('aria-label', text.textContent.trim());
   content.append(icon, text);
   if (!open) {
     const arrow = document.createElement('span');
@@ -38,37 +52,37 @@ function buildTrigger(label, open) {
   return trigger;
 }
 
+/** Body cell: drops empty paragraphs, wraps whole-paragraph footnotes like live. */
+function decorateBody(body) {
+  body.classList.add('disclosure-content');
+  body.querySelectorAll(':scope > p').forEach((p) => {
+    if (!p.textContent.trim() && !p.querySelector('picture, img, a')) p.remove();
+  });
+  // live wraps whole-paragraph footnotes in <small><sup>; markdown keeps only the sup
+  body.querySelectorAll(':scope > p > sup:only-child').forEach((sup) => {
+    if (sup.parentElement.textContent.trim() !== sup.textContent.trim()) return;
+    const small = document.createElement('small');
+    sup.replaceWith(small);
+    small.append(sup);
+  });
+}
+
 export default function decorate(block) {
   const open = block.classList.contains('open');
-  const items = [...block.children].map((row) => {
+  [...block.children].forEach((row) => {
     const cells = [...row.children];
-    let label = DEFAULT_LABEL;
-    let body = cells[cells.length - 1];
-    if (cells.length >= 2) {
-      label = cells[0].textContent.trim() || DEFAULT_LABEL;
-      body = cells.slice(1).reduce((acc, c) => {
-        acc.append(...c.childNodes);
-        return acc;
-      }, document.createElement('div'));
+    const label = cells.length >= 2 ? cells[0] : null;
+    const bodies = cells.length >= 2 ? cells.slice(1) : cells;
+    bodies.forEach(decorateBody);
+    // Canvas: the authored cells stay where they are, both visible
+    if (isAuthoring()) {
+      row.classList.add('disclosure-item');
+      label?.classList.add('disclosure-label-cell');
+      return;
     }
-    const el = document.createElement(open ? 'div' : 'details');
-    el.className = 'disclosure-item';
-    const content = document.createElement('div');
-    content.className = 'disclosure-content';
-    if (body) content.append(...body.childNodes);
-    // drop empty paragraphs
-    content.querySelectorAll(':scope > p').forEach((p) => {
-      if (!p.textContent.trim() && !p.querySelector('picture, img, a')) p.remove();
-    });
-    // live wraps whole-paragraph footnotes in <small><sup>; markdown keeps only the sup
-    content.querySelectorAll(':scope > p > sup:only-child').forEach((sup) => {
-      if (sup.parentElement.textContent.trim() !== sup.textContent.trim()) return;
-      const small = document.createElement('small');
-      sup.replaceWith(small);
-      small.append(sup);
-    });
-    el.append(buildTrigger(label, open), content);
-    return el;
+    const item = document.createElement(open ? 'div' : 'details');
+    item.className = 'disclosure-item';
+    item.append(buildTrigger(label, open), ...bodies);
+    row.replaceWith(item);
   });
-  block.replaceChildren(...items);
 }
