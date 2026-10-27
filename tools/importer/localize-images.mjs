@@ -40,13 +40,13 @@ let changed = 0;
 const deadLog = [];
 files.forEach((f) => {
   const html = readFileSync(f, 'utf-8');
-  const stripped = html.replace(/(<picture>\s*)?<img[^>]*src="(https:\/\/www\.manulifeim\.com\/content\/dam\/[^"]+)"[^>]*>(\s*<\/picture>)?/g, (m, a, src) => {
+  const stripped = html.replace(/(<picture>\s*)?<img[^>]*src="(https:\/\/www\.manulifeim\.com\/content\/[^"]+)"[^>]*>(\s*<\/picture>)?/g, (m, a, src) => {
     const clean = src.replace(/&amp;/g, '&');
     if (!dead.has(clean)) return m;
     deadLog.push(`${f.replace(/^content|\.plain\.html$/g, '')} ${clean}`);
     return '';
   });
-  const out = stripped.replace(/https:\/\/www\.manulifeim\.com\/content\/dam\/[^"'\s]+/g, (m) => {
+  const out = stripped.replace(/https:\/\/www\.manulifeim\.com\/content\/[^"\s]+/g, (m) => {
     // srcset entries end in a comma; URLs themselves may contain commas and parentheses
     const [, u, tail] = m.match(/^(.*?)(,?)$/);
     const clean = u.replace(/&amp;/g, '&');
