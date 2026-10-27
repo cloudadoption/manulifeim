@@ -1,5 +1,4 @@
 /* section-nav: anchors (+left) | links */
-/* stylelint-disable no-descending-specificity */
 
 /* full bleed: no section padding */
 main > .section.section-nav-container {
@@ -265,10 +264,13 @@ main > .section.section-nav-container:has(.section-nav.links) {
   overflow-wrap: normal;
 }
 
+/* hover on the item and focus on the link style the same link */
+/* stylelint-disable no-descending-specificity */
 .section-nav.links .section-nav-item:hover .section-nav-link,
 .section-nav.links .section-nav-link:focus {
   color: var(--color-primary);
 }
+/* stylelint-enable no-descending-specificity */
 
 .section-nav.links .section-nav-item.active .section-nav-link {
   font-weight: 700;

@@ -1,7 +1,6 @@
 /* promo (simpleBanner): green | navy | blue | gold | violet | white, double
    Rows are the items, cells .promo-image / .promo-content / .promo-colour (authored, in
    place); in the content: title, text paragraphs, arrow-link paragraphs. */
-/* stylelint-disable no-descending-specificity */
 
 .promo {
   display: block;

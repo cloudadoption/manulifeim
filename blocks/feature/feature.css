@@ -2,7 +2,6 @@
    Authored cells are styled in place: the block is the frame, its row is display: contents,
    cells are .feature-content / .feature-image; tags inside are selected by name (Canvas swaps
    an edited p / h for .prosemirror-editor). */
-/* stylelint-disable no-descending-specificity */
 
 .feature > div {
   display: contents;
@@ -174,6 +173,7 @@ main > .section.feature-container:has(.feature.marketing) > .feature-wrapper {
   min-height: 256px;
 }
 
+/* stylelint-disable no-descending-specificity -- variant rules (marketing, kicker, banner) style different elements; order follows the variant sections */
 .feature.marketing .feature-image img {
   position: absolute;
   top: 0;
@@ -182,6 +182,7 @@ main > .section.feature-container:has(.feature.marketing) > .feature-wrapper {
   height: 100%;
   object-fit: cover;
 }
+/* stylelint-enable no-descending-specificity */
 
 /* ---------------- kicker ---------------- */
 
@@ -192,11 +193,13 @@ main > .section.feature-container:has(.feature.marketing) > .feature-wrapper {
   box-shadow: var(--shadow-card, 0 8px 24px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 4%));
 }
 
+/* stylelint-disable no-descending-specificity -- variant rules (marketing, kicker, banner) style different elements; order follows the variant sections */
 .feature.kicker .feature-content {
   box-sizing: border-box;
   min-height: 0;
   padding: 32px;
 }
+/* stylelint-enable no-descending-specificity */
 
 /* authors: the authored list, one line per author ([photo] **Name**, position) */
 .feature.kicker .feature-content > ul {
@@ -232,6 +235,7 @@ main > .section.feature-container:has(.feature.marketing) > .feature-wrapper {
   margin-right: 8px;
 }
 
+/* stylelint-disable no-descending-specificity -- variant rules (marketing, kicker, banner) style different elements; order follows the variant sections */
 .feature.kicker .feature-content > ul > li img {
   display: block;
   width: 40px;
@@ -240,6 +244,7 @@ main > .section.feature-container:has(.feature.marketing) > .feature-wrapper {
   border-radius: 64px;
   object-fit: cover;
 }
+/* stylelint-enable no-descending-specificity */
 
 .feature.kicker .feature-content > ul > li strong {
   font-weight: inherit;
@@ -253,17 +258,20 @@ main > .section.feature-container:has(.feature.marketing) > .feature-wrapper {
   color: var(--color-text);
 }
 
+/* stylelint-disable no-descending-specificity -- variant rules (marketing, kicker, banner) style different elements; order follows the variant sections */
 .feature.kicker .feature-image {
   position: relative;
   display: block;
   width: 100%;
 }
+/* stylelint-enable no-descending-specificity */
 
 .feature.kicker .feature-image :is(p, picture) {
   display: block;
   height: 100%;
 }
 
+/* stylelint-disable no-descending-specificity -- variant rules (marketing, kicker, banner) style different elements; order follows the variant sections */
 .feature.kicker .feature-image img {
   display: block;
   width: 100%;
@@ -273,13 +281,16 @@ main > .section.feature-container:has(.feature.marketing) > .feature-wrapper {
   object-fit: cover;
   object-position: center;
 }
+/* stylelint-enable no-descending-specificity */
 
 /* ---------------- banner ---------------- */
 
 /* live featureBanner is not a padded component: full width of the main column */
+/* stylelint-disable no-descending-specificity -- variant rules (marketing, kicker, banner) style different elements; order follows the variant sections */
 main > .section > .feature-wrapper:has(> .feature.banner) {
   padding: 0;
 }
+/* stylelint-enable no-descending-specificity */
 
 .feature.banner {
   position: relative;
@@ -292,12 +303,14 @@ main > .section > .feature-wrapper:has(> .feature.banner) {
   padding-bottom: 0;
 }
 
+/* stylelint-disable no-descending-specificity -- variant rules (marketing, kicker, banner) style different elements; order follows the variant sections */
 .feature.banner .feature-content {
   box-sizing: border-box;
   display: block;
   width: 100%;
   padding: 24px;
 }
+/* stylelint-enable no-descending-specificity */
 
 .feature.banner .feature-content :is(h1, h2, h3, h4, h5, h6),
 .feature.banner .feature-content > :is(p, .prosemirror-editor) {
@@ -315,12 +328,14 @@ main > .section > .feature-wrapper:has(> .feature.banner) {
 
 /* one picture serves both sizes: a 200px crop on small screens, 250px high at natural width
    from 801px; a second authored picture is the small-screen one */
+/* stylelint-disable no-descending-specificity -- variant rules (marketing, kicker, banner) style different elements; order follows the variant sections */
 .feature.banner .feature-image img {
   display: block;
   width: 100%;
   height: 200px;
   object-fit: cover;
 }
+/* stylelint-enable no-descending-specificity */
 
 .feature.banner.has-mobile-media .feature-image > :first-child {
   display: none;
@@ -350,10 +365,12 @@ main > .section > .feature-wrapper:has(> .feature.banner) {
     padding-bottom: 90px;
   }
 
+  /* stylelint-disable no-descending-specificity -- variant rules (marketing, kicker, banner) style different elements; order follows the variant sections */
   .feature.banner .feature-content {
     width: 50%;
     padding: 48px 64px;
   }
+  /* stylelint-enable no-descending-specificity */
 
   .feature.banner .feature-content :is(h1, h2, h3, h4, h5, h6),
   .feature.banner .feature-content > :is(p, .prosemirror-editor) {
@@ -392,12 +409,14 @@ main > .section > .feature-wrapper:has(> .feature.banner) {
     flex-direction: row;
   }
 
+  /* stylelint-disable no-descending-specificity -- variant rules (marketing, kicker, banner) style different elements; order follows the variant sections */
   .feature.kicker .feature-content {
     flex: 1 1 50%;
     align-self: center;
     min-height: 600px;
     padding: 80px 64px;
   }
+  /* stylelint-enable no-descending-specificity */
 
   /* live wraps the text in a 450px column */
   .feature.kicker .feature-content > * {
@@ -422,9 +441,11 @@ main > .section > .feature-wrapper:has(> .feature.banner) {
     justify-content: space-between;
   }
 
+  /* stylelint-disable no-descending-specificity -- variant rules (marketing, kicker, banner) style different elements; order follows the variant sections */
   .feature.banner .feature-content {
     width: auto;
   }
+  /* stylelint-enable no-descending-specificity */
 
   /* live: the 250px-high image keeps its natural width, the text takes what is left */
   .feature.banner .feature-image {

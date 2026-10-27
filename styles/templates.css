@@ -1,5 +1,4 @@
 /* Rules are grouped by template, so selectors of different templates interleave. */
-/* stylelint-disable no-descending-specificity */
 
 /*
  * Page-level layouts that are not blocks. scripts.js adds `template-<name>` to <body>
@@ -48,11 +47,13 @@
   font-weight: var(--font-weight-regular);
 }
 
+/* stylelint-disable no-descending-specificity -- template rules target different templates; order follows the template sections */
 .template-viewpoint main > .section:first-child h1 ~ p {
   font-size: var(--font-size-lead);
   font-weight: var(--font-weight-regular);
   line-height: 1.5em;
 }
+/* stylelint-enable no-descending-specificity */
 
 /* body: every wrapper sits in the 600px reading column (blocks may override their -wrapper) */
 :where(.template-viewpoint main > .section:not(:first-child, .sidebar, .sidebar ~ .section) > div) {
@@ -119,12 +120,14 @@
   background-color: var(--color-white);
 }
 
+/* stylelint-disable no-descending-specificity -- template rules target different templates; order follows the template sections */
 .template-case-study-detail main > .section:first-child {
   order: -2;
   margin-bottom: 16px;
   border-bottom: 1px solid var(--color-border-strong);
   padding: 24px 16px;
 }
+/* stylelint-enable no-descending-specificity */
 
 :where(.template-case-study-detail main > .section:first-child > div) {
   padding: 0;
@@ -134,10 +137,12 @@
   font-weight: var(--font-weight-regular);
 }
 
+/* stylelint-disable no-descending-specificity -- template rules target different templates; order follows the template sections */
 .template-case-study-detail main > .section:first-child h1 ~ p {
   width: auto;
   max-width: var(--width-reading);
 }
+/* stylelint-enable no-descending-specificity */
 
 /* body */
 .template-case-study-detail main > .section:not(:first-child, .sidebar, .sidebar ~ .section) {
@@ -162,9 +167,11 @@
 }
 
 /* body text is a live column-container: 24px more side padding up to 800px */
+/* stylelint-disable no-descending-specificity -- template rules target different templates; order follows the template sections */
 .template-case-study-detail main > .section:not(:first-child, .sidebar, .sidebar ~ .section) > .default-content-wrapper {
   padding-inline: 24px;
 }
+/* stylelint-enable no-descending-specificity */
 
 /* sidebar: above the body up to 1100px (live column-reverse). The case-study-sidebar
    block draws the live aside (padding, rules), so the section adds nothing. */
@@ -192,10 +199,12 @@
 }
 
 /* title: 32px / 300 (24px <= 600), one component padding above, two below */
+/* stylelint-disable no-descending-specificity -- template rules target different templates; order follows the template sections */
 .template-press-release main .default-content-wrapper > h1 {
   font-size: var(--font-size-h2);
   font-weight: var(--font-weight-light);
 }
+/* stylelint-enable no-descending-specificity */
 
 .template-press-release main .default-content-wrapper > h1:not(:first-child) {
   margin-top: var(--spacing-section-y);
@@ -206,10 +215,12 @@
 }
 
 /* the body after the title is a live column-container: 24px more side padding up to 800px */
+/* stylelint-disable no-descending-specificity -- template rules target different templates; order follows the template sections */
 .template-press-release main .default-content-wrapper > h1 ~ *,
 .template-press-release main .default-content-wrapper:has(> h1) ~ div {
   margin-inline: 24px;
 }
+/* stylelint-enable no-descending-specificity */
 
 @media (width >= 801px) {
   .template-press-release main .default-content-wrapper > h1 ~ *,
@@ -332,9 +343,11 @@
   }
 
   /* article */
+  /* stylelint-disable no-descending-specificity -- template rules target different templates; order follows the template sections */
   .template-viewpoint main > .section:first-child {
     padding: 64px 24px 64px 0;
   }
+  /* stylelint-enable no-descending-specificity */
 
   .template-viewpoint main > .section:not(:first-child, .sidebar, .sidebar ~ .section) {
     padding-right: 24px;

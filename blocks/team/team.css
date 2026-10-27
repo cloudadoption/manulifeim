@@ -1,6 +1,5 @@
 /* team (teamMembers): the block is the card, rows .team-member, cells .team-photo /
    .team-content (name = first element, title = the paragraph after it, then the bio) */
-/* stylelint-disable no-descending-specificity */
 
 .team {
   background-color: var(--color-white);
@@ -136,9 +135,11 @@ html[quick-edit] .team .team-content > :nth-child(n+3) li {
   list-style-type: decimal;
 }
 
+/* stylelint-disable no-descending-specificity -- bio rules for pages and Canvas target different trees */
 .team .team-content li + li {
   margin-top: 8px;
 }
+/* stylelint-enable no-descending-specificity */
 
 .team .team-content :is(p, li) :is(b, strong) {
   font-weight: 600;
@@ -192,6 +193,7 @@ html[quick-edit] .team .team-content > :nth-child(n+3) li {
   display: none;
 }
 
+/* stylelint-disable no-descending-specificity -- bio rules for pages and Canvas target different trees */
 .team .team-more,
 .team .team-less {
   display: flex;
@@ -203,7 +205,9 @@ html[quick-edit] .team .team-content > :nth-child(n+3) li {
   letter-spacing: -0.02em;
   color: var(--color-text);
 }
+/* stylelint-enable no-descending-specificity */
 
+/* stylelint-disable no-descending-specificity -- bio rules for pages and Canvas target different trees */
 .team .team-less {
   width: 100%;
   margin: 14px 0 16px;
@@ -214,6 +218,7 @@ html[quick-edit] .team .team-content > :nth-child(n+3) li {
   font-family: inherit;
   cursor: pointer;
 }
+/* stylelint-enable no-descending-specificity */
 
 .team .team-toggle-icon {
   display: inline-block;

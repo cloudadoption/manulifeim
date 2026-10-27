@@ -3,7 +3,6 @@
    page-header rows are display: contents, carousel rows are the slides. Tags inside the
    content cell are selected by name; Canvas swaps an edited p / h for .prosemirror-editor,
    hence :is(p, .prosemirror-editor). */
-/* stylelint-disable no-descending-specificity */
 
 /* full-bleed: the hero section has no section padding */
 main > .section.hero-container {
@@ -464,6 +463,7 @@ html[quick-edit] .hero > [data-config] {
   background-color: var(--color-white);
 }
 
+/* stylelint-disable-next-line no-descending-specificity -- banner and carousel buttons never share a block */
 .hero.banner a.button.secondary {
   border-color: var(--color-primary);
   background-color: transparent;
