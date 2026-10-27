@@ -64,16 +64,38 @@ function itemFromRow(row, tile) {
   return li;
 }
 
+/** Name / position / company spans like live (also used for index cards). */
+function authorText(name, position, company) {
+  const shown = position || company ? `${name},\u00a0` : name;
+  return el(
+    'p',
+    'cards-author-text',
+    el('span', 'cards-author-name', shown || ''),
+    position ? el('span', 'cards-author-position', position) : null,
+    company ? el('span', 'cards-author-company', company) : null,
+  );
+}
+
 /**
- * Author lines (published pages only): the company after the <br> gets its own colour
- * like live, and a broken photo collapses.
+ * Author lines (published pages only): "**Name**, Position <br> Company" is laid out like
+ * live (name, position and company as wrapping items), and a broken photo collapses.
+ * Canvas keeps the authored paragraph.
  */
 function decorateAuthors(li) {
   li.querySelectorAll('.cards-card-body > :is(ul, ol) > li').forEach((author) => {
-    author.querySelectorAll('br').forEach((br) => {
-      const company = el('span', 'cards-author-company');
-      while (br.nextSibling) company.append(br.nextSibling);
-      if (company.textContent.trim()) br.after(company);
+    author.querySelectorAll(':scope > p').forEach((p) => {
+      const strong = p.querySelector(':scope > strong, :scope > b');
+      if (!strong || p.querySelector('img')) return;
+      let position = '';
+      let company = '';
+      let afterBr = false;
+      [...p.childNodes].forEach((n) => {
+        if (n === strong) return;
+        if (n.nodeName === 'BR') afterBr = true;
+        else if (afterBr) company += n.textContent;
+        else position += n.textContent;
+      });
+      p.replaceWith(authorText(strong.textContent.trim(), position.replace(/^\s*,\s*/, '').trim(), company.trim()));
     });
     author.querySelectorAll('img').forEach((img) => {
       img.addEventListener('error', () => img.closest('p, picture')?.classList.add('image-hidden'));
@@ -81,22 +103,12 @@ function decorateAuthors(li) {
   });
 }
 
-/**
- * Author line for an index item (generated, so it can use live's spans): photo /
- * "Name, " position / company on its own line.
- */
+/** Author line for an index item: photo / name, position / company. */
 function authorItem(author) {
   const li = el('li');
   const pic = author.image ? toPicture(author.image, author.name || '', '100') : null;
   if (pic) li.append(el('p', '', pic));
-  const name = author.title || author.company ? `${author.name},\u00a0` : author.name;
-  li.append(el(
-    'p',
-    'cards-author-text',
-    el('span', 'cards-author-name', name || ''),
-    author.title ? el('span', 'cards-author-position', author.title) : null,
-    author.company ? el('span', 'cards-author-company', author.company) : null,
-  ));
+  li.append(authorText(author.name || '', author.title, author.company));
   return li;
 }
 
@@ -113,7 +125,6 @@ function itemFromIndex(item, withImage = true) {
   a.href = item.path;
   body.append(el('p', 'link-cta-wrapper', a));
   li.append(body);
-  decorateAuthors(li);
   return li;
 }
 
