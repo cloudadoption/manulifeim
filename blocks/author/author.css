@@ -138,6 +138,12 @@
   overflow: hidden;
 }
 
+/* aem.page renders the link in a paragraph */
+.author .author-logo-link > :is(p, .prosemirror-editor) {
+  height: 100%;
+  margin: 0;
+}
+
 /* stylelint-disable-next-line no-descending-specificity -- the logo link, not a text link */
 .author .author-logo-link a {
   display: block;
