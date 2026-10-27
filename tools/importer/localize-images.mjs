@@ -14,7 +14,12 @@ import { join } from 'path';
 
 const images = JSON.parse(readFileSync('tools/importer/snapshots/_images.json', 'utf-8'));
 const byUrl = {};
+// images that fail on the live site itself (403/404 there too) are dropped from the page
+const dead = new Set();
 Object.entries(images).forEach(([u, e]) => {
+  if (!e.file && [403, 404, 410].includes(e.status)) {
+    [u, decodeURI(u), encodeURI(decodeURI(u))].forEach((k) => dead.add(k));
+  }
   if (!e.file) return;
   [u, decodeURI(u), encodeURI(decodeURI(u))].forEach((k) => { byUrl[k] = e.file; });
 });
@@ -32,9 +37,16 @@ const list = (d, out = []) => {
 const args = process.argv.slice(2);
 const files = args.length ? args.map((p) => `content${p}.plain.html`) : list('content');
 let changed = 0;
+const deadLog = [];
 files.forEach((f) => {
   const html = readFileSync(f, 'utf-8');
-  const out = html.replace(/https:\/\/www\.manulifeim\.com\/content\/dam\/[^"'\s]+/g, (m) => {
+  const stripped = html.replace(/(<picture>\s*)?<img[^>]*src="(https:\/\/www\.manulifeim\.com\/content\/dam\/[^"]+)"[^>]*>(\s*<\/picture>)?/g, (m, a, src) => {
+    const clean = src.replace(/&amp;/g, '&');
+    if (!dead.has(clean)) return m;
+    deadLog.push(`${f.replace(/^content|\.plain\.html$/g, '')} ${clean}`);
+    return '';
+  });
+  const out = stripped.replace(/https:\/\/www\.manulifeim\.com\/content\/dam\/[^"'\s]+/g, (m) => {
     // srcset entries end in a comma; URLs themselves may contain commas and parentheses
     const [, u, tail] = m.match(/^(.*?)(,?)$/);
     const clean = u.replace(/&amp;/g, '&');
@@ -47,4 +59,7 @@ files.forEach((f) => {
     console.log(`localized ${f.replace(/^content|\.plain\.html$/g, '')}`);
   }
 });
-console.log(`${changed} pages changed`);
+if (deadLog.length) {
+  writeFileSync('tools/importer/reports/dead-images.txt', `${deadLog.join('\n')}\n`, { flag: 'a' });
+}
+console.log(`${changed} pages changed${deadLog.length ? `, ${deadLog.length} images dead on live removed (reports/dead-images.txt)` : ''}`);

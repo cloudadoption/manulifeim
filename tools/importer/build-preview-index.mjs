@@ -73,6 +73,20 @@ function row(path, doc, headers, props) {
     }
     out[key] = evaluate(p.value, el, headers);
   });
+  // author photos in the metadata point at DA media (needs a login); use the media-bus URL of
+  // the same photo as rendered in the page's author box (img alt = author name)
+  if (out.authorDetails) {
+    try {
+      const authors = JSON.parse(out.authorDetails);
+      const imgs = [...doc.querySelectorAll('main img')];
+      authors.forEach((a) => {
+        const img = imgs.find((i) => (i.getAttribute('alt') || '').trim() === (a.name || '').trim());
+        if (img) a.photo = new URL(img.getAttribute('src'), `${PREVIEW}${path}`).pathname;
+        else if (/content\.da\.live/.test(a.photo || '')) a.photo = '';
+      });
+      out.authorDetails = JSON.stringify(authors);
+    } catch (e) { /* keep as is */ }
+  }
   return out;
 }
 

@@ -15,3 +15,4 @@ node tools/importer/snapshot/fix-media.mjs | tail -1
 node tools/importer/localize-images.mjs | tail -1
 node tools/importer/check-images.mjs | tail -2
 node tools/importer/upload-pending.mjs --limit "${1:-80}" | tail -4
+sh tools/importer/update-preview-index.sh | tail -3
