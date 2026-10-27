@@ -188,6 +188,15 @@ export function buildAuthorInline(author, prefix) {
 }
 
 const indexCache = {};
+const PREVIEW_INDEX = '/institutional/tw/en/preview-index.json';
+const PREVIEW_SHEETS = {
+  [INDEX_URLS.all]: 'default',
+  [INDEX_URLS.viewpoints]: 'viewpoints',
+  [INDEX_URLS.press]: 'press',
+  [INDEX_URLS['case-studies']]: 'case-studies',
+  [INDEX_URLS.documents]: 'resources',
+  [INDEX_URLS.people]: 'people',
+};
 const PAGE = 1000; // rows per request (JSON sheets answer at most 1000 rows by default)
 
 async function fetchAllRows(path) {
@@ -220,7 +229,15 @@ async function fetchAllRows(path) {
  */
 export async function fetchIndex(path = INDEX_URLS.all) {
   if (!indexCache[path]) {
-    indexCache[path] = fetchAllRows(path).catch(() => []);
+    indexCache[path] = fetchAllRows(path)
+      .then(async (rows) => {
+        if (rows.length) return rows;
+        // Edge Delivery indexes published pages only; while the site is preview-only, a
+        // generated stand-in with the same sheets is used (tools/importer/build-preview-index.mjs)
+        const sheet = PREVIEW_SHEETS[new URL(path, window.location.href).pathname];
+        return sheet ? fetchAllRows(`${PREVIEW_INDEX}?sheet=${sheet}`) : rows;
+      })
+      .catch(() => []);
   }
   return indexCache[path];
 }
