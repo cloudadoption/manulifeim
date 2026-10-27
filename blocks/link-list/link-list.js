@@ -23,7 +23,13 @@ export default function decorate(block) {
     const hasLink = !!cell.querySelector('a[href]');
     const heading = cell.querySelector('h1, h2, h3, h4, h5, h6');
     if (inline) {
-      cell.classList.add(i === 0 && !hasLink ? 'link-list-title' : 'link-list-links');
+      const title = i === 0 && !hasLink;
+      cell.classList.add(title ? 'link-list-title' : 'link-list-links');
+      // live renders the title as an h2; an authored text cell keeps that role
+      if (title && !heading) {
+        cell.setAttribute('role', 'heading');
+        cell.setAttribute('aria-level', '2');
+      }
     } else if (hasLink) {
       cell.classList.add('link-list-item');
     } else if (heading) {
