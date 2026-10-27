@@ -8,9 +8,13 @@
  * - sectionBreak -> Section Metadata Id + Nav Title of the next section
  * - divider -> Section Metadata Style: divider on the next section
  * - column-container qw-8 -> Style: centered
- * - multi-column column-container with default content in 2+ columns -> Columns block;
- *   nested components (simpleBanner, marketoForm, disclosures, ...) cannot nest in DA
- *   and follow as their own sections; otherwise the columns are flattened in order
+ * - multi-column column-container with content (default content or figures) in 2+ columns
+ *   -> Columns block, figures inline in their cell; other nested components (simpleBanner,
+ *   marketoForm, disclosures, ...) cannot nest in DA and follow as their own sections
+ * - multi-column container where every column holds at most one item (one default-content
+ *   run or one block) and the filled columns come first -> one section with Layout
+ *   (e.g. text in an fw-8 column next to an empty fw-4 one, or text next to a form)
+ * - otherwise the columns are flattened in order
  * - junk components are dropped
  *
  * The model is rendered as <div class="mim-section" data-mim="{json}"> wrappers holding
@@ -212,11 +216,12 @@ export function expandColumns(document, cc) {
     || !!container.querySelector(':scope > .column-container__column--qw-8');
   const cols = [...container.querySelectorAll(':scope > .column-container__column')];
   const items = cols.map((c) => columnItems(c));
-  const defaultCols = items.filter((list) => list.some((i) => i.kind === 'default' && !isEmpty(i.el))).length;
-  const nested = items.flat().filter((i) => i.kind !== 'default');
+  const isFigure = (i) => i.kind === 'block' && i.name === 'figure';
+  const contentCols = items.filter((list) => list.some((i) => (i.kind === 'default' && !isEmpty(i.el)) || isFigure(i))).length;
+  const nested = items.flat().filter((i) => i.kind !== 'default' && !isFigure(i));
   const out = [];
 
-  if (cols.length >= 2 && defaultCols >= 2) {
+  if (cols.length >= 2 && contentCols >= 2) {
     const widths = cols.map(widthOf).join(',');
     nested.forEach((i) => i.el.remove());
     cc.setAttribute('data-mim-columns', LAYOUTS[widths] || '');
@@ -225,21 +230,53 @@ export function expandColumns(document, cc) {
     return out;
   }
 
+  const groups = items.map((list) => columnModel(document, list));
+  const layout = LAYOUTS[cols.map(widthOf).join(',')];
+  const filled = groups.map((g) => g.length);
+  const last = filled.reduce((a, n, k) => (n ? k : a), -1);
+  if (layout && !centered && last >= 0 && filled.every((n, k) => (k <= last ? n === 1 : n === 0))
+    && groups.flat().every((it) => it.type === 'default' || it.type === 'block')
+    && (last < cols.length - 1 || groups.flat().some((it) => it.type === 'block'))) {
+    const nodes = groups.flat().flatMap((it) => (it.type === 'default' ? it.nodes : [it.el]));
+    return [{
+      type: 'section', styles: [], nodes, layout,
+    }];
+  }
+
   // sequential flatten
   let run = null;
-  items.flat().forEach((i) => {
+  groups.flat().forEach((it) => {
+    if (it.type === 'default') {
+      if (!run) {
+        run = { type: 'default', nodes: [], centered };
+        out.push(run);
+      }
+      run.nodes.push(...it.nodes);
+      return;
+    }
+    run = null;
+    out.push({ ...it, centered });
+  });
+  return out;
+}
+
+/* model items of one column: default runs merged, blocks / nested containers as items */
+function columnModel(document, list) {
+  const out = [];
+  let run = null;
+  list.forEach((i) => {
     if (i.kind === 'default') {
       const nodes = toDefault(document, i.el, i.name);
       if (!nodes.length) return;
       if (!run) {
-        run = { type: 'default', nodes: [], centered };
+        run = { type: 'default', nodes: [] };
         out.push(run);
       }
       run.nodes.push(...nodes);
       return;
     }
     run = null;
-    out.push(...itemFor(document, i).map((x) => ({ ...x, centered })));
+    out.push(...itemFor(document, i));
   });
   return out;
 }
@@ -280,7 +317,8 @@ export function toSections(items, opts = {}) {
     sections.push(current);
     return current;
   };
-  items.forEach((it) => {
+  items.forEach((item) => {
+    let it = item;
     if (it.type === 'divider') {
       if (!pending.styles.includes('divider')) pending.styles.push('divider');
       current = null;
@@ -293,11 +331,17 @@ export function toSections(items, opts = {}) {
       current = null;
       return;
     }
+    if (it.type === 'section' && it.layout && opts.flow) {
+      // flow templates (article, press release body) keep column content in the flow;
+      // their column widths come from styles/templates.css
+      it = { type: 'default', nodes: it.nodes };
+    }
     if (it.type === 'section') {
       // explicit section (e.g. article sidebar) with its own styles
       current = null;
       const sec = start();
       it.styles.forEach((st) => { if (!sec.styles.includes(st)) sec.styles.push(st); });
+      if (it.layout) sec.layout = it.layout;
       sec.nodes.push(...it.nodes);
       current = null;
       return;

@@ -8,8 +8,7 @@
  *   | First Name | text | required |
  *   | Province | select: AB, BC, ... | required |
  *   | Submit | submit | |
- * The success text follows the block as default content (contract: consent and success
- * texts are default content outside the block).
+ * The success text (shown on live after sending) is the last row: | Success | text |.
  */
 import {
   h, block, text, norm,
@@ -45,12 +44,10 @@ export default function parse(element, { document }) {
     rows.push([text(button) || 'Submit', 'submit', '']);
   }
   if (text(tip) && !/indicates a required field/i.test(text(tip))) rows.unshift(['Tip', text(tip)]);
-  const out = [block(document, 'Form', [], rows)];
+  // live shows the success text only after sending: a Success row, hidden until submit
   const success = element.querySelector('.marketoForm__success');
-  if (success) {
-    success.querySelectorAll('h1, h2, h3, h4, p').forEach((p) => {
-      if (text(p)) out.push(h(document, 'p', text(p)));
-    });
-  }
-  element.replaceWith(...out);
+  const msg = success ? [...success.querySelectorAll('h1, h2, h3, h4, p')].filter((p) => text(p))
+    .map((p) => h(document, 'p', text(p))) : [];
+  if (msg.length) rows.push(['Success', msg]);
+  element.replaceWith(block(document, 'Form', [], rows));
 }

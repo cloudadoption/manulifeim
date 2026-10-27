@@ -29,7 +29,10 @@ function titleParts(document, title) {
     const sup = p.querySelector('sup');
     const onlySup = sup && norm(sup.textContent) === text(p);
     if (onlySup && !words.length) {
-      out.push(h(document, 'p', `<sup>${text(sup)}</sup>`));
+      // keep live's nesting (<sub><sup><strong>Q4 2025</strong></sup></sub>: 31px bold)
+      const bold = sup.querySelector('strong, b') ? `<strong>${text(sup)}</strong>` : text(sup);
+      const html = `<sup>${bold}</sup>`;
+      out.push(h(document, 'p', sup.parentElement.closest('sub') ? `<sub>${html}</sub>` : html));
     } else {
       words.push(p.innerHTML.replace(/&nbsp;/g, ' ').replace(/^(\s|<br\s*\/?>)+|(\s|<br\s*\/?>)+$/gi, '').trim());
     }

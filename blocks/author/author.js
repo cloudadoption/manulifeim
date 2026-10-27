@@ -118,7 +118,8 @@ export default function decorate(block) {
         p.textContent = value;
         text.append(p);
       };
-      add('author-name', name?.textContent.trim());
+      // live: "Craig Scordellis," above the title / company
+      add('author-name', name && (title || company) ? `${name.textContent.trim()},` : name?.textContent.trim());
       add('author-title', title?.textContent.trim());
       add('author-company', company);
     }

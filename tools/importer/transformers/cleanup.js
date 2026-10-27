@@ -47,7 +47,14 @@ export default function transform(hookName, element, payload) {
     });
   });
   const main = body.querySelector('main') || body;
-  JUNK.forEach((sel) => main.querySelectorAll(sel).forEach((n) => n.remove()));
+  JUNK.forEach((sel) => main.querySelectorAll(sel).forEach((n) => {
+    // the article sidebar keeps the share action names for its Share block (sections.js)
+    if (n.matches('.viewpoint-detail__sidebar > .share-controls')) {
+      n.parentElement.setAttribute('data-mim-share', [...n.querySelectorAll('.share-links__caption')]
+        .map((c) => c.textContent.trim()).filter(Boolean).join('|'));
+    }
+    n.remove();
+  }));
   // the svg sprite and inline icons carry no content
   body.querySelectorAll('svg').forEach((n) => n.remove());
   removeComments(body);

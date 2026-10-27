@@ -86,9 +86,11 @@ function decorateText(content) {
     const prev = heading.previousElementSibling;
     if (prev && prev.tagName === 'P' && prev.querySelector('sup, sub')
       && prev.textContent.trim() === prev.querySelector('sup, sub').textContent.trim()) {
-      const sup = document.createElement('sup');
-      sup.textContent = prev.textContent.trim();
-      heading.prepend(sup, document.createElement('br'));
+      // keep the authored nesting: live <sub><sup><strong> is 0.7 x 0.7 of the title, bold
+      const eyebrow = document.createElement('span');
+      eyebrow.className = 'hero-eyebrow';
+      eyebrow.append(...prev.childNodes);
+      heading.prepend(eyebrow, document.createElement('br'));
       prev.remove();
     }
   }

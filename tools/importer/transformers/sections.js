@@ -61,6 +61,9 @@ function articleModel(document, main) {
       authors.forEach((a) => wrap.append(a));
       nodes.push(wrap);
     }
+    // share controls: one row per action, the block builds the links for the EDS URL
+    const actions = (sidebar.getAttribute('data-mim-share') || '').split('|').filter(Boolean);
+    if (actions.length) nodes.push(WebImporter.Blocks.createBlock(document, { name: 'Share', cells: actions.map((a) => [a]) }));
     sidebar.querySelectorAll(':scope > section.viewpoint-links').forEach((s) => {
       if (s.querySelector('a[href]')) nodes.push(s);
     });

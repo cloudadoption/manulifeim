@@ -16,7 +16,9 @@
  * Select options: after "select:" in the type cell, or comma-separated in the third
  * cell. "required" anywhere in the type / third cell marks the field as required.
  * Optional first row `Tip | indicates a required field` overrides the tip text.
- * Submit prevents default and does nothing (static replica).
+ * Optional row `Success | Thank you ...` holds the text live shows after sending.
+ * Submit never sends anything (static replica): a valid form is replaced by the success
+ * text, an invalid one shows the browser's validation messages.
  */
 import { toClassName } from '../../scripts/aem.js';
 
@@ -122,11 +124,19 @@ function buildField(field, uid, index) {
 export default function decorate(block) {
   const uid = Math.random().toString(36).slice(2, 8);
   let tipText = 'indicates a required field';
+  let success = null;
   const fields = [];
   [...block.children].forEach((row) => {
     const first = row.children[0]?.textContent.trim().toLowerCase();
     if (first === 'tip' && row.children[1]) {
       tipText = row.children[1].textContent.trim() || tipText;
+      return;
+    }
+    if (first === 'success' && row.children[1]) {
+      success = document.createElement('div');
+      success.className = 'form-success';
+      success.setAttribute('role', 'status');
+      success.append(...row.children[1].childNodes);
       return;
     }
     const field = parseRow(row);
@@ -152,6 +162,13 @@ export default function decorate(block) {
   fields.forEach((f, i) => form.append(buildField(f, uid, i)));
   form.addEventListener('submit', (e) => {
     e.preventDefault();
+    if (!success) return;
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+    inner.replaceChildren(success);
+    success.hidden = false;
   });
   inner.append(form);
   block.replaceChildren(inner);

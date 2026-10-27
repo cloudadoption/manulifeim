@@ -15,7 +15,11 @@ import {
   image, block, richText, h, text, bestSrc,
 } from '../utils/dom.js';
 
-export default function parse(element, { document }) {
+/**
+ * Splits a live figure into text before the image, the pictures and the caption.
+ * @returns {{variants: string[], before: Element[], pictures: Element[], after: Element[]}}
+ */
+export function figureParts(element, document) {
   const inner = element.querySelector('.landingImage2__inner, .landingimage__inner') || element;
   const cls = inner.className;
   const variants = [];
@@ -53,6 +57,15 @@ export default function parse(element, { document }) {
     });
   };
   walk(inner);
+  return {
+    variants, before, pictures, after,
+  };
+}
+
+export default function parse(element, { document }) {
+  const {
+    variants, before, pictures, after,
+  } = figureParts(element, document);
   const rows = [];
   if (before.length) rows.push([before]);
   if (pictures.length) rows.push([pictures]);
