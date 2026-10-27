@@ -37,8 +37,8 @@ Fixed:
 - `blocks/cards/cards.js`: news cards from the index show date/title/link only (no summary)
 
 Remaining:
-- [batch 2: CSS] hero slide h1 starts with <br> on live (text 52px lower) - hero-carousel parser drops it (parser: hero-carousel)
-- [batch 2: CSS] AUM approval code '5796846' is <small> on live (13px), plain p in EDS (parser: disclosure)
+- [fixed 2026-10-27, CSS: empty title line] hero slide h1 starts with <br> on live (text 52px lower) - hero-carousel parser drops it (parser: hero-carousel)
+- [fixed 2026-10-27, approval code in <small>] AUM approval code '5796846' is <small> on live (13px), plain p in EDS (parser: disclosure)
 - [data not captured yet] latest viewpoints / latest news come from the index: other items than live (Aug 3 / Mar 31 press releases not indexed)
 - [accepted] header search box: Coveo web component renders on live, not in the static mirror; carousel autoplay; author photos hidden on live by JS fallback state
 
@@ -52,7 +52,7 @@ Fixed:
 - `blocks/promo/promo.css`: double promo content 60% wide at every width (live), also when stacked <=600px
 
 Remaining:
-- [batch 2: CSS] hero h1 has a trailing <p>&nbsp;</p> on live (title 44px higher in EDS) (parser: hero-banner)
+- [accepted: authored quirk on 3 of 40 live banners] hero h1 has a trailing <p>&nbsp;</p> on live (title 44px higher in EDS) (parser: hero-banner)
 - [fixed 2026-10-27, re-imported] 'Some of our memberships' h3 sits in a 6-6 column with an empty column on live (50% wide at 1000px); flattened to full width (parser: columns / page-model expandColumns)
 - [data not captured yet] Latest news from the index
 
@@ -68,9 +68,9 @@ Fixed:
 Remaining:
 - [partly fixed 2026-10-27] nested promo ('Latest asset allocation views', 'Portfolio review'), the form and the 'Asset and liability assumptions' disclosure sit inside 6-6 / 8-4 columns on live; EDS shows them full width below (blocks cannot nest) (parser: columns / page-model expandColumns) -- text next to a form now sits side by side (Layout); columns holding several components (text + form + text, text + promo) still flatten
 - [fixed 2026-10-27, re-imported] 'Q4 2025' is <sub><sup><strong> on live (31px bold); EDS keeps only <sup> (45px light) (parser: hero-banner)
-- [batch 2: CSS] table column widths (th width=20%/15%) not imported (parser: table)
+- [accepted: the Table block has no column widths] table column widths (th width=20%/15%) not imported (parser: table)
 - [fixed 2026-10-27, re-imported] marketoForm success text 'Thank you for reaching out...' imported as visible paragraph (parser: form (marketoForm))
-- [batch 2: CSS] footnote line '1 Liability assumptions. 2 Asset assumptions.' loses <small>
+- [accepted: inline <small> not kept by DA] footnote line '1 Liability assumptions. 2 Asset assumptions.' loses <small>
 - [accepted] charts are inline SVG sized by JS on live (mirror shows them unsized); reCAPTCHA
 
 ### 4. `/institutional/tw/en/viewpoints/fixed-income` (viewpoints)
@@ -99,7 +99,7 @@ Fixed:
 Remaining:
 - [fixed 2026-10-27, re-imported] Share block (LinkedIn/Facebook/X/mail/copy/download) missing: share-controls is in the importer DROP list; needs a block + re-import (parser: page-model DROP / new share block)
 - [fixed 2026-10-27, re-imported] author name lacks the trailing comma ('Craig Scordellis,') (parser: author)
-- [batch 2: CSS] spacer <p>&nbsp;</p> before some h2 dropped (sections ~40px tighter)
+- [accepted: empty spacer paragraphs are not imported] spacer <p>&nbsp;</p> before some h2 dropped (sections ~40px tighter)
 - [accepted] author photo hidden on live (JS fallback state)
 
 ### 6. `/institutional/tw/en/about-us/press-releases` (press-release-root)
@@ -123,7 +123,7 @@ Fixed:
 - `styles/templates.css`: body after the title gets the column-container 24px side margin <=800px
 
 Remaining:
-- [batch 2: CSS] spacer paragraphs (after the date, before Media Contact) dropped; '- End -' loses its centre alignment (parser: press-release)
+- [accepted: empty spacer paragraphs are not imported] spacer paragraphs (after the date, before Media Contact) dropped; '- End -' loses its centre alignment (parser: press-release)
 
 ### 8. `/institutional/tw/en/strategies/equity/asia-best-select` (plain)
 
@@ -135,7 +135,7 @@ Fixed:
 Remaining:
 - [accepted] strategy data panel dropped on purpose (live: 'No strategy data for share class S0001')
 - [fixed 2026-10-27, re-imported] Philosophy is in an 8-col column on live (66% wide); full width in EDS (parser: columns / page-model expandColumns)
-- [batch 2: CSS] Vehicles intro is h4 with inline font-weight:normal on live; bold in EDS
+- [accepted: inline font-weight not kept by DA] Vehicles intro is h4 with inline font-weight:normal on live; bold in EDS
 - [accepted] team bios truncated + Read more by JS on live; 'Important information' captured open
 
 ### 9. `/institutional/tw/en/strategies/private-markets/agriculture/team` (plain)
@@ -147,7 +147,7 @@ Fixed:
 - `blocks/section-nav/section-nav.js`: scroll spy ignored the 0-height (not yet loaded) sections, so the last item was active at the top; re-runs when sections load
 
 Remaining:
-- [batch 2: CSS] empty first <p> in each live bio (16px) dropped
+- [accepted: empty spacer paragraphs are not imported] empty first <p> in each live bio (16px) dropped
 - [accepted] bio truncation height is JS on live
 
 ### 10. `/institutional/tw/en/sustainable-investing-case-studies` (case-study-list)
@@ -172,7 +172,7 @@ Fixed:
 - `styles/templates.css`: body text +24px side padding <=800px (live column-container)
 
 Remaining:
-- [batch 2: CSS] empty description <p> under the h1 dropped (body 12-16px higher)
+- [accepted: empty spacer paragraphs are not imported] empty description <p> under the h1 dropped (body 12-16px higher)
 
 ## Import source fix (2026-10-27)
 

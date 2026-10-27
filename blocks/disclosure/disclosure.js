@@ -58,6 +58,14 @@ function decorateBody(body) {
   body.querySelectorAll(':scope > p').forEach((p) => {
     if (!p.textContent.trim() && !p.querySelector('picture, img, a')) p.remove();
   });
+  // live sets the approval code (last line, e.g. "5796846") in <small>; pages only
+  const last = body.lastElementChild;
+  if (!isAuthoring() && last?.tagName === 'P' && /^[A-Z]{0,4}[:\s-]*\d{6,8}$/.test(last.textContent.trim())
+    && !last.querySelector('small')) {
+    const small = document.createElement('small');
+    small.append(...last.childNodes);
+    last.append(small);
+  }
   // live wraps whole-paragraph footnotes in <small><sup>; markdown keeps only the sup
   body.querySelectorAll(':scope > p > sup:only-child').forEach((sup) => {
     if (sup.parentElement.textContent.trim() !== sup.textContent.trim()) return;
