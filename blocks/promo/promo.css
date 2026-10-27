@@ -1,9 +1,15 @@
-/* promo (simpleBanner): green | navy | blue | gold | violet | white, double */
+/* promo (simpleBanner): green | navy | blue | gold | violet | white, double
+   Rows are the items, cells .promo-image / .promo-content / .promo-colour (authored, in
+   place); in the content: title, text paragraphs, arrow-link paragraphs. */
 /* stylelint-disable no-descending-specificity */
 
-.promo .promo-main {
+.promo {
   display: block;
   margin: 0;
+}
+
+.promo .promo-colour {
+  display: none;
 }
 
 .promo .promo-item {
@@ -51,7 +57,7 @@
   width: 60%;
 }
 
-.promo .promo-title {
+.promo .promo-content > :is(h1, h2, h3, h4, h5, h6) {
   margin: 0 0 24px;
   font-size: 24px;
   font-weight: 300;
@@ -60,55 +66,63 @@
   color: var(--color-white, #fff);
 }
 
-.promo .promo-title em,
-.promo .promo-title i {
+.promo .promo-content > :is(h1, h2, h3, h4, h5, h6) :is(em, i) {
   font-family: var(--font-family-serif, "Manulife JH Serif", "Times New Roman", serif);
   font-style: italic;
 }
 
-.promo .promo-title b,
-.promo .promo-title strong {
+.promo .promo-content > :is(h1, h2, h3, h4, h5, h6) :is(b, strong) {
   font-weight: 700;
 }
 
-.promo .promo-title sup,
-.promo .promo-title sub {
+.promo .promo-content > :is(h1, h2, h3, h4, h5, h6) :is(sup, sub) {
   font-size: 0.7em;
   vertical-align: super;
 }
 
-.promo .promo-subtitle {
-  margin-bottom: 24px;
+/* text: the paragraphs (and lists) that are not arrow links; 24px below the last one */
+.promo .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) {
+  margin: 0;
   color: var(--color-white, #fff);
 }
 
-.promo .promo-subtitle > * {
-  margin: 0;
-}
-
-.promo .promo-subtitle > :not(:first-child) {
+.promo .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) + :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) {
   margin-top: 16px;
 }
 
-.promo .promo-subtitle p,
-.promo .promo-subtitle li {
+.promo .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper, :has(~ :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper))) {
+  margin-bottom: 24px;
+}
+
+.promo .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper),
+.promo .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) li {
   font-size: 16px;
   line-height: 1.75;
   letter-spacing: -0.02em;
   color: var(--color-white, #fff);
 }
 
-.promo .promo-subtitle sup {
+.promo .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) sup {
   vertical-align: super;
 }
 
-.promo .promo-subtitle a:any-link {
+.promo .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) a:any-link {
   color: var(--color-white, #fff);
   text-decoration: underline;
   overflow-wrap: anywhere;
 }
 
-.promo a.promo-link {
+.promo .promo-content > .link-cta-wrapper {
+  display: flex;
+  align-self: flex-start;
+  margin: 0;
+}
+
+.promo .promo-content > .link-cta-wrapper + .link-cta-wrapper {
+  margin-top: 8px;
+}
+
+.promo a.link-cta {
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
@@ -121,11 +135,7 @@
   text-decoration: none;
 }
 
-.promo a.promo-link + a.promo-link {
-  margin-top: 8px;
-}
-
-.promo a.promo-link::before {
+.promo a.link-cta::before {
   content: "";
   position: relative;
   top: -1px;
@@ -137,18 +147,17 @@
   mask: url("../../icons/arrow-right-circle.svg") center / contain no-repeat;
 }
 
-.promo a.promo-link:hover,
-.promo a.promo-link:focus {
+.promo a.link-cta:hover,
+.promo a.link-cta:focus {
   color: var(--color-white, #fff);
   text-decoration: underline;
 }
 
-.promo .promo-white .promo-title,
-.promo .promo-white .promo-subtitle,
-.promo .promo-white .promo-subtitle p,
-.promo .promo-white .promo-subtitle li,
-.promo .promo-white .promo-subtitle a:any-link,
-.promo .promo-white a.promo-link {
+.promo .promo-white .promo-content > :is(h1, h2, h3, h4, h5, h6),
+.promo .promo-white .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper),
+.promo .promo-white .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) li,
+.promo .promo-white .promo-content > :is(p, ul, ol, div, .prosemirror-editor):not(.link-cta-wrapper) a:any-link,
+.promo .promo-white a.link-cta {
   color: var(--color-text, #282b3e);
 }
 
@@ -173,22 +182,22 @@
     flex-basis: 40%;
   }
 
-  .promo .promo-title {
+  .promo .promo-content > :is(h1, h2, h3, h4, h5, h6) {
     font-size: 32px;
   }
 
-  .promo.double .promo-title {
+  .promo.double .promo-content > :is(h1, h2, h3, h4, h5, h6) {
     font-size: 24px;
   }
 }
 
 @media (width >= 1101px) {
-  .promo .promo-main {
+  .promo {
     display: flex;
     align-items: stretch;
   }
 
-  .promo.double .promo-main {
+  .promo.double {
     justify-content: space-between;
     margin: 0 -24px;
   }

@@ -65,11 +65,15 @@ export default function decorate(block) {
   const main = document.createElement('div');
   main.className = 'table-main';
   if (title) {
-    const h = title.querySelector('h1, h2, h3, h4, h5, h6');
-    const h2 = document.createElement('h2');
-    h2.className = 'table-title';
-    h2.innerHTML = h ? h.innerHTML : title.textContent.trim();
-    main.append(h2);
+    // the authored title moves as it is; a bold-text title keeps the heading role
+    const wrap = document.createElement('div');
+    wrap.className = 'table-title';
+    if (!title.querySelector('h1, h2, h3, h4, h5, h6')) {
+      wrap.setAttribute('role', 'heading');
+      wrap.setAttribute('aria-level', '2');
+    }
+    wrap.append(...title.childNodes);
+    main.append(wrap);
   }
   const figure = document.createElement('figure');
   figure.className = 'table-figure';

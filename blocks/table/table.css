@@ -15,6 +15,18 @@
   color: var(--color-text, #282b3e);
 }
 
+/* the authored title (a heading, or a bold paragraph) inside the title wrapper */
+.table .table-title > * {
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+
+.table .table-title strong {
+  font-weight: inherit;
+}
+
 .table .table-title sup {
   font-size: 0.7em;
   vertical-align: super;
