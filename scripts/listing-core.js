@@ -143,7 +143,8 @@ export function normalizeEntry(row) {
   const description = String(e.description || '').trim();
   return {
     path,
-    title: String(e.title || '').trim(),
+    // some pages carry the site name in their <title> ("… | Manulife Investment Management")
+    title: String(e.title || '').replace(/\s*[|\u2013-]\s*Manulife Investment (?:Management|Mgmt\.?)\s*$/, '').trim(),
     description,
     image,
     template: String(e.template || '').trim().toLowerCase(),

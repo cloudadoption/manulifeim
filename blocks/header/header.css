@@ -482,6 +482,9 @@
   max-width: 100%;
   padding: 8px 0;
   text-align: center;
+
+  /* live .siteBanner: 16px line box around the 24px text line (bar 57px high) */
+  line-height: 1;
 }
 
 .header .header-banner-text {

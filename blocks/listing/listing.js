@@ -13,6 +13,7 @@
  * | Empty   | Sorry, no results match this criteria                                      |
  * | Sidebar | rich text shown left of the list (press: Media relations)                  |
  * | Count   | {count} listings  (viewpoints: result count line above the list)           |
+ * | Filters | on   (case studies: Topic / Theme filter bar; the TW live app shows none)  |
  *
  * URL query parameters (kept in the URL with history.replaceState):
  *   viewpoints   ?tag= ?assetManager= ?author= ?category= ?page=
@@ -39,7 +40,7 @@ const URL_KEYS = {
   documents: ['q', 'type', 'topic', 'audience'],
   people: [],
 };
-const CONFIG_KEYS = ['source', 'filter', 'limit', 'sort', 'empty', 'sidebar', 'title', 'count'];
+const CONFIG_KEYS = ['source', 'filter', 'limit', 'sort', 'empty', 'sidebar', 'title', 'count', 'filters'];
 const DEFAULT_EMPTY = 'Sorry, no results match this criteria';
 const CS_SORTS = [['newest', 'Newest'], ['oldest', 'Oldest']];
 
@@ -630,7 +631,8 @@ export default async function decorate(block) {
         ));
       }
     }
-    root.replaceChildren(filterBar, sorter, results);
+    const showFilters = /^(on|yes|true|show)$/i.test(String(config.filters || '').trim());
+    root.replaceChildren(...(showFilters ? [filterBar] : []), sorter, results);
   }
 
   /* --- documents --- */

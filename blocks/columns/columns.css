@@ -28,6 +28,11 @@
   margin-top: 0;
 }
 
+/* rich text (live .text.parbase): 16px between blocks */
+.columns .columns-col > * + * {
+  margin-top: 16px;
+}
+
 .columns .columns-col img {
   max-width: 100%;
   height: auto;

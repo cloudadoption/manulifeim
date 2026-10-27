@@ -38,7 +38,8 @@
   border-bottom: none;
 }
 
-.cards.overlap {
+.cards.overlap,
+main > .section:has(.hero.overlap) + .section .cards {
   position: relative;
   z-index: 1;
 }

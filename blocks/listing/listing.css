@@ -220,7 +220,7 @@ main > .section > .listing-wrapper {
 
 .listing .listing-vp-title {
   margin: 0;
-  font-size: var(--font-size-h2);
+  font-size: var(--font-size-h3);
   font-weight: var(--font-weight-light);
   line-height: var(--line-height-heading);
 }
@@ -744,7 +744,7 @@ main > .section > .listing-wrapper {
 
 .listing .listing-cs-title {
   margin: 0 0 16px;
-  font-size: var(--font-size-h2);
+  font-size: var(--font-size-h3);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-heading);
 }

@@ -290,7 +290,8 @@ export default async function decorate(block) {
         .map(indexEntryToItem)).slice(0, limit);
     }
     if (fromIndex.length) {
-      fromIndex.forEach((item) => ul.append(buildTeaserFromItem(item, false)));
+      // live latest-news cards: date, title and link only
+      fromIndex.forEach((item) => ul.append(buildTeaserFromItem({ ...item, summary: '' }, false)));
     } else {
       authored.forEach((row) => {
         const li = buildTeaser(row, false);

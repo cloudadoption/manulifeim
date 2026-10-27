@@ -428,6 +428,11 @@ main > .section.hero-container > .hero-wrapper {
   background-color: var(--color-white, #fff);
 }
 
+/* press release root: live heroHeader (32px up to 600px; heroHeader2 elsewhere) */
+.template-press-release-root .hero.page-header .hero-banner {
+  padding: 32px;
+}
+
 .hero.page-header .hero-icon img {
   display: block;
   width: 48px;
@@ -441,6 +446,16 @@ main > .section.hero-container > .hero-wrapper {
 
 .hero.page-header .hero-title.hero-title-first {
   margin-top: 64px;
+}
+
+/* live .caseStudyList .heroHeader2__banner / __title */
+.template-case-study-list .hero.page-header .hero-banner {
+  padding: 24px 16px;
+}
+
+.template-case-study-list .hero.page-header .hero-title {
+  margin: 0;
+  font-weight: 400;
 }
 
 .hero.page-header .hero-subtitle {
@@ -495,8 +510,10 @@ main > .section.hero-container > .hero-wrapper {
   color: var(--color-white, #fff);
 }
 
-/* the section after a page header gets extra top padding (.followed-by-top-padding + *) */
-main > .section.hero-container:has(.hero.page-header) + .section {
+/* the section after a page header gets extra top padding (.followed-by-top-padding + *);
+   not the sticky category bar, which sits right under the header on live, nor the
+   case-study list app */
+body:not(.template-case-study-list) main > .section.hero-container:has(.hero.page-header) + .section:not(.section-nav-container) {
   padding-top: 32px;
 }
 
@@ -540,7 +557,9 @@ main > .section.hero-container:has(.hero.page-header) + .section {
     flex-flow: row wrap;
   }
 
-  .hero.page-header .hero-banner {
+  .hero.page-header .hero-banner,
+  .template-press-release-root .hero.page-header .hero-banner,
+  .template-case-study-list .hero.page-header .hero-banner {
     padding: 64px;
   }
 }
@@ -645,7 +664,7 @@ main > .section.hero-container:has(.hero.page-header) + .section {
     margin-bottom: -160px;
   }
 
-  main > .section.hero-container:has(.hero.page-header) + .section {
+  body:not(.template-case-study-list) main > .section.hero-container:has(.hero.page-header) + .section:not(.section-nav-container) {
     padding-top: 64px;
   }
 }

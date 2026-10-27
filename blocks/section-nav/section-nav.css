@@ -74,6 +74,7 @@ main > .section.section-nav-container > .section-nav-wrapper {
   letter-spacing: -0.02em;
   color: var(--color-text, #282b3e);
   text-decoration: none;
+  overflow-wrap: normal;
   transition: color 0.4s ease-in-out, border-color 0.4s ease-in-out;
 }
 
@@ -237,20 +238,6 @@ main > .section.section-nav-container:has(.section-nav.links) {
   padding: 0;
 }
 
-.section-nav .section-nav-select {
-  box-sizing: border-box;
-  display: block;
-  width: 100%;
-  padding: 16px;
-  appearance: none;
-  border: none;
-  border-radius: 0;
-  background-color: var(--color-border, #ededed);
-  font-family: inherit;
-  font-size: 16px;
-  color: var(--color-text, #282b3e);
-}
-
 .section-nav.links .section-nav-item {
   box-sizing: border-box;
   display: flex;
@@ -275,6 +262,7 @@ main > .section.section-nav-container:has(.section-nav.links) {
   color: var(--color-text-muted, #5e6073);
   text-decoration: none;
   white-space: normal;
+  overflow-wrap: normal;
 }
 
 .section-nav.links .section-nav-item:hover .section-nav-link,

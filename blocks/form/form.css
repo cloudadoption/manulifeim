@@ -208,7 +208,9 @@
   .form .form-button-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+
+    /* live: the reCAPTCHA widget (not replicated) sits left of the button */
+    justify-content: flex-end;
   }
 
   .form .form-button {

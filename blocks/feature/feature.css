@@ -265,6 +265,11 @@ main > .section.feature-container:has(.feature.marketing) > .feature-wrapper {
 
 /* ---------------- banner ---------------- */
 
+/* live featureBanner is not a padded component: full width of the main column */
+main > .section > .feature-wrapper:has(> .feature.banner) {
+  padding: 0;
+}
+
 .feature.banner {
   position: relative;
   padding-top: 8px;
@@ -297,7 +302,7 @@ main > .section.feature-container:has(.feature.marketing) > .feature-wrapper {
   color: var(--color-text, #282b3e);
 }
 
-.feature.banner .feature-content > :is(.feature-title, .feature-title-text):last-of-type {
+.feature.banner .feature-content > :is(.feature-title, .feature-title-text):not(:has(+ .feature-title-text)) {
   margin-bottom: 8px;
 }
 
@@ -351,7 +356,7 @@ main > .section.feature-container:has(.feature.marketing) > .feature-wrapper {
     font-size: 32px;
   }
 
-  .feature.banner .feature-content > :is(.feature-title, .feature-title-text):last-of-type {
+  .feature.banner .feature-content > :is(.feature-title, .feature-title-text):not(:has(+ .feature-title-text)) {
     margin-bottom: 16px;
   }
 }
@@ -416,8 +421,15 @@ main > .section.feature-container:has(.feature.marketing) > .feature-wrapper {
     width: auto;
   }
 
+  /* live: the 250px-high image keeps its natural width, the text takes what is left */
   .feature.banner .feature-image-desktop {
     display: block;
+    flex: none;
+  }
+
+  .feature.banner .feature-image-desktop img {
+    display: block;
+    max-width: none;
   }
 
   .feature.banner .feature-image-mobile {

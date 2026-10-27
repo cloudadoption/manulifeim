@@ -207,7 +207,7 @@ body.appear {
 
 /* header space is reserved before the header block loads: 50px dark, 80px white from 801px.
    min-height: the loaded header grows with the site banner below the bar. */
-header {
+body > header {
   min-height: var(--header-height);
   background-color: var(--color-header-mobile);
 }
@@ -613,6 +613,20 @@ button.button.accent:focus-visible {
   padding-bottom: var(--spacing-section-edge);
 }
 
+/* default content of component-root pages comes from a live column-container, whose
+   container adds 24px side padding up to 800px (flow templates style their own body;
+   page titles are live title components without it) */
+:where(body:not(.template-viewpoint, .template-press-release, .template-case-study-detail)
+  main > .section:not(.narrow, [data-layout]) > .default-content-wrapper:not(:has(> h1))) {
+  padding-inline: calc(var(--spacing-section-x) + 24px);
+}
+
+/* live title--viewpoints: the page title of viewpoints listings sits in a white band */
+.template-viewpoints main > .section:first-child:has(> .default-content-wrapper > h1) {
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-white);
+}
+
 /* section metadata styles */
 
 /* white: solid white band */
@@ -677,8 +691,13 @@ main > .section[data-layout]:last-child {
 }
 
 @media (width >= 801px) {
-  header {
+  body > header {
     background-color: var(--color-white);
+  }
+
+  :where(body:not(.template-viewpoint, .template-press-release, .template-case-study-detail)
+    main > .section:not(.narrow, [data-layout]) > .default-content-wrapper:not(:has(> h1))) {
+    padding-inline: var(--spacing-section-x);
   }
 
   main > .section.centered > div > * {

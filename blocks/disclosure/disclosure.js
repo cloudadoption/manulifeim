@@ -60,6 +60,13 @@ export default function decorate(block) {
     content.querySelectorAll(':scope > p').forEach((p) => {
       if (!p.textContent.trim() && !p.querySelector('picture, img, a')) p.remove();
     });
+    // live wraps whole-paragraph footnotes in <small><sup>; markdown keeps only the sup
+    content.querySelectorAll(':scope > p > sup:only-child').forEach((sup) => {
+      if (sup.parentElement.textContent.trim() !== sup.textContent.trim()) return;
+      const small = document.createElement('small');
+      sup.replaceWith(small);
+      small.append(sup);
+    });
     el.append(buildTrigger(label, open), content);
     return el;
   });

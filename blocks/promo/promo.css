@@ -46,6 +46,11 @@
   padding: 32px;
 }
 
+/* live: 60% at every width (also when stacked under the image) */
+.promo.double .promo-content {
+  width: 60%;
+}
+
 .promo .promo-title {
   margin: 0 0 24px;
   font-size: 24px;
@@ -166,10 +171,6 @@
 
   .promo.double .promo-image {
     flex-basis: 40%;
-  }
-
-  .promo.double .promo-content {
-    width: 60%;
   }
 
   .promo .promo-title {

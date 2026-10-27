@@ -1,5 +1,10 @@
 /* disclosure: "Important disclosures" accordion (+inset, open) */
 
+/* live .disclosures: 8px top at every width; sides / bottom = section padding */
+main > .section > .disclosure-wrapper {
+  padding-top: 0;
+}
+
 .disclosure {
   padding-top: 8px;
 }

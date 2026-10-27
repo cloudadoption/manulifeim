@@ -182,16 +182,24 @@ function buildAnchors(block) {
     const offset = block.getBoundingClientRect().height + 1;
     let active = -1;
     targets.forEach((t, i) => {
-      if (t && t.getBoundingClientRect().top - offset <= 1) active = i;
+      if (!t) return;
+      const rect = t.getBoundingClientRect();
+      // sections that are not shown yet (still loading) report top 0
+      if (!rect.height && !rect.width) return;
+      if (rect.top - offset <= 1) active = i;
     });
     setActive(active);
   };
-  window.addEventListener('scroll', () => {
+  const schedule = () => {
     if (!ticking) {
       ticking = true;
       window.requestAnimationFrame(update);
     }
-  }, { passive: true });
+  };
+  window.addEventListener('scroll', schedule, { passive: true });
+  // sections load (and grow) after the nav is decorated
+  const main = block.closest('main');
+  if (main && window.ResizeObserver) new ResizeObserver(schedule).observe(main);
   update();
 }
 
@@ -223,21 +231,10 @@ function buildLinks(block) {
   });
   if (activeIndex === -1) activeIndex = fallback;
 
-  // mobile: native select (live pressCategories__select)
-  const mobile = document.createElement('div');
-  mobile.className = 'section-nav-mobile';
-  const select = document.createElement('select');
-  select.className = 'section-nav-select';
-  select.setAttribute('aria-label', 'Categories');
-  items.forEach((item, i) => {
-    const opt = document.createElement('option');
-    opt.value = item.href;
-    opt.textContent = item.label;
-    if (i === activeIndex) opt.selected = true;
-    select.append(opt);
-  });
-  select.addEventListener('change', () => { window.location.href = select.value; });
-  mobile.append(select);
+  // mobile: live pressCategories cc-select (trigger "Select.." + list of the category links)
+  const dropdown = buildDropdown(items, (i) => { window.location.href = items[i].href; });
+  dropdown.el.querySelector('.section-nav-select-trigger').textContent = 'Select..';
+  const mobile = dropdown.el;
 
   const ul = document.createElement('ul');
   ul.className = 'section-nav-list';

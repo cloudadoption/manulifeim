@@ -307,7 +307,15 @@ test('DOM listing (press): sidebar, category, pages', async () => {
 });
 
 test('DOM listing (case-studies): count, sort dropdown, filter tabs, URL, load more', async () => {
-  const w = await setupDom(`${ROOT}/sustainable-investing-case-studies?theme=timber`, blockHtml('listing', 'case-studies', [['Limit', '9']]));
+  // without a Filters row (the TW live app) only the sorter and results render
+  const plain = await setupDom(`${ROOT}/sustainable-investing-case-studies`, blockHtml('listing', 'case-studies', [['Limit', '9']]));
+  const decoratePlain = await listing();
+  const plainBlock = plain.document.querySelector('.listing');
+  await decoratePlain(plainBlock);
+  assert.equal(plainBlock.querySelector('.listing-cs-filters'), null, 'no filter bar by default');
+  assert.ok(plainBlock.querySelector('.listing-cs-count'));
+
+  const w = await setupDom(`${ROOT}/sustainable-investing-case-studies?theme=timber`, blockHtml('listing', 'case-studies', [['Limit', '9'], ['Filters', 'on']]));
   const decorate = await listing();
   const block = w.document.querySelector('.listing');
   await decorate(block);
