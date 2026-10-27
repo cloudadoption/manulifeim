@@ -5,7 +5,8 @@
  * server, so the capture code never changes between batches.
  *
  *   node tools/importer/snapshot/queue.mjs [--size 25] [--budget 540] [--gap 20-30] [--group article]
- *   (--gap: seconds between page starts, min-max; --images-first p1,p2: their images first)
+ *   (--gap: seconds between page starts, min-max; --images-first p1,p2: their images first;
+ *   --deferred: include the pages listed in _deferred.json)
  *
  * Order: one sample page per template group, then live_status 200 rows, then unchecked rows.
  * Rows already in _state.json (any outcome) are skipped, so a page is never fetched twice.
@@ -29,8 +30,11 @@ const rows = parseCsv(readFileSync('tools/migration-scope/pages.csv', 'utf-8'));
 const state = readState();
 // pages that timed out (no status) get one more try
 const retry = (s) => s && s.status == null && !s.retried;
+// pages loaded several times by lost batches wait in _deferred.json until the rest is captured
+const deferred = new Set(readJson(`${SNAP_DIR}/_deferred.json`, []));
 const todo = rows.filter((r) => (!state[r.live_path] || retry(state[r.live_path])) && ['200', 'unchecked'].includes(r.live_status))
-  .filter((r) => !group || r.template_group === group);
+  .filter((r) => !group || r.template_group === group)
+  .filter((r) => args.includes('--deferred') || !deferred.has(`${ORIGIN}${r.live_path}`));
 
 const sampled = new Set(Object.keys(state).map((p) => state[p].group));
 const samples = [];
