@@ -1,0 +1,41 @@
+/* Listing (people): person cards from the people index (no DA page uses it yet). */
+import { applyFilters, sortItems, paginate } from '../../scripts/listing-core.js';
+import { el } from '../../scripts/dom-utils.js';
+import {
+  icon, picture, buildPagination, emptyState,
+} from './listing-ui.js';
+
+function personCard(it) {
+  const img = picture(it.image, it.title, '200');
+  return el(
+    'li',
+    { class: 'listing-person' },
+    el(
+      'div',
+      { class: 'listing-person-content' },
+      img ? el('div', { class: 'listing-person-image' }, img) : null,
+      el('h3', { class: 'listing-person-name' }, it.title),
+      it.position ? el('p', { class: 'listing-person-position' }, it.position) : null,
+    ),
+    el(
+      'div',
+      { class: 'listing-person-footer' },
+      el('a', { class: 'listing-person-more', href: it.path, 'aria-label': `Read more: ${it.title}` }, 'Read more', icon('chevron-right')),
+    ),
+  );
+}
+
+export default function people(ctx) {
+  const {
+    root, items, config, state, pageSize, setPage, effective,
+  } = ctx;
+  return function renderPeople() {
+    const filtered = sortItems(applyFilters(items, effective()), state.sort);
+    const result = paginate(filtered, state.page, pageSize);
+    const parts = [];
+    if (!result.items.length) parts.push(emptyState(config));
+    else parts.push(el('ul', { class: 'listing-people-list' }, result.items.map(personCard)));
+    parts.push(buildPagination(result, setPage));
+    root.replaceChildren(...parts.filter(Boolean));
+  };
+}
