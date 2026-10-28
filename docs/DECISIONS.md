@@ -28,10 +28,14 @@ aem.page with working listings: run `sh tools/importer/update-preview-index.sh` 
 previews the sheet), set `INDEX_SOURCE = 'stand-in'`, and set it back to `native` once the tree is
 published. Never ship `stand-in` to a published site: live listings would show unpublished pages.
 
-## ADR-002: listing people mode (2026-10-28, open)
+## ADR-002: listing people mode kept until capture is complete (2026-10-28)
 
-`listing (people)` (`blocks/listing/people.js`) has no use in DA. The scope lists two people-listing
-pages: `/consultant-team` is imported as authored content; `/authors` answered 404 on live
-(2026-10-26, `_state.json`), so no live page needs the mode. Kept (it loads only when a block uses
-it) pending the site owner's decision; the earlier condition "until /authors is captured" was based
-on a wrong premise.
+`listing (people)` (`blocks/listing/people.js`) has no use in DA. Of the two people-listing pages in
+scope, `/consultant-team` is imported as authored content and `/authors` answered 404 on live
+(2026-10-26, `_state.json`). About 600 pages are still uncaptured and may include a people listing.
+
+**Decision (Ben, 2026-10-28).** Keep the mode (it loads only when a block uses it) until capture is
+complete; do not delete it before then.
+
+**Revisit** when every row of `tools/migration-scope/pages.csv` has been captured: if no imported page
+uses `listing (people)`, delete `people.js`, the `people` variant and its CSS in one commit.

@@ -1,6 +1,6 @@
 /*
- * Listing (people): person cards from the people index. No DA page uses it and /authors is 404
- * on live; kept pending a decision (docs/DECISIONS.md ADR-002).
+ * Listing (people): person cards from the people index. No DA page uses it yet; kept until the
+ * live capture is complete, then revisited (docs/DECISIONS.md ADR-002).
  */
 import { applyFilters, sortItems, paginate } from '../../scripts/listing-core.js';
 import { el } from '../../scripts/dom-utils.js';
