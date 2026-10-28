@@ -211,6 +211,9 @@ main > .section > .listing-wrapper {
   display: block;
   max-width: 100%;
   height: auto;
+
+  /* teaser images are 1.908:1 (measured); holds the space until the image has loaded (CLS) */
+  aspect-ratio: auto 1908 / 1000;
   margin: 0 auto;
 }
 
