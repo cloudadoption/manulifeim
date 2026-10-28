@@ -84,6 +84,7 @@
   /* layout and containers */
   --layout-rail-width: 0px;
   --header-height: 50px;
+  --alert-reserve: 81px;
   --width-reading: 600px;
   --width-inset: 800px;
   --width-form: 850px;
@@ -113,6 +114,7 @@
     --spacing-section-x: 32px;
     --layout-rail-width: 80px;
     --header-height: 80px;
+    --alert-reserve: 57px;
   }
 }
 
@@ -195,6 +197,18 @@ body.appear {
 body > header {
   min-height: var(--header-height);
   background-color: var(--color-header-mobile);
+}
+
+/* site banner (nav section 4) space, CLS: reserved below the bar until the header has loaded,
+   unless the banner was dismissed this session (scripts.js sets html.site-alert-dismissed).
+   --alert-reserve is the current message's height (2 lines < 801px, 1 line from 801px). */
+html:not(.site-alert-dismissed) body > header {
+  min-height: calc(var(--header-height) + var(--alert-reserve));
+  background-image: linear-gradient(transparent var(--header-height), var(--color-white) 0);
+}
+
+body > header:has(> .header[data-block-status='loaded']) {
+  min-height: 0;
 }
 
 /* attestation prompt (live body.attestation__blur): scripts.js sets the class before first paint

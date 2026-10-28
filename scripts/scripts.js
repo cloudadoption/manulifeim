@@ -226,6 +226,12 @@ async function loadEager(doc) {
   if (attestationPending) document.body.classList.add('attestation-blur');
   // the class survives the body swaps Canvas does between edits
   else document.body.classList.remove('attestation-blur');
+  // banner closed this session (blocks/header): no space reserved for it (styles.css)
+  try {
+    if (sessionStorage.getItem('mim-site-banner-dismissed')) document.documentElement.classList.add('site-alert-dismissed');
+  } catch (e) {
+    // storage unavailable: keep the reserve
+  }
   const template = decorateTemplateAndTheme();
   const templateStyles = STYLED_TEMPLATES.includes(template)
     ? loadCSS(`${window.hlx.codeBasePath}/styles/templates.css`).catch(() => {})
