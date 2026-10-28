@@ -40,7 +40,8 @@ let changed = 0;
 const deadLog = [];
 files.forEach((f) => {
   const html = readFileSync(f, 'utf-8');
-  const stripped = html.replace(/(<picture>\s*)?<img[^>]*src="(https:\/\/www\.manulifeim\.com\/content\/[^"]+)"[^>]*>(\s*<\/picture>)?/g, (m, a, src) => {
+  // any live path: dead assets also sit outside /content (e.g. /libs/.../blank.png spacers)
+  const stripped = html.replace(/(<picture>\s*)?<img[^>]*src="(https:\/\/www\.manulifeim\.com\/[^"]+)"[^>]*>(\s*<\/picture>)?/g, (m, a, src) => {
     const clean = src.replace(/&amp;/g, '&');
     if (!dead.has(clean)) return m;
     deadLog.push(`${f.replace(/^content|\.plain\.html$/g, '')} ${clean}`);
