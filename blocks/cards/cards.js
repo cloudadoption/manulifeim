@@ -28,6 +28,7 @@
  */
 import isAuthoring from '../../scripts/authoring.js';
 import {
+  el,
   isMediaCell,
   fetchIndex,
   indexEntryToItem,
@@ -36,13 +37,6 @@ import {
   toPath,
   sortByDateDesc,
 } from '../../scripts/block-utils.js';
-
-function el(tag, className, ...children) {
-  const e = document.createElement(tag);
-  if (className) e.className = className;
-  e.append(...children.filter((c) => c !== null && c !== undefined && c !== ''));
-  return e;
-}
 
 /** A row that only holds one link (auto-filled from the index). */
 function linkOnlyRow(row) {

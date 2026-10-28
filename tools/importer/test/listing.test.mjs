@@ -4,33 +4,31 @@
  *
  *   node --test tools/importer/test/listing.test.mjs
  *
- * Data: migration-work/fake-index/*.json (node tools/importer/build-fake-index.mjs) for
- * viewpoints and search; synthetic rows for press, case studies, documents and people
- * (the snapshots hold one page of each). DOM tests run the real blocks in jsdom (from the
- * excat content-import skill) with fetch served from those files.
+ * Data: tools/importer/test/fixtures/ (committed, so `npm test` runs on a fresh clone):
+ * query-index.json and query-index-people.json copied from migration-work/fake-index
+ * (node tools/importer/build-fake-index.mjs), live-fixed-income-order.json read once from
+ * the live snapshot. Synthetic rows for press, case studies, documents and people (the
+ * snapshots hold one page of each). DOM tests run the real blocks in jsdom (devDependency)
+ * with fetch served from those rows.
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
+import { JSDOM, VirtualConsole } from 'jsdom';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = join(here, '../../..');
-const FAKE = join(repo, 'migration-work/fake-index');
-const SNAP = join(repo, 'tools/importer/snapshots/www.manulifeim.com');
-const NM = '/home/node/.excat-marketplaces/excat-marketplace/excat/skills/excat-content-import/scripts/node_modules';
-const { JSDOM, VirtualConsole } = await import(pathToFileURL(join(NM, 'jsdom/lib/api.js')).href);
+const FIXTURES = join(here, 'fixtures');
 
 const core = await import(pathToFileURL(join(repo, 'scripts/listing-core.js')).href);
 
 const ROOT = '/institutional/tw/en';
-const readJson = (f) => JSON.parse(readFileSync(join(FAKE, f), 'utf-8'));
-if (!existsSync(join(FAKE, 'query-index.json'))) {
-  throw new Error('run node tools/importer/build-fake-index.mjs first');
-}
+const readJson = (f) => JSON.parse(readFileSync(join(FIXTURES, f), 'utf-8'));
 const allRows = readJson('query-index.json').data;
-const vpRows = readJson('query-index-viewpoints.json').data;
+// query-index-viewpoints.json is the viewpoint subset of the main index, in the same order
+const vpRows = allRows.filter((r) => r.template === 'viewpoint');
 const viewpoints = vpRows.map(core.normalizeEntry).filter(core.VARIANT_BASE.viewpoints);
 
 /* ---------- synthetic rows for the thin snapshot types ---------- */
@@ -129,9 +127,7 @@ test('sort newest + paging match the live fixed-income page order', () => {
   const sorted = core.sortItems(core.applyFilters(viewpoints, { category: ['fixed-income'] }), 'newest');
   for (let i = 1; i < sorted.length; i += 1) assert.ok(sorted[i - 1].sortTs >= sorted[i].sortTs);
   // live page 1 (10 newest) restricted to the articles we have snapshots of keeps its order
-  const html = readFileSync(join(SNAP, `${ROOT}/viewpoints/fixed-income.html`), 'utf-8');
-  const live = [...html.matchAll(/class="viewpointList__titleLink"[^>]*>|href="https:\/\/www\.manulifeim\.com(\/institutional\/tw\/en\/viewpoints\/fixed-income\/[^"]+)" class="viewpointList__titleLink"/g)]
-    .map((m) => m[1]).filter(Boolean).map((p) => p.toLowerCase());
+  const live = readJson('live-fixed-income-order.json').paths.map((p) => p.toLowerCase());
   assert.equal(live.length, 10);
   const ours = sorted.map((v) => v.path.toLowerCase()).filter((p) => live.includes(p));
   const liveKnown = live.filter((p) => ours.includes(p));
@@ -216,6 +212,8 @@ async function setupDom(url, bodyHtml) {
   const w = dom.window;
   globalThis.window = w;
   globalThis.document = w.document;
+  // the blocks use the window's AbortController (event listener `signal`), not Node's
+  globalThis.AbortController = w.AbortController;
   globalThis.fetch = async (input) => {
     const u = new URL(String(input), 'http://localhost');
     const rows = SOURCES[u.pathname.split('/').pop()];

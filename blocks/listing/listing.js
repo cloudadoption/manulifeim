@@ -32,6 +32,7 @@ import {
   slugify,
 } from '../../scripts/listing-core.js';
 import { pageSignal } from '../../scripts/authoring.js';
+import { el } from '../../scripts/dom-utils.js';
 
 const VARIANTS = ['viewpoints', 'press', 'case-studies', 'documents', 'people'];
 const URL_KEYS = {
@@ -46,21 +47,6 @@ const DEFAULT_EMPTY = 'Sorry, no results match this criteria';
 const CS_SORTS = [['newest', 'Newest'], ['oldest', 'Oldest']];
 
 /* ---------- small DOM helpers ---------- */
-
-function el(tag, attrs = {}, ...children) {
-  const node = document.createElement(tag);
-  Object.entries(attrs).forEach(([k, v]) => {
-    if (v === undefined || v === null || v === false) return;
-    if (k === 'class') node.className = v;
-    else if (k === 'text') node.textContent = v;
-    else node.setAttribute(k, v === true ? '' : v);
-  });
-  children.flat().forEach((c) => {
-    if (c === undefined || c === null || c === false) return;
-    node.append(typeof c === 'string' ? document.createTextNode(c) : c);
-  });
-  return node;
-}
 
 const icon = (name) => el('span', { class: `listing-icon listing-icon-${name}`, 'aria-hidden': 'true' });
 

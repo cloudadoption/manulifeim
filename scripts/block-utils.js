@@ -4,11 +4,10 @@
  */
 import { createOptimizedPicture } from './aem.js';
 import {
-  INDEX_URLS, readIndexJson, normalizeEntry, isoDate,
+  INDEX_URLS, MONTHS, readIndexJson, normalizeEntry, isoDate, splitValues,
 } from './listing-core.js';
 
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
-  'August', 'September', 'October', 'November', 'December'];
+export { el } from './dom-utils.js';
 
 /**
  * True for an authored cell that holds only an image (with or without its <p>).
@@ -255,17 +254,8 @@ export async function fetchIndex(path = INDEX_URLS.all) {
  * @returns {string[]}
  */
 export function splitList(value) {
-  if (!value) return [];
-  if (Array.isArray(value)) return value;
-  const str = String(value).trim();
-  if (str.startsWith('[')) {
-    try {
-      return JSON.parse(str);
-    } catch (e) {
-      // ignore
-    }
-  }
-  return str.split(str.includes('|') ? '|' : ',').map((s) => s.trim()).filter((s) => s);
+  // arrays as they are (author objects); strings like the index helper
+  return Array.isArray(value) ? value : splitValues(value);
 }
 
 /**

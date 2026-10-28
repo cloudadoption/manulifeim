@@ -20,7 +20,7 @@ export const PAGE_SIZES = {
   viewpoints: 10, press: 10, 'case-studies': 9, documents: 10, people: 0,
 };
 
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+export const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
   'August', 'September', 'October', 'November', 'December'];
 
 /** Same rule as aem.js toClassName. */

@@ -17,6 +17,7 @@ import { loadFragment } from '../fragment/fragment.js';
 // eslint-disable-next-line import/no-cycle
 import { openRegionSelector } from '../../scripts/scripts.js';
 import { pageSignal } from '../../scripts/authoring.js';
+import { el } from '../../scripts/dom-utils.js';
 
 const desktop = window.matchMedia('(width >= 801px)');
 const hoverDesktop = window.matchMedia('(hover: hover) and (width >= 801px)');
@@ -28,15 +29,6 @@ const nextId = (prefix) => {
   uid += 1;
   return `${prefix}-${uid}`;
 };
-
-function el(tag, attrs = {}, ...children) {
-  const e = document.createElement(tag);
-  Object.entries(attrs).forEach(([k, v]) => {
-    if (v !== undefined && v !== null && v !== false) e.setAttribute(k, v === true ? '' : v);
-  });
-  children.flat().filter((c) => c !== null && c !== undefined && c !== '').forEach((c) => e.append(c));
-  return e;
-}
 
 /** Monochrome icon from /icons/<name>.svg, drawn with currentColor through a CSS mask. */
 function icon(name, cls = '') {

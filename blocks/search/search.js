@@ -17,6 +17,7 @@ import {
   INDEX_URLS, SEARCH_FACETS, normalizeEntry, runSearch, pagerWindow, pageType,
   formatShortDate,
 } from '../../scripts/listing-core.js';
+import { el } from '../../scripts/dom-utils.js';
 
 const SORTS = [
   ['relevance', 'Relevance'],
@@ -30,20 +31,6 @@ const SORT_KEYS = {
 const SIZES = [10, 25, 50, 100];
 const FACET_VALUES = 8; // number-of-values on live
 const COLLAPSE_AFTER = 4; // collapse-facets-after on live
-
-function el(tag, attrs = {}, ...children) {
-  const node = document.createElement(tag);
-  Object.entries(attrs).forEach(([k, v]) => {
-    if (v === undefined || v === null || v === false) return;
-    if (k === 'class') node.className = v;
-    else node.setAttribute(k, v === true ? '' : v);
-  });
-  children.flat().forEach((c) => {
-    if (c === undefined || c === null || c === false) return;
-    node.append(typeof c === 'string' ? document.createTextNode(c) : c);
-  });
-  return node;
-}
 
 const icon = (name) => el('span', { class: `search-icon search-icon-${name}`, 'aria-hidden': 'true' });
 const fmt = (n) => n.toLocaleString('en-US');

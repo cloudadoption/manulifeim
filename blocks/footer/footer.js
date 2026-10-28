@@ -9,13 +9,7 @@
  */
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
-
-function el(tag, cls, ...children) {
-  const e = document.createElement(tag);
-  if (cls) e.className = cls;
-  children.flat().filter(Boolean).forEach((c) => e.append(c));
-  return e;
-}
+import { el } from '../../scripts/dom-utils.js';
 
 const contentOf = (section) => (section && section.querySelector('.default-content-wrapper')) || section;
 

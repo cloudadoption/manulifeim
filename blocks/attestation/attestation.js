@@ -22,6 +22,7 @@ import { getMetadata, loadCSS } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 // eslint-disable-next-line import/no-cycle
 import { ATTESTATION_KEY } from '../../scripts/scripts.js';
+import { el } from '../../scripts/dom-utils.js';
 
 const REGION_HASH = '#region-select';
 const ATTESTATION_PATH = '/institutional/tw/en/fragments/attestation';
@@ -29,15 +30,6 @@ const REGION_SELECT_PATH = '/institutional/tw/en/fragments/region-select';
 const TRANSITION_MS = 300;
 
 let modalPromise = null;
-
-function el(tag, attrs = {}, ...children) {
-  const e = document.createElement(tag);
-  Object.entries(attrs).forEach(([k, v]) => {
-    if (v !== undefined && v !== null && v !== false) e.setAttribute(k, v === true ? '' : v);
-  });
-  children.flat().filter((c) => c !== null && c !== undefined && c !== '').forEach((c) => e.append(c));
-  return e;
-}
 
 function icon(name, cls) {
   const span = el('span', { class: `attestation-icon ${cls || ''}`.trim(), 'aria-hidden': 'true' });
