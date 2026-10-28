@@ -86,14 +86,17 @@ function uploadedOnce(ws, p) {
   ws.page(p, '<div><p>v2 from the importer</p></div>');
 }
 
-test('new page (DA 404): uploaded, previewed, and a later re-import with DA unchanged uploads again', () => {
+test('new page (DA 404): created and previewed; a later re-import is held (creation-only, even unchanged)', () => {
   const ws = workspace();
   uploadedOnce(ws, '/t/new');
   assert.equal(ws.pages()['/t/new'].upload, 201);
   assert.equal(ws.pages()['/t/new'].preview, 200);
+  const before = ws.pages()['/t/new'];
   const r = ws.run('--force', '/t/new');
-  assert.equal(r.docWrites('/t/new'), 1, r.stdout);
-  assert.match(ws.remote('/t/new').body, /v2 from the importer/);
+  assert.equal(r.docWrites('/t/new'), 0, r.stdout);
+  assert.match(ws.remote('/t/new').body, /v1/);
+  assert.deepEqual(ws.pages()['/t/new'], before, 'ledger record unchanged');
+  assert.ok(ws.conflicts()?.['/t/new'], 'held and logged');
 });
 
 test('an authored edit within the first minute after our upload is kept', () => {
@@ -119,18 +122,20 @@ test('a failed upload record is not a baseline: authored version from before the
   assert.ok(ws.conflicts()?.['/t/failed'], 'conflict logged');
 });
 
-test('a failed upload keeps the last successful baseline: an edit made before the failed attempt is kept', () => {
+test('a failed create leaves no baseline; the path is held afterwards (also when DA is still absent)', () => {
   const ws = workspace();
-  uploadedOnce(ws, '/t/keep');
+  ws.page('/t/keep', '<div><p>v1</p></div>');
   ws.patchState((s) => { s.postStatus = { [doc('/t/keep')]: 500 }; });
   ws.run('--force', '/t/keep');
   assert.equal(ws.pages()['/t/keep'].upload, 500);
-  const failedAt = Date.parse(ws.pages()['/t/keep'].at);
+  assert.equal(ws.pages()['/t/keep'].baseline, undefined, 'a failed write is no baseline');
   ws.patchState((s) => { s.postStatus = {}; });
-  ws.setRemote('/t/keep', { body: daBody('<div><p>authored before the failed attempt</p></div>'), lastModified: failedAt - 30 * 1000 });
+  const absent = ws.run('--force', '/t/keep');
+  assert.equal(absent.docWrites('/t/keep'), 0, 'ambiguous ownership after a failed write: held');
+  ws.setRemote('/t/keep', { body: daBody('<div><p>authored after the failed attempt</p></div>'), lastModified: Date.now() });
   const r = ws.run('--force', '/t/keep');
   assert.equal(r.docWrites('/t/keep'), 0, r.stdout);
-  assert.match(ws.remote('/t/keep').body, /authored before the failed attempt/);
+  assert.match(ws.remote('/t/keep').body, /authored after the failed attempt/);
 });
 
 test('a page we uploaded that is now gone from DA is not recreated', () => {
@@ -298,7 +303,7 @@ test('an author creates the page after our final check, before the POST: create-
   assert.ok(ws.conflicts()?.['/t/created'], 'conflict persisted');
 });
 
-test('an author saves an existing page as our POST arrives: If-Match write is rejected and kept', () => {
+test('an existing page is never replaced (creation-only): no document POST, so no window for an author save', () => {
   const ws = workspace();
   ws.page('/t/update', '<div><p>v1</p></div>');
   ws.run('--force', '/t/update');
@@ -306,10 +311,8 @@ test('an author saves an existing page as our POST arrives: If-Match write is re
   ws.page('/t/update', '<div><p>v2</p></div>');
   ws.patchState((s) => { s.atPost = { [doc('/t/update')]: { body: daBody('<div><p>author save</p></div>') } }; });
   const r = ws.run('--force', '/t/update');
-  const posts = r.calls.filter((c) => c.method === 'POST' && c.url === doc('/t/update'));
-  assert.equal(posts.length, 1, 'one attempt, no unconditional retry');
-  assert.ok(posts[0].headers['if-match'] && posts[0].headers['if-match'] !== '*', 'specific If-Match');
-  assert.match(ws.remote('/t/update').body, /author save/);
+  assert.equal(r.docWrites('/t/update'), 0, r.stdout);
+  assert.match(ws.remote('/t/update').body, /v1/);
   assert.deepEqual(ws.pages()['/t/update'].baseline, baseline, 'baseline unchanged');
   assert.ok(ws.conflicts()?.['/t/update']);
 });

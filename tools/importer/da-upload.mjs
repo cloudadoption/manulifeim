@@ -16,18 +16,19 @@
  * content/<path>.plain.html to the DA media URL (so the local file is exactly what DA gets),
  * POSTs the page to admin.da.live, reads it back to confirm it matches, then previews it.
  * Credentials are injected by the environment (no Authorization header here).
- * Authored DA changes are protected as far as DA's API allows. After a successful write whose
- * read-back is byte-identical to what we sent, the record keeps `baseline` = { sha256 of DA's
- * <main> (exact bytes), etag from our write response }. DA is checked before the media uploads and
- * again right before the document write:
- * - absent in DA and no record of ours at all: created with If-None-Match: * (create-only);
- * - present, fingerprint equal and an ETag of our write known: replaced with If-Match: <etag>;
- * - everything else is held (skipped, logged in reports/da-conflicts.json, also with --force):
- *   any record without a verified baseline (legacy, failed or uncertain uploads), a different
- *   fingerprint, a page of ours absent from DA, no usable ETag, a DA answer other than 200/404,
- *   a network error, and a 412 from DA (never retried, never recorded as a success).
- * Limitation: the preconditions rely on da-admin's storage checks (create-only, specific
- * If-Match on an existing object); they were verified in its source, not by a live write probe.
+ * Creation-only migration uploads (manual authoring in DA is separate). DA is checked before the
+ * media uploads and again right before the document write:
+ * - absent in DA (404) and no history for the path (no ledger record, no logged conflict):
+ *   created with If-None-Match: *;
+ * - everything else is held (skipped, logged in reports/da-conflicts.json with the first and the
+ *   latest reason, also with --force): any page that exists in DA (never replaced: a specific
+ *   If-Match is not enforced against an object deleted in the meantime), a 404 with prior
+ *   ownership or conflict history, a DA answer other than 200/404, a network error, and a 412
+ *   (never retried, never recorded as a success).
+ * After a successful create whose read-back is byte-identical to what we sent, the record keeps
+ * `baseline` = { sha256 of DA's <main> (exact bytes), etag of our write } for reporting.
+ * Limitation: create-only relies on da-admin's If-None-Match: * storage check (verified in its
+ * source, not by a live write probe).
  * State: tools/importer/reports/da-upload.json (pages) and da-media.json (images).
  */
 import {
@@ -105,17 +106,19 @@ function writePlan(path) {
   const known = pages[path];
   const base = known?.baseline;
   if (r.status === 404) {
-    // only a page the migration has no record of at all may be created
+    // only a path without any history (no ledger record, no logged conflict) may be created
     if (known) return { hold: `absent from DA but the migration has a record of it (${known.at}, upload ${known.upload}): deleted there?, not recreating` };
+    if (conflicts[path]) return { hold: `absent from DA but held before (${conflicts[path].firstAt || conflicts[path].at}): deleted there?, not recreating` };
     return { header: 'If-None-Match: *' };
   }
   if (r.status !== 200) return { hold: `DA answered HTTP ${r.status}, not overwriting` };
+  // creation-only: DA cannot make a replacement safe against a deletion in the meantime (a specific
+  // If-Match is not enforced against an absent object), so existing pages are never replaced here
   const main = mainOf(r.body);
-  if (main === undefined) return { hold: 'DA copy has no <main>, not overwriting' };
-  if (!base?.sha256) return { hold: 'exists in DA without a fingerprint of a verified upload by the migration' };
-  if (fingerprint(main) !== base.sha256) return { hold: `DA copy differs from our last verified upload (${base.at}): authored change` };
-  if (!base.etag) return { hold: 'no ETag of our last write, so DA cannot enforce the replacement (If-Match); held' };
-  return { header: `If-Match: ${base.etag}` };
+  if (main === undefined) return { hold: 'exists in DA (no <main>); creation-only uploads do not replace existing pages' };
+  if (!base?.sha256) return { hold: 'exists in DA without a verified upload by the migration; creation-only uploads do not replace existing pages' };
+  if (fingerprint(main) !== base.sha256) return { hold: `DA copy differs from our last verified upload (${base.at}): authored change; creation-only uploads do not replace existing pages` };
+  return { hold: `exists in DA unchanged since our upload (${base.at}); creation-only uploads do not replace existing pages` };
 }
 
 const etagOf = (file) => {
@@ -125,8 +128,13 @@ const etagOf = (file) => {
 };
 
 function hold(path, reason) {
-  conflicts[path] = { reason, at: new Date().toISOString() };
-  return { path, skipped: `authored change kept: ${reason}` };
+  // keep the history: the first hold of a path stays recorded next to the latest one
+  const prev = conflicts[path];
+  const at = new Date().toISOString();
+  conflicts[path] = {
+    reason, at, firstAt: prev?.firstAt || prev?.at || at, firstReason: prev?.firstReason || prev?.reason || reason,
+  };
+  return { path, skipped: `held: ${reason}` };
 }
 
 function uploadPage(path) {
