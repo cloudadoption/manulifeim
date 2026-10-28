@@ -29,7 +29,10 @@ import {
   INDEX_URLS, PAGE_SIZES, VARIANT_BASE, normalizeEntry, parseFilter, filtersFromParams,
 } from '../../scripts/listing-core.js';
 import { el } from '../../scripts/dom-utils.js';
-import { currentParams, updateUrl, scrollToBlock } from './listing-ui.js';
+import { fetchPlaceholders } from '../../scripts/placeholders.js';
+import {
+  currentParams, updateUrl, scrollToBlock, setPlaceholders,
+} from './listing-ui.js';
 
 const VARIANTS = ['viewpoints', 'press', 'case-studies', 'documents', 'people'];
 const URL_KEYS = {
@@ -81,11 +84,13 @@ export default async function decorate(block) {
   const root = el('div', { class: 'listing-inner', 'aria-busy': 'true' });
   block.replaceChildren(...settings, root);
 
-  // the variant module loads while the index is fetched
-  const [{ default: create }, items] = await Promise.all([
+  // the variant module and the labels load while the index is fetched
+  const [{ default: create }, items, ph] = await Promise.all([
     import(`./${variant}.js`),
     loadItems(config, variant),
+    fetchPlaceholders(),
   ]);
+  setPlaceholders(ph);
   root.removeAttribute('aria-busy');
   const ctx = {
     block, root, items, config, state, baseFilters, pageSize, sidebar,

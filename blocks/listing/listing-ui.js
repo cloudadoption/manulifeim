@@ -6,8 +6,22 @@ import { toPicture, buildAuthorInline, hideOnError } from '../../scripts/block-u
 import { formatLongDate, isoDate, pageWindow } from '../../scripts/listing-core.js';
 import { pageSignal } from '../../scripts/authoring.js';
 import { el } from '../../scripts/dom-utils.js';
+import { placeholder } from '../../scripts/placeholders.js';
 
 export const DEFAULT_EMPTY = 'Sorry, no results match this criteria';
+
+let ph = {};
+
+/** Placeholders sheet for the listing labels (set once by listing.js before rendering). */
+export function setPlaceholders(sheet) {
+  ph = sheet || {};
+}
+
+/** Label from the placeholders sheet, else the English default; `{name}` from vars. */
+export const t = (key, fallback, vars) => placeholder(ph, key, fallback, vars);
+
+/** The block's Empty row, else the sheet's or the English no-results text. */
+export const emptyText = (config) => config.empty || t('noResults', DEFAULT_EMPTY);
 
 export const icon = (name) => el('span', { class: `listing-icon listing-icon-${name}`, 'aria-hidden': 'true' });
 
@@ -52,8 +66,8 @@ function pageHref(page) {
 export function buildPagination(result, onPage, labels = {}) {
   const { page, pages } = result;
   if (pages <= 1) return null;
-  const prevLabel = labels.previous || 'Previous';
-  const nextLabel = labels.next || 'Next';
+  const prevLabel = labels.previous || t('previous', 'Previous');
+  const nextLabel = labels.next || t('next', 'Next');
   const ul = el('ul', { class: 'listing-pagination-list' });
   const direction = (label, target, enabled) => {
     const li = el('li', { class: 'listing-pagination-item' });
@@ -93,7 +107,7 @@ export function buildPagination(result, onPage, labels = {}) {
 }
 
 export function readMore(href, title, cls, iconName = 'arrow-right-circle') {
-  return el('a', { class: cls, href, 'aria-label': `Read more: ${title}` }, icon(iconName), 'Read more');
+  return el('a', { class: cls, href, 'aria-label': t('readMoreAbout', 'Read more: {title}', { title }) }, icon(iconName), t('readMore', 'Read more'));
 }
 
 export function authorsBlock(authors) {
@@ -109,7 +123,7 @@ export function authorsBlock(authors) {
 }
 
 export function emptyState(config, cls = 'listing-empty') {
-  return el('p', { class: cls }, config.empty || DEFAULT_EMPTY);
+  return el('p', { class: cls }, emptyText(config));
 }
 
 export function scrollToBlock(block) {

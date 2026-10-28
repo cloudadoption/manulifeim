@@ -4,7 +4,7 @@ import {
 } from '../../scripts/listing-core.js';
 import { el } from '../../scripts/dom-utils.js';
 import {
-  icon, updateUrl, buildPagination, DEFAULT_EMPTY,
+  icon, updateUrl, buildPagination, emptyText, t,
 } from './listing-ui.js';
 
 export default function documents(ctx) {
@@ -43,11 +43,11 @@ export default function documents(ctx) {
       el(
         'div',
         { class: 'listing-doc-section wide' },
-        el('div', { class: 'listing-doc-search-wrap' }, icon('magnifier'), el('label', { class: 'listing-doc-label', for: search.id }, 'Search'), search),
+        el('div', { class: 'listing-doc-search-wrap' }, icon('magnifier'), el('label', { class: 'listing-doc-label', for: search.id }, t('search', 'Search')), search),
       ),
       topicSel,
       audSel,
-      el('div', { class: 'listing-doc-section small' }, el('button', { type: 'submit', class: 'listing-doc-submit' }, 'Submit')),
+      el('div', { class: 'listing-doc-section small' }, el('button', { type: 'submit', class: 'listing-doc-submit' }, t('submit', 'Submit'))),
     );
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -86,15 +86,15 @@ export default function documents(ctx) {
       return el('li', { class: `listing-tab${active ? ' active' : ''}` }, b);
     };
     tabs.append(tab('', 'All Types', withoutType.length));
-    const typeName = (t) => RESOURCE_TYPE_LABELS[t] || t;
-    types.forEach((t) => tabs.append(tab(t.value, typeName(t.value), t.count)));
+    const typeName = (type) => RESOURCE_TYPE_LABELS[type] || type;
+    types.forEach((type) => tabs.append(tab(type.value, typeName(type.value), type.count)));
     if (baseType) {
       // a page fixed to one type (documents / fact sheets) shows only that tab
       tabs.replaceChildren(tab(baseType[0], typeName(baseType[0]), withoutType.length));
     }
 
     const list = el('div', { class: 'listing-doc-results' });
-    if (!result.items.length) list.append(el('h3', { class: 'listing-doc-empty' }, config.empty || DEFAULT_EMPTY));
+    if (!result.items.length) list.append(el('h3', { class: 'listing-doc-empty' }, emptyText(config)));
     else {
       list.append(el('ul', { class: 'listing-doc-list' }, result.items.map((it) => el(
         'li',
@@ -108,7 +108,7 @@ export default function documents(ctx) {
         el(
           'div',
           { class: 'listing-doc-action' },
-          el('a', { class: 'listing-doc-link', href: it.documentUrl || it.path }, 'View document'),
+          el('a', { class: 'listing-doc-link', href: it.documentUrl || it.path }, t('viewDocument', 'View document')),
         ),
       ))));
     }

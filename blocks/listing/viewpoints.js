@@ -8,7 +8,7 @@ import {
 } from '../../scripts/listing-core.js';
 import { el } from '../../scripts/dom-utils.js';
 import {
-  icon, timeEl, picture, buildPagination, readMore, authorsBlock, emptyState,
+  icon, timeEl, picture, buildPagination, readMore, authorsBlock, emptyState, t,
 } from './listing-ui.js';
 
 function viewpointItem(it) {
@@ -45,8 +45,8 @@ function filterLabel(items, key, value) {
     if (key === 'tag') {
       const idx = it.tagSlugs.findIndex((s) => s.toLowerCase() === v);
       if (idx > -1 && it.tags[idx]) return it.tags[idx];
-      const t = it.tags.find((x) => slugify(x) === slugify(v));
-      if (t) return t;
+      const tag = it.tags.find((x) => slugify(x) === slugify(v));
+      if (tag) return tag;
     }
     if (key === 'assetManager' && it.assetManager && slugify(it.assetManagerSlug) === slugify(v)) {
       return it.assetManager;
@@ -86,7 +86,7 @@ async function authorHeader(author) {
   const person = people.find((p) => slugify(baseName(p.title)) === slugify(baseName(author.name)));
   if (person && (person.bio || person.description)) {
     details.append(el('p', { class: 'listing-author-header-bio' }, person.bio || person.description));
-    details.append(el('a', { class: 'listing-author-header-more', href: person.path }, 'Read bio', icon('arrow-right')));
+    details.append(el('a', { class: 'listing-author-header-more', href: person.path }, t('readBio', 'Read bio'), icon('arrow-right')));
   }
   return header;
 }
