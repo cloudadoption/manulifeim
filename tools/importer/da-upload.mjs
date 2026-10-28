@@ -16,6 +16,9 @@
  * content/<path>.plain.html to the DA media URL (so the local file is exactly what DA gets),
  * POSTs the page to admin.da.live, reads it back to confirm it matches, then previews it.
  * Credentials are injected by the environment (no Authorization header here).
+ * Authored changes are never overwritten: a page that exists in DA and was modified there more
+ * than 60 s after our last upload (or that we never uploaded) is skipped and logged in
+ * reports/da-conflicts.json, also with --force; nothing is sent for it.
  * State: tools/importer/reports/da-upload.json (pages) and da-media.json (images).
  */
 import {
@@ -36,11 +39,14 @@ mkdirSync(REPORTS, { recursive: true });
 const pagesFile = `${REPORTS}/da-upload.json`;
 const mediaFile = `${REPORTS}/da-media.json`;
 const fixesFile = `${REPORTS}/media-fixes.json`;
+const conflictsFile = `${REPORTS}/da-conflicts.json`;
+const conflicts = existsSync(conflictsFile) ? JSON.parse(readFileSync(conflictsFile, 'utf-8')) : {};
 const pages = existsSync(pagesFile) ? JSON.parse(readFileSync(pagesFile, 'utf-8')) : {};
 const media = existsSync(mediaFile) ? JSON.parse(readFileSync(mediaFile, 'utf-8')) : {};
 const save = () => {
   writeFileSync(pagesFile, JSON.stringify(pages, null, 1));
   writeFileSync(mediaFile, JSON.stringify(media, null, 1));
+  writeFileSync(conflictsFile, JSON.stringify(conflicts, null, 1));
 };
 
 const args = process.argv.slice(2);
@@ -73,6 +79,20 @@ function uploadMedia(name, onDa) {
 // guides the team maintains and publishes itself: never uploaded or previewed from here
 const PROTECTED = /^\/migration-status(\/|$)/;
 
+// edits made in DA after our last upload (authors work there now): never overwritten
+const AUTHORED_GRACE_MS = 60 * 1000;
+function authoredConflict(path) {
+  const head = execFileSync('curl', ['-s', '-S', '-I', `${DA_SOURCE}${path}.html`]).toString();
+  const status = Number((head.match(/^HTTP\/[\d.]+ (\d{3})(?![\s\S]*^HTTP\/)/m) || [])[1]);
+  if (status === 404) return null;
+  const lm = Date.parse((head.match(/^last-modified:\s*(.+)$/im) || [])[1] || '');
+  if (status !== 200 || Number.isNaN(lm)) return `DA state unknown (HTTP ${status || '?'}), not overwriting`;
+  const last = Date.parse(pages[path]?.at || '');
+  if (Number.isNaN(last)) return `exists in DA (modified ${new Date(lm).toISOString()}) but was never uploaded by the migration`;
+  if (lm > last + AUTHORED_GRACE_MS) return `modified in DA at ${new Date(lm).toISOString()}, after our last upload at ${pages[path].at}`;
+  return null;
+}
+
 function uploadPage(path) {
   if (PROTECTED.test(path)) return { path, skipped: 'protected guide page (/migration-status)' };
   const file = `content${path}.plain.html`;
@@ -92,6 +112,12 @@ function uploadPage(path) {
   if (bad.length) {
     return { path, skipped: `media Edge Delivery rejects: ${bad.map(([n, pr]) => `${n} (${pr.action})`).join(', ')}; run tools/importer/snapshot/fix-media.mjs` };
   }
+  const conflict = authoredConflict(path);
+  if (conflict) {
+    conflicts[path] = { reason: conflict, at: new Date().toISOString() };
+    return { path, skipped: `authored change kept: ${conflict}` };
+  }
+  delete conflicts[path];
   // images: upload once (new names too, e.g. after fix-media), then point the local copy at the DA media URL
   const failed = names.filter((n) => !uploadMedia(n, html.includes(`${DA_MEDIA}${n}`)));
   html = html.replace(/(["'(\s])\/media-da\//g, `$1${DA_MEDIA}`);
