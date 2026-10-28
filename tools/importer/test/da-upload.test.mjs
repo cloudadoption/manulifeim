@@ -214,6 +214,116 @@ test('DA is rechecked right before the document write (after media uploads)', ()
   assert.ok(ws.conflicts()?.['/t/race']);
 });
 
+/* ---- regressions found in review of a347bc6 ---- */
+
+test('legacy successful-upload record without a baseline + DA 404: not recreated (--force), conflict persisted', () => {
+  const ws = workspace();
+  ws.records({ '/t/legacy404': { upload: 200, preview: 200, matches: true, at: '2026-10-27T09:47:37.033Z' } });
+  ws.page('/t/legacy404', '<div><p>importer copy</p></div>');
+  const r = ws.run('--force', '/t/legacy404');
+  assert.equal(r.docWrites('/t/legacy404'), 0, r.stdout);
+  assert.equal(ws.remote('/t/legacy404'), undefined, 'still absent in DA');
+  assert.ok(ws.conflicts()?.['/t/legacy404'], 'conflict persisted');
+});
+
+test('failed-upload record (ambiguous ownership) + DA 404: not recreated', () => {
+  const ws = workspace();
+  ws.records({ '/t/failed404': { upload: 500, at: '2026-10-28T18:05:00.000Z', error: 'server error' } });
+  ws.page('/t/failed404', '<div><p>importer copy</p></div>');
+  const r = ws.run('--force', '/t/failed404');
+  assert.equal(r.docWrites('/t/failed404'), 0, r.stdout);
+  assert.ok(ws.conflicts()?.['/t/failed404']);
+});
+
+function editAfterUpload(p, ours, authored) {
+  const ws = workspace();
+  ws.page(p, ours);
+  assert.equal(ws.run('--force', p).docWrites(p), 1, 'first upload');
+  ws.setRemote(p, { body: daBody(authored), lastModified: Date.now(), etag: '"author"' });
+  ws.page(p, '<div><p>re-import</p></div>');
+  return ws;
+}
+
+test('a whitespace-only edit inside <pre> is an authored change', () => {
+  const ws = editAfterUpload('/t/pre', '<div><pre>alpha beta</pre></div>', '<div><pre>alpha  beta</pre></div>');
+  const r = ws.run('--force', '/t/pre');
+  assert.equal(r.docWrites('/t/pre'), 0, r.stdout);
+  assert.match(ws.remote('/t/pre').body, /alpha {2}beta/);
+  assert.ok(ws.conflicts()?.['/t/pre']);
+});
+
+test('a space inserted between inline elements is an authored change', () => {
+  const ws = editAfterUpload('/t/inline', '<div><p><em>a</em><strong>b</strong></p></div>', '<div><p><em>a</em> <strong>b</strong></p></div>');
+  const r = ws.run('--force', '/t/inline');
+  assert.equal(r.docWrites('/t/inline'), 0, r.stdout);
+  assert.match(ws.remote('/t/inline').body, /<\/em> <strong>/);
+  assert.ok(ws.conflicts()?.['/t/inline']);
+});
+
+test('a read-back with other bytes than we sent (whitespace only) does not become our baseline', () => {
+  const ws = workspace({ storeTransform: { [doc('/t/readback')]: ['</p>', '</p> '] } });
+  ws.page('/t/readback', '<div><p>ours</p></div>');
+  const first = ws.run('--force', '/t/readback');
+  assert.equal(first.docWrites('/t/readback'), 1);
+  assert.equal(ws.pages()['/t/readback'].baseline, undefined, 'no baseline from an uncertain read-back');
+  ws.patchState((s) => { s.storeTransform = {}; });
+  ws.page('/t/readback', '<div><p>re-import</p></div>');
+  const r = ws.run('--force', '/t/readback');
+  assert.equal(r.docWrites('/t/readback'), 0, r.stdout);
+  assert.ok(ws.conflicts()?.['/t/readback']);
+});
+
+test('a read-back with changed content does not become our baseline', () => {
+  const ws = workspace({ storeTransform: { [doc('/t/changed')]: ['ours', 'author text'] } });
+  ws.page('/t/changed', '<div><p>ours</p></div>');
+  ws.run('--force', '/t/changed');
+  assert.equal(ws.pages()['/t/changed'].baseline, undefined);
+  ws.patchState((s) => { s.storeTransform = {}; });
+  ws.page('/t/changed', '<div><p>re-import</p></div>');
+  const r = ws.run('--force', '/t/changed');
+  assert.equal(r.docWrites('/t/changed'), 0, r.stdout);
+  assert.match(ws.remote('/t/changed').body, /author text/);
+});
+
+test('an author creates the page after our final check, before the POST: create-only write is rejected and kept', () => {
+  const ws = workspace({ atPost: { [doc('/t/created')]: { body: daBody('<div><p>created by an author</p></div>') } } });
+  ws.page('/t/created', '<div><p>importer copy</p></div>');
+  const r = ws.run('--force', '/t/created');
+  const posts = r.calls.filter((c) => c.method === 'POST' && c.url === doc('/t/created'));
+  assert.equal(posts.length, 1, 'one attempt, no unconditional retry');
+  assert.equal(posts[0].headers['if-none-match'], '*', 'create-only precondition');
+  assert.match(ws.remote('/t/created').body, /created by an author/);
+  assert.notEqual(ws.pages()['/t/created']?.upload, 201, 'not recorded as a success');
+  assert.equal(ws.pages()['/t/created']?.baseline, undefined);
+  assert.ok(ws.conflicts()?.['/t/created'], 'conflict persisted');
+});
+
+test('an author saves an existing page as our POST arrives: If-Match write is rejected and kept', () => {
+  const ws = workspace();
+  ws.page('/t/update', '<div><p>v1</p></div>');
+  ws.run('--force', '/t/update');
+  const { baseline } = ws.pages()['/t/update'];
+  ws.page('/t/update', '<div><p>v2</p></div>');
+  ws.patchState((s) => { s.atPost = { [doc('/t/update')]: { body: daBody('<div><p>author save</p></div>') } }; });
+  const r = ws.run('--force', '/t/update');
+  const posts = r.calls.filter((c) => c.method === 'POST' && c.url === doc('/t/update'));
+  assert.equal(posts.length, 1, 'one attempt, no unconditional retry');
+  assert.ok(posts[0].headers['if-match'] && posts[0].headers['if-match'] !== '*', 'specific If-Match');
+  assert.match(ws.remote('/t/update').body, /author save/);
+  assert.deepEqual(ws.pages()['/t/update'].baseline, baseline, 'baseline unchanged');
+  assert.ok(ws.conflicts()?.['/t/update']);
+});
+
+test('an existing page without a usable precondition (no ETag from our write) is held', () => {
+  const ws = workspace({ noEtag: true });
+  ws.page('/t/noetag', '<div><p>v1</p></div>');
+  ws.run('--force', '/t/noetag');
+  ws.page('/t/noetag', '<div><p>v2</p></div>');
+  const r = ws.run('--force', '/t/noetag');
+  assert.equal(r.docWrites('/t/noetag'), 0, r.stdout);
+  assert.ok(ws.conflicts()?.['/t/noetag']);
+});
+
 test('/migration-status pages are never touched', () => {
   const ws = workspace();
   ws.page('/migration-status/author-guide', '<div><p>guide</p></div>');
