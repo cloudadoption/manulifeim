@@ -324,6 +324,42 @@ test('an existing page without a usable precondition (no ETag from our write) is
   assert.ok(ws.conflicts()?.['/t/noetag']);
 });
 
+/* ---- regressions found in review of 3e09e2b: deletion cases ---- */
+
+test('A: conflict-only history + DA deletion: not recreated without --force; conflict kept, no ledger record', () => {
+  const ws = workspace();
+  ws.setRemote('/t/conflict-only', { body: daBody('<div><p>authored</p></div>'), lastModified: Date.now(), etag: '"author"' });
+  ws.page('/t/conflict-only', '<div><p>importer copy</p></div>');
+  const first = ws.run('/t/conflict-only');
+  assert.equal(first.docWrites('/t/conflict-only'), 0, first.stdout);
+  const held = ws.conflicts()?.['/t/conflict-only'];
+  assert.ok(held, 'first run holds and logs the conflict');
+  assert.equal(ws.pages()['/t/conflict-only'], undefined, 'no ledger record yet');
+  ws.patchState((s) => { delete s.docs[doc('/t/conflict-only')]; });
+  const r = ws.run('/t/conflict-only');
+  assert.equal(r.docWrites('/t/conflict-only'), 0, r.stdout);
+  assert.equal(ws.remote('/t/conflict-only'), undefined, 'still absent in DA');
+  assert.ok(ws.conflicts()?.['/t/conflict-only'], 'conflict history kept');
+  assert.equal(ws.pages()['/t/conflict-only']?.baseline, undefined, 'no baseline recorded');
+  const forced = ws.run('--force', '/t/conflict-only');
+  assert.equal(forced.docWrites('/t/conflict-only'), 0, '--force does not bypass');
+});
+
+test('B: existing page deleted as our POST arrives: no replacement or recreation (--force --no-preview)', () => {
+  const ws = workspace();
+  ws.page('/t/del-at-post', '<div><p>v1</p></div>');
+  assert.equal(ws.run('--force', '/t/del-at-post').docWrites('/t/del-at-post'), 1, 'created by the CLI');
+  const before = ws.pages()['/t/del-at-post'];
+  assert.ok(before.baseline?.sha256, 'baseline from the create');
+  ws.page('/t/del-at-post', '<div><p>v2</p></div>');
+  ws.patchState((s) => { s.deleteAtPost = [doc('/t/del-at-post')]; });
+  const r = ws.run('--force', '--no-preview', '/t/del-at-post');
+  assert.equal(r.docWrites('/t/del-at-post'), 0, r.stdout);
+  assert.equal(ws.remote('/t/del-at-post').body.includes('v2'), false, 'not replaced');
+  assert.deepEqual(ws.pages()['/t/del-at-post'], before, 'ledger record unchanged, no replacement baseline');
+  assert.ok(ws.conflicts()?.['/t/del-at-post'], 'held and logged');
+});
+
 test('/migration-status pages are never touched', () => {
   const ws = workspace();
   ws.page('/migration-status/author-guide', '<div><p>guide</p></div>');

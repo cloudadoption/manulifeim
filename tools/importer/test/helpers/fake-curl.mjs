@@ -7,7 +7,8 @@
  *     afterMediaPost: { <url>: { body, lastModified } }, // an author saves while media uploads
  *     atPost: { <url>: { body } },                       // an author saves as our document POST arrives
  *     storeTransform: { <url>: [from, to] },             // DA keeps different bytes than were sent
- *     noEtag: true }                                     // write responses carry no ETag
+ *     noEtag: true,                                      // write responses carry no ETag
+ *     deleteAtPost: [<url>] }                            // object deleted as our document POST arrives
  * Document writes get an ETag (written with -D <file>) and honour preconditions like da-admin:
  * If-None-Match: * fails (412) when the document exists; a specific If-Match fails when the
  * document exists with another ETag (when it is absent the write proceeds, as in da-admin).
@@ -83,6 +84,11 @@ if (method === 'POST') {
       status: 200, body: author.body, lastModified: Date.now(), etag: `"author-${state.etagSeq}"`,
     };
     delete state.atPost[url];
+  }
+  // deleteAtPost: the object is deleted as our document POST arrives (before the precondition check)
+  if ((state.deleteAtPost || []).includes(url)) {
+    delete state.docs[url];
+    state.deleteAtPost = state.deleteAtPost.filter((u) => u !== url);
   }
   const current = state.docs[url];
   const exists = current && current.status === 200;
