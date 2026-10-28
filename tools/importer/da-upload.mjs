@@ -16,14 +16,18 @@
  * content/<path>.plain.html to the DA media URL (so the local file is exactly what DA gets),
  * POSTs the page to admin.da.live, reads it back to confirm it matches, then previews it.
  * Credentials are injected by the environment (no Authorization header here).
- * Authored changes are never overwritten. After a successful write whose read-back equals what we
- * sent, the record keeps `baseline` = SHA-256 of DA's <main>. A page that exists in DA is only
- * written when its current <main> has that fingerprint; DA is checked before the media uploads and
- * again right before the document write. Held (skipped, logged in reports/da-conflicts.json, also
- * with --force): no baseline (never uploaded by us, legacy record, failed or unverified upload),
- * a different fingerprint, a page we uploaded that is now gone from DA, any DA answer other than
- * 200/404, a network error. Limitation: DA sends no ETag, so the write is not conditional; an edit
- * saved between the last check and the write (one request apart) is not detected.
+ * Authored DA changes are protected as far as DA's API allows. After a successful write whose
+ * read-back is byte-identical to what we sent, the record keeps `baseline` = { sha256 of DA's
+ * <main> (exact bytes), etag from our write response }. DA is checked before the media uploads and
+ * again right before the document write:
+ * - absent in DA and no record of ours at all: created with If-None-Match: * (create-only);
+ * - present, fingerprint equal and an ETag of our write known: replaced with If-Match: <etag>;
+ * - everything else is held (skipped, logged in reports/da-conflicts.json, also with --force):
+ *   any record without a verified baseline (legacy, failed or uncertain uploads), a different
+ *   fingerprint, a page of ours absent from DA, no usable ETag, a DA answer other than 200/404,
+ *   a network error, and a 412 from DA (never retried, never recorded as a success).
+ * Limitation: the preconditions rely on da-admin's storage checks (create-only, specific
+ * If-Match on an existing object); they were verified in its source, not by a live write probe.
  * State: tools/importer/reports/da-upload.json (pages) and da-media.json (images).
  */
 import {
@@ -68,8 +72,6 @@ function curl(argv) {
   return { status: Number(out.slice(i + 1)), body: out.slice(0, i) };
 }
 
-const norm = (h) => h.replace(/\s+/g, ' ').replace(/> </g, '><').trim();
-
 function uploadMedia(name, onDa) {
   if (media[name]?.status === 201 || media[name]?.status === 200) return true;
   const file = `content/media-da/${name}`;
@@ -88,26 +90,39 @@ function uploadMedia(name, onDa) {
 const PROTECTED = /^\/migration-status(\/|$)/;
 
 // authors edit in DA: a page in DA is only replaced when it is still exactly what our last
-// successful upload left there (content fingerprint, not timestamps)
-const fingerprint = (main) => createHash('sha256').update(norm(main)).digest('hex');
+// verified upload left there (exact-byte fingerprint) and DA can enforce that with If-Match
+const fingerprint = (main) => createHash('sha256').update(main, 'utf8').digest('hex');
 const mainOf = (body) => (body.match(/<main>([\s\S]*)<\/main>/) || [])[1];
 
-function authoredConflict(path) {
+/** { hold: reason } or the write precondition: { header: 'If-None-Match: *' | 'If-Match: <etag>' } */
+function writePlan(path) {
   let r;
   try {
     r = curl([`${DA_SOURCE}${path}.html`]);
   } catch (e) {
-    return `DA unreachable (${String(e.message || e).split('\n')[0]}), not overwriting`;
+    return { hold: `DA unreachable (${String(e.message || e).split('\n')[0]}), not overwriting` };
   }
-  const base = pages[path]?.baseline;
-  if (r.status === 404) return base ? `gone from DA since our upload of ${base.at} (deleted there?), not recreating` : null;
-  if (r.status !== 200) return `DA answered HTTP ${r.status}, not overwriting`;
+  const known = pages[path];
+  const base = known?.baseline;
+  if (r.status === 404) {
+    // only a page the migration has no record of at all may be created
+    if (known) return { hold: `absent from DA but the migration has a record of it (${known.at}, upload ${known.upload}): deleted there?, not recreating` };
+    return { header: 'If-None-Match: *' };
+  }
+  if (r.status !== 200) return { hold: `DA answered HTTP ${r.status}, not overwriting` };
   const main = mainOf(r.body);
-  if (main === undefined) return 'DA copy has no <main>, not overwriting';
-  if (!base?.sha256) return 'exists in DA without a fingerprint of a verified upload by the migration';
-  if (fingerprint(main) !== base.sha256) return `DA copy differs from our last verified upload (${base.at}): authored change`;
-  return null;
+  if (main === undefined) return { hold: 'DA copy has no <main>, not overwriting' };
+  if (!base?.sha256) return { hold: 'exists in DA without a fingerprint of a verified upload by the migration' };
+  if (fingerprint(main) !== base.sha256) return { hold: `DA copy differs from our last verified upload (${base.at}): authored change` };
+  if (!base.etag) return { hold: 'no ETag of our last write, so DA cannot enforce the replacement (If-Match); held' };
+  return { header: `If-Match: ${base.etag}` };
 }
+
+const etagOf = (file) => {
+  const h = existsSync(file) ? readFileSync(file, 'utf-8') : '';
+  const all = [...h.matchAll(/^etag:\s*(.+?)\s*$/gim)];
+  return all.length ? all[all.length - 1][1] : undefined;
+};
 
 function hold(path, reason) {
   conflicts[path] = { reason, at: new Date().toISOString() };
@@ -133,19 +148,25 @@ function uploadPage(path) {
   if (bad.length) {
     return { path, skipped: `media Edge Delivery rejects: ${bad.map(([n, pr]) => `${n} (${pr.action})`).join(', ')}; run tools/importer/snapshot/fix-media.mjs` };
   }
-  const before = authoredConflict(path);
-  if (before) return hold(path, before);
+  const before = writePlan(path);
+  if (before.hold) return hold(path, before.hold);
   // images: upload once (new names too, e.g. after fix-media), then point the local copy at the DA media URL
   const failed = names.filter((n) => !uploadMedia(n, html.includes(`${DA_MEDIA}${n}`)));
   html = html.replace(/(["'(\s])\/media-da\//g, `$1${DA_MEDIA}`);
   writeFileSync(file, html);
 
   // DA may have changed while the media uploaded: check again right before the write
-  const last = authoredConflict(path);
-  if (last) return hold(path, `${last} (rechecked before the write)`);
+  const plan = writePlan(path);
+  if (plan.hold) return hold(path, `${plan.hold} (rechecked before the write)`);
   const doc = `/tmp/da-${process.pid}.html`;
+  const respHeaders = `/tmp/da-${process.pid}.headers`;
   writeFileSync(doc, `<body><header></header><main>${html}</main><footer></footer></body>`);
-  const up = curl(['-X', 'POST', '-F', `data=@${doc};type=text/html`, `${DA_SOURCE}${path}.html`]);
+  writeFileSync(respHeaders, '');
+  const up = curl(['-X', 'POST', '-H', plan.header, '-D', respHeaders, '-F', `data=@${doc};type=text/html`, `${DA_SOURCE}${path}.html`]);
+  if (up.status === 412) {
+    // DA rejected the precondition: the page changed (or appeared) meanwhile; no retry, no record
+    return hold(path, `DA rejected the conditional write (${plan.header}): changed in DA meanwhile`);
+  }
   const rec = {
     upload: up.status, images: names.length, imagesFailed: failed, at: new Date().toISOString(),
   };
@@ -158,9 +179,13 @@ function uploadPage(path) {
   delete conflicts[path];
   const back = curl([`${DA_SOURCE}${path}.html`]);
   const main = back.status === 200 ? mainOf(back.body) : undefined;
-  rec.matches = main !== undefined && norm(main) === norm(html);
-  // baseline only when DA holds exactly what we sent; anything else is held next time
-  if (rec.matches) rec.baseline = { sha256: fingerprint(main), at: rec.at };
+  // baseline only when DA holds byte-for-byte what we sent; anything else is held next time
+  rec.matches = main !== undefined && main === html;
+  if (rec.matches) {
+    rec.baseline = { sha256: fingerprint(main), at: rec.at };
+    const etag = etagOf(respHeaders);
+    if (etag) rec.baseline.etag = etag;
+  }
   if (main !== undefined && !rec.matches) {
     // DA normalised the markup (or someone saved meanwhile): keep the local copy identical to DA
     writeFileSync(file, main);
