@@ -24,7 +24,7 @@
  * Each variant renders in its own module (viewpoints.js, press.js, case-studies.js,
  * documents.js, people.js), loaded on demand; shared DOM pieces are in listing-ui.js.
  */
-import { fetchIndex } from '../../scripts/block-utils.js';
+import { fetchIndex, readRows } from '../../scripts/block-utils.js';
 import {
   INDEX_URLS, PAGE_SIZES, VARIANT_BASE, normalizeEntry, parseFilter, filtersFromParams,
 } from '../../scripts/listing-core.js';
@@ -43,20 +43,12 @@ const CONFIG_KEYS = ['source', 'filter', 'limit', 'sort', 'empty', 'sidebar', 't
 
 /* ---------- config ---------- */
 
+/** Settings rows; they stay in the block (data-config) so Canvas can edit them. */
 function readConfig(block) {
-  const config = {};
-  [...block.children].forEach((row) => {
-    const cells = [...row.children];
-    const key = cells[0]?.textContent.trim().toLowerCase();
-    if (!CONFIG_KEYS.includes(key) || cells.length < 2) return;
-    if (key === 'sidebar') {
-      [, config.sidebar] = cells;
-      return;
-    }
-    const a = cells[1].querySelector('a[href]');
-    config[key] = key === 'source' && a ? a.getAttribute('href') : cells[1].textContent.trim();
-  });
-  return config;
+  const { config, cells, settings } = readRows(block, CONFIG_KEYS, { hrefKeys: ['source'] });
+  delete config.sidebar;
+  if (cells.sidebar) config.sidebar = cells.sidebar;
+  return { config, settings };
 }
 
 async function loadItems(config, variant) {
@@ -73,7 +65,7 @@ async function loadItems(config, variant) {
 export default async function decorate(block) {
   const variant = VARIANTS.find((v) => block.classList.contains(v)) || 'viewpoints';
   block.classList.add(variant);
-  const config = readConfig(block);
+  const { config, settings } = readConfig(block);
   const baseFilters = parseFilter(config.filter);
   const limitCfg = parseInt(config.limit, 10);
   const pageSize = Number.isFinite(limitCfg) && limitCfg >= 0 ? limitCfg : PAGE_SIZES[variant];
@@ -85,6 +77,7 @@ export default async function decorate(block) {
     shown: pageSize,
     openGroup: '',
   };
+  // the sidebar is content: its authored nodes move into the aside (editable there in Canvas)
   const sidebar = config.sidebar ? el('aside', { class: 'listing-sidebar' }, ...config.sidebar.childNodes) : null;
   // plain links in the sidebar (decorateButtons turned link-only paragraphs into buttons)
   sidebar?.querySelectorAll('.button, .button-container').forEach((n) => {
@@ -92,7 +85,7 @@ export default async function decorate(block) {
   });
 
   const root = el('div', { class: 'listing-inner', 'aria-busy': 'true' });
-  block.replaceChildren(root);
+  block.replaceChildren(...settings, root);
 
   // the variant module loads while the index is fetched
   const [{ default: create }, items] = await Promise.all([

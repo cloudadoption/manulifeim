@@ -24,7 +24,7 @@
  */
 
 import isAuthoring from '../../scripts/authoring.js';
-import { isMediaCell } from '../../scripts/block-utils.js';
+import { isMediaCell, readRows } from '../../scripts/block-utils.js';
 
 function isEmptyParagraph(el) {
   return el.tagName === 'P' && !el.querySelector('img, picture') && !el.textContent.trim();
@@ -57,19 +57,12 @@ function eager(slide, first) {
 }
 
 function buildCarousel(block) {
-  let speed = 5;
-  const slides = [];
-  [...block.children].forEach((row) => {
-    const cells = [...row.children];
-    const label = cells[0]?.textContent.trim().toLowerCase();
-    if (cells.length >= 2 && label === 'speed' && !row.querySelector('picture')) {
-      const v = parseFloat(cells[1].textContent);
-      if (v > 0) speed = v;
-      row.dataset.config = 'speed';
-      return;
-    }
-    slides.push(row);
+  const { config, items: slides } = readRows(block, ['speed'], {
+    hrefKeys: [],
+    accept: (cells) => !cells.some((c) => c.querySelector('picture')),
   });
+  const v = parseFloat(config.speed);
+  const speed = v > 0 ? v : 5;
 
   slides.forEach((row, i) => {
     row.classList.add('hero-slide');

@@ -27,6 +27,7 @@ import {
   parseTeaserRow,
   fetchIndex,
   indexEntryToItem,
+  readRows,
 } from '../../scripts/block-utils.js';
 import {
   normalizeEntry, applyFilters, parseFilter, sortItems, VARIANT_BASE,
@@ -167,20 +168,15 @@ async function latestFromIndex(config, limit) {
 }
 
 export default async function decorate(block) {
-  const config = {};
-  const items = [];
-  [...block.children].forEach((row) => {
-    const cells = [...row.children];
-    const key = cells[0]?.textContent.trim().toLowerCase();
-    if (cells.length >= 2 && CONFIG_KEYS.includes(key) && !cells[0].querySelector('picture')) {
-      const a = cells[1].querySelector('a[href]');
-      if (key === 'link' && a) config.link = { href: a.getAttribute('href'), text: a.textContent.trim() };
-      else config[key] = cells[1].textContent.trim();
-      return;
-    }
-    const item = parseTeaserRow(row);
-    if (item) items.push(item);
+  const {
+    config, cells, settings, items: rows,
+  } = readRows(block, CONFIG_KEYS, {
+    hrefKeys: [],
+    accept: (rowCells) => !rowCells[0].querySelector('picture'),
   });
+  const linkEl = cells.link?.querySelector('a[href]');
+  if (linkEl) config.link = { href: linkEl.getAttribute('href'), text: linkEl.textContent.trim() };
+  const items = rows.map(parseTeaserRow).filter(Boolean);
 
   const limit = parseInt(config.limit, 10);
   const shown = limit > 0 ? items.slice(0, limit) : items;
@@ -189,7 +185,7 @@ export default async function decorate(block) {
   const inner = document.createElement('div');
   inner.className = 'article-list-inner';
   inner.append(header, ul);
-  block.replaceChildren(inner);
+  block.replaceChildren(...settings, inner);
   setView((config.view || '').toLowerCase() === 'card' ? 'card' : 'list');
 
   // allow later feeds (query index) to replace the items

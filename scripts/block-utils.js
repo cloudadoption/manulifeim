@@ -7,7 +7,7 @@ import {
   INDEX_URLS, MONTHS, readIndexJson, normalizeEntry, isoDate, splitValues,
 } from './listing-core.js';
 
-export { el } from './dom-utils.js';
+export { el, readRows } from './dom-utils.js';
 
 /**
  * True for an authored cell that holds only an image (with or without its <p>).

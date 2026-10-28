@@ -142,16 +142,9 @@ main > .section.hero-container > .hero-wrapper {
 }
 /* stylelint-enable selector-class-pattern */
 
-/* config rows (Speed): hidden on pages, editable in Canvas */
-.hero > [data-config] {
-  display: none;
-}
-
+/* settings row (Speed, styles.css): inset like the slides in Canvas */
 html[quick-edit] .hero > [data-config] {
-  display: flex;
-  gap: 16px;
   padding: 8px 24px;
-  font-size: 14px;
 }
 
 /* ---------------- carousel ---------------- */

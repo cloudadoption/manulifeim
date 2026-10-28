@@ -21,7 +21,7 @@
  */
 /* eslint-enable max-len */
 import { toClassName } from '../../scripts/aem.js';
-import { parseDate, hideOnError } from '../../scripts/block-utils.js';
+import { parseDate, hideOnError, readRows } from '../../scripts/block-utils.js';
 import { pageSignal } from '../../scripts/authoring.js';
 
 const TAB_TITLES = {
@@ -229,16 +229,16 @@ function sortItems(list, order) {
 }
 
 export default function decorate(block) {
-  let title = 'Browse by';
+  const { config, settings, items: rows } = readRows(block, ['title'], {
+    hrefKeys: [],
+    accept: (cells) => !cells[1].querySelector('a'),
+  });
+  const title = config.title || 'Browse by';
   const tabs = new Map();
-  [...block.children].forEach((row) => {
+  rows.forEach((row) => {
     const cells = [...row.children];
     const first = cells[0]?.textContent.trim();
     if (!first) return;
-    if (first.toLowerCase() === 'title' && cells[1] && !cells[1].querySelector('a')) {
-      title = cells[1].textContent.trim() || title;
-      return;
-    }
     const id = toClassName(first);
     const addTab = () => {
       if (!tabs.has(id)) tabs.set(id, { label: first, items: [], sources: [] });
@@ -404,7 +404,7 @@ export default function decorate(block) {
     });
   });
 
-  block.replaceChildren(inner);
+  block.replaceChildren(...settings, inner);
   if (buttons.length) activate(0);
 
   // measure once the section is visible and on resize

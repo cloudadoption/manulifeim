@@ -226,17 +226,6 @@ main > .section:has(.hero.overlap) + .section .cards {
   width: 100%;
 }
 
-/* config rows (news Source / Limit): hidden on pages, editable in Canvas */
-.cards > [data-config] {
-  display: none;
-}
-
-html[quick-edit] .cards > [data-config] {
-  display: flex;
-  gap: 16px;
-  font-size: 14px;
-}
-
 /* ---------- news ---------- */
 
 /* stylelint-disable no-descending-specificity -- teaser, tile and author rules style different elements; order follows the variant sections */

@@ -220,6 +220,17 @@ body > header:has(> .header[data-block-status='loaded']) {
   min-height: 0;
 }
 
+/* block settings rows (readRows, scripts/dom-utils.js): hidden on pages, editable in Canvas */
+main .block > [data-config] {
+  display: none;
+}
+
+html[quick-edit] main .block > [data-config] {
+  display: flex;
+  gap: 16px;
+  font-size: var(--font-size-small);
+}
+
 /* attestation prompt (live body.attestation__blur): scripts.js sets the class before first paint
    while the Taiwan disclaimer is not accepted; the modal is in blocks/attestation */
 body.attestation-blur :is(main, footer, .header-bar, .header-rail) {

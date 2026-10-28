@@ -12,7 +12,6 @@
  *   are skipped
  * @returns {HTMLElement}
  */
-// eslint-disable-next-line import/prefer-default-export
 export function el(tag, attrs = {}, ...children) {
   const node = document.createElement(tag);
   const props = typeof attrs === 'string' ? { class: attrs } : (attrs || {});
@@ -27,4 +26,41 @@ export function el(tag, attrs = {}, ...children) {
     node.append(typeof c === 'string' ? document.createTextNode(c) : c);
   });
   return node;
+}
+
+/**
+ * Splits a block's rows into settings rows and content rows. A settings row has a known key in
+ * its first cell and a value cell; it stays in the block, marked `data-config` (hidden on pages,
+ * shown in quick edit, styles.css), so authors can still edit it in Canvas.
+ * @param {Element} block
+ * @param {string[]} keys lower-case keys
+ * @param {object} [options]
+ * @param {string[]} [options.hrefKeys] keys whose value is the cell's link href, when the cell
+ *   has a link outside a list (default: all keys)
+ * @param {(cells: Element[]) => boolean} [options.accept] extra test a settings row must pass
+ * @returns {{ config: Object<string, string>, cells: Object<string, Element>,
+ *   settings: Element[], items: Element[] }} values, value cells and rows by kind
+ */
+export function readRows(block, keys, { hrefKeys = keys, accept } = {}) {
+  const config = {};
+  const cells = {};
+  const settings = [];
+  const items = [];
+  [...block.children].forEach((row) => {
+    const rowCells = [...row.children];
+    const key = rowCells[0]?.textContent.trim().toLowerCase();
+    if (rowCells.length >= 2 && keys.includes(key) && (!accept || accept(rowCells))) {
+      const [, cell] = rowCells;
+      const link = hrefKeys.includes(key) && !cell.querySelector('li') ? cell.querySelector('a[href]') : null;
+      config[key] = (link ? link.getAttribute('href') : cell.textContent).trim();
+      cells[key] = cell;
+      row.dataset.config = key;
+      settings.push(row);
+    } else {
+      items.push(row);
+    }
+  });
+  return {
+    config, cells, settings, items,
+  };
 }

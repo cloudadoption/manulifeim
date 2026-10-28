@@ -36,6 +36,7 @@ import {
   toPicture,
   toPath,
   sortByDateDesc,
+  readRows,
 } from '../../scripts/block-utils.js';
 
 /** A row that only holds one link (auto-filled from the index). */
@@ -142,19 +143,8 @@ export default async function decorate(block) {
   if (!['tiles', 'news', 'separate'].some((v) => cl.contains(v))) cl.add('teaser');
   const authoring = isAuthoring();
   const ul = el('ul', 'cards-list');
-  const config = {};
-  const rows = [];
-  [...block.children].forEach((row) => {
-    const cells = [...row.children];
-    const key = cells[0]?.textContent.trim().toLowerCase();
-    if (cl.contains('news') && cells.length >= 2 && ['source', 'limit'].includes(key)) {
-      const a = cells[1].querySelector('a');
-      config[key] = a ? a.getAttribute('href') : cells[1].textContent.trim();
-      row.dataset.config = key;
-      return;
-    }
-    rows.push(row);
-  });
+  // Source / Limit settings rows (news only)
+  const { config, items: rows } = readRows(block, cl.contains('news') ? ['source', 'limit'] : []);
 
   const tiles = cl.contains('tiles');
   const markers = [];
