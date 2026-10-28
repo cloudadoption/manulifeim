@@ -33,6 +33,7 @@ Edge Delivery Services. Read a block first. Omissions are in the repo or known.
 - `Template` metadata → `body.template-<name>`: home, plain, viewpoints, viewpoint (alias article), press-release-root, press-release, case-study-list, case-study-detail (alias case-study), search. Layouts in `styles/templates.css`, loaded only for viewpoint, case-study-detail, press-release, case-study-list.
 - Article / case study authoring: section 1 = header (date p, h1, summary p); body sections next; then one section with `Style: sidebar` (author, link-list, case-study-sidebar). Sections after the sidebar span full width.
 - Press release: first paragraph = date, h1 = 32px/300 title.
+- Index source: `INDEX_SOURCE` in `scripts/block-utils.js` (`native`; ADR-001 in `docs/DECISIONS.md`). Listings show published pages only; no runtime fallback.
 
 ## Manulife replica: live snapshots
 - www.manulifeim.com answers 403 to curl; pages are read once in the browser and stored in `tools/importer/snapshots/` (bulk HTML gitignored, local only). `_state.json` = per live path status, `_log.jsonl` = capture log, `_images.json` = image URLs per page.

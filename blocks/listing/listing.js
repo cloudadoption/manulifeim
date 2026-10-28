@@ -52,14 +52,8 @@ function readConfig(block) {
 }
 
 async function loadItems(config, variant) {
-  const source = config.source || INDEX_URLS[variant];
-  let rows = await fetchIndex(source);
-  let items = rows.map(normalizeEntry).filter(VARIANT_BASE[variant]);
-  if (!items.length && source !== INDEX_URLS.all) {
-    rows = await fetchIndex(INDEX_URLS.all);
-    items = rows.map(normalizeEntry).filter(VARIANT_BASE[variant]);
-  }
-  return items;
+  const rows = await fetchIndex(config.source || INDEX_URLS[variant]);
+  return rows.map(normalizeEntry).filter(VARIANT_BASE[variant]);
 }
 
 export default async function decorate(block) {
