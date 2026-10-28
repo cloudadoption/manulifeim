@@ -267,6 +267,11 @@ async function loadLazy(doc) {
 
   if (footer) await loadFooter(footer);
 
+  if (main && getMetadata('links').trim().toLowerCase() === 'new-tab') {
+    const { default: openLinksInNewTab } = await import('./link-target.js');
+    openLinksInNewTab(main, new URL(window.location.href));
+  }
+
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 }
