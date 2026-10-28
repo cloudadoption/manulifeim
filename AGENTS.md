@@ -16,6 +16,7 @@ Edge Delivery Services. Read a block first. Omissions are in the repo or known.
 
 ## Remember
 - `npx -y @adobe/aem-cli up`: local code, previewed content.
+- `npm test`: `test/` and `tools/importer/test/` (node:test + jsdom, fixtures in `tools/importer/test/fixtures/`, no browser, no snapshots). Must pass on a fresh clone.
 - Merging `main` ships code; content publishes separately.
 - A PR without a `{branch}--manulifeim--cloudadoption.aem.page/{path}` link is rejected.
 - All committed files are served. Use `.hlxignore`.
@@ -35,7 +36,7 @@ Edge Delivery Services. Read a block first. Omissions are in the repo or known.
 
 ## Manulife replica: live snapshots
 - www.manulifeim.com answers 403 to curl; pages are read once in the browser and stored in `tools/importer/snapshots/` (bulk HTML gitignored, local only). `_state.json` = per live path status, `_log.jsonl` = capture log, `_images.json` = image URLs per page.
-- Capture loop: `node tools/importer/snapshot/queue.mjs --size N --budget S` → run `capture-pages.fn.txt` in the Playwright MCP browser (`browser_run_code`, `filename: snap-NNN.json`; it reads `_queue.json` from the dev server) → `node tools/importer/snapshot/ingest.mjs /tmp/playwright/snap-NNN.json`. One page every 5–10 s. Accept the attestation on `/institutional/tw/en` first.
+- Capture loop: `node tools/importer/snapshot/queue.mjs --size N --budget S` → run `capture-pages.fn.txt` in the Playwright MCP browser (`browser_run_code`, `filename: snap-NNN.json`; it reads `_queue.json` from the dev server) → `node tools/importer/snapshot/ingest.mjs /tmp/playwright/snap-NNN.json` → close the browser → `sh tools/importer/after-capture.sh` (import, guards, upload, preview). One page every 30–45 s (`--gap 30-45`), batches of 16, at least 30 min between batches; the run ends on an emptied page to keep the tool output small. Accept the attestation on `/institutional/tw/en` first.
 - Images: `images.mjs queue` → `capture-images.fn.txt` → `images.mjs ingest <file>` → `images.mjs sidecars` (maps for `run-bulk-import --html-dir tools/importer/snapshots`).
 - Media rules (`snapshot/media.mjs`, aem.live limits): ingest names files by their bytes, turns GIF and SVG > 40 KB into PNG (2x, librsvg; IM6's own SVG renderer breaks charts). `snapshot/fix-media.mjs` applies the same to `content/media-da`, updates `_images.json`, sidecars and pages, logs `reports/media-fixes.json`; then `da-upload.mjs --reupload-fixed`.
 - Before upload: `node tools/importer/check-images.mjs` lists pages with `<img>` still on www.manulifeim.com or > 200 distinct images; `da-upload.mjs` skips them (`--allow-live-images` overrides the first).

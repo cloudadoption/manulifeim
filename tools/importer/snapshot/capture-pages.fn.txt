@@ -82,5 +82,7 @@ async (page) => {
     const wait = gap - (Date.now() - started);
     if (wait > 0) await page.waitForTimeout(wait);
   }
+  // empty page so the tool's closing snapshot stays small
+  await page.evaluate(() => { document.body.innerHTML = ''; }).catch(() => {});
   return { pages: out, images: imgs };
 }
