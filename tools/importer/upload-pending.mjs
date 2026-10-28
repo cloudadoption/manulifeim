@@ -27,7 +27,8 @@ const all = [];
 (function walk(d) {
   readdirSync(d).forEach((f) => {
     const p = join(d, f);
-    if (f === 'media-da') return;
+    // media-da: images; migration-status: guides the team maintains (never uploaded from here)
+    if (f === 'media-da' || p === join('content', 'migration-status')) return;
     if (statSync(p).isDirectory()) walk(p);
     else if (f.endsWith('.plain.html')) all.push(p.slice('content'.length, -'.plain.html'.length));
   });

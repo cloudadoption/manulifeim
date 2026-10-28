@@ -70,7 +70,11 @@ function uploadMedia(name, onDa) {
   return r.status < 300;
 }
 
+// guides the team maintains and publishes itself: never uploaded or previewed from here
+const PROTECTED = /^\/migration-status(\/|$)/;
+
 function uploadPage(path) {
+  if (PROTECTED.test(path)) return { path, skipped: 'protected guide page (/migration-status)' };
   const file = `content${path}.plain.html`;
   if (!existsSync(file)) return { path, error: 'no local file' };
   let html = readFileSync(file, 'utf-8');
