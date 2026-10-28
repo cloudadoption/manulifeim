@@ -16,15 +16,21 @@
  * content/<path>.plain.html to the DA media URL (so the local file is exactly what DA gets),
  * POSTs the page to admin.da.live, reads it back to confirm it matches, then previews it.
  * Credentials are injected by the environment (no Authorization header here).
- * Authored changes are never overwritten: a page that exists in DA and was modified there more
- * than 60 s after our last upload (or that we never uploaded) is skipped and logged in
- * reports/da-conflicts.json, also with --force; nothing is sent for it.
+ * Authored changes are never overwritten. After a successful write whose read-back equals what we
+ * sent, the record keeps `baseline` = SHA-256 of DA's <main>. A page that exists in DA is only
+ * written when its current <main> has that fingerprint; DA is checked before the media uploads and
+ * again right before the document write. Held (skipped, logged in reports/da-conflicts.json, also
+ * with --force): no baseline (never uploaded by us, legacy record, failed or unverified upload),
+ * a different fingerprint, a page we uploaded that is now gone from DA, any DA answer other than
+ * 200/404, a network error. Limitation: DA sends no ETag, so the write is not conditional; an edit
+ * saved between the last check and the write (one request apart) is not detected.
  * State: tools/importer/reports/da-upload.json (pages) and da-media.json (images).
  */
 import {
   readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync,
 } from 'fs';
 import { execFileSync } from 'child_process';
+import { createHash } from 'crypto';
 import { join } from 'path';
 import { liveImages, imageNames, PAGE_IMAGE_LIMIT } from './check-images.mjs';
 import { mediaProblem } from './snapshot/media.mjs';
@@ -34,6 +40,8 @@ const SITE = 'manulifeim';
 const DA_SOURCE = `https://admin.da.live/source/${ORG}/${SITE}`;
 const DA_MEDIA = `https://content.da.live/${ORG}/${SITE}/media-da/`;
 const PREVIEW = `https://admin.hlx.page/preview/${ORG}/${SITE}/main`;
+// test seam: offline regression tests point this at a fake curl (default: the real one)
+const CURL = process.env.DA_UPLOAD_CURL || 'curl';
 const REPORTS = 'tools/importer/reports';
 mkdirSync(REPORTS, { recursive: true });
 const pagesFile = `${REPORTS}/da-upload.json`;
@@ -55,7 +63,7 @@ const li = args.indexOf('--limit');
 const limit = li === -1 ? Infinity : Number(args[li + 1]);
 
 function curl(argv) {
-  const out = execFileSync('curl', ['-s', '-S', '-w', '\n%{http_code}', ...argv], { maxBuffer: 64 * 1024 * 1024 }).toString();
+  const out = execFileSync(CURL, ['-s', '-S', '-w', '\n%{http_code}', ...argv], { maxBuffer: 64 * 1024 * 1024 }).toString();
   const i = out.lastIndexOf('\n');
   return { status: Number(out.slice(i + 1)), body: out.slice(0, i) };
 }
@@ -79,18 +87,31 @@ function uploadMedia(name, onDa) {
 // guides the team maintains and publishes itself: never uploaded or previewed from here
 const PROTECTED = /^\/migration-status(\/|$)/;
 
-// edits made in DA after our last upload (authors work there now): never overwritten
-const AUTHORED_GRACE_MS = 60 * 1000;
+// authors edit in DA: a page in DA is only replaced when it is still exactly what our last
+// successful upload left there (content fingerprint, not timestamps)
+const fingerprint = (main) => createHash('sha256').update(norm(main)).digest('hex');
+const mainOf = (body) => (body.match(/<main>([\s\S]*)<\/main>/) || [])[1];
+
 function authoredConflict(path) {
-  const head = execFileSync('curl', ['-s', '-S', '-I', `${DA_SOURCE}${path}.html`]).toString();
-  const status = Number((head.match(/^HTTP\/[\d.]+ (\d{3})(?![\s\S]*^HTTP\/)/m) || [])[1]);
-  if (status === 404) return null;
-  const lm = Date.parse((head.match(/^last-modified:\s*(.+)$/im) || [])[1] || '');
-  if (status !== 200 || Number.isNaN(lm)) return `DA state unknown (HTTP ${status || '?'}), not overwriting`;
-  const last = Date.parse(pages[path]?.at || '');
-  if (Number.isNaN(last)) return `exists in DA (modified ${new Date(lm).toISOString()}) but was never uploaded by the migration`;
-  if (lm > last + AUTHORED_GRACE_MS) return `modified in DA at ${new Date(lm).toISOString()}, after our last upload at ${pages[path].at}`;
+  let r;
+  try {
+    r = curl([`${DA_SOURCE}${path}.html`]);
+  } catch (e) {
+    return `DA unreachable (${String(e.message || e).split('\n')[0]}), not overwriting`;
+  }
+  const base = pages[path]?.baseline;
+  if (r.status === 404) return base ? `gone from DA since our upload of ${base.at} (deleted there?), not recreating` : null;
+  if (r.status !== 200) return `DA answered HTTP ${r.status}, not overwriting`;
+  const main = mainOf(r.body);
+  if (main === undefined) return 'DA copy has no <main>, not overwriting';
+  if (!base?.sha256) return 'exists in DA without a fingerprint of a verified upload by the migration';
+  if (fingerprint(main) !== base.sha256) return `DA copy differs from our last verified upload (${base.at}): authored change`;
   return null;
+}
+
+function hold(path, reason) {
+  conflicts[path] = { reason, at: new Date().toISOString() };
+  return { path, skipped: `authored change kept: ${reason}` };
 }
 
 function uploadPage(path) {
@@ -112,17 +133,16 @@ function uploadPage(path) {
   if (bad.length) {
     return { path, skipped: `media Edge Delivery rejects: ${bad.map(([n, pr]) => `${n} (${pr.action})`).join(', ')}; run tools/importer/snapshot/fix-media.mjs` };
   }
-  const conflict = authoredConflict(path);
-  if (conflict) {
-    conflicts[path] = { reason: conflict, at: new Date().toISOString() };
-    return { path, skipped: `authored change kept: ${conflict}` };
-  }
-  delete conflicts[path];
+  const before = authoredConflict(path);
+  if (before) return hold(path, before);
   // images: upload once (new names too, e.g. after fix-media), then point the local copy at the DA media URL
   const failed = names.filter((n) => !uploadMedia(n, html.includes(`${DA_MEDIA}${n}`)));
   html = html.replace(/(["'(\s])\/media-da\//g, `$1${DA_MEDIA}`);
   writeFileSync(file, html);
 
+  // DA may have changed while the media uploaded: check again right before the write
+  const last = authoredConflict(path);
+  if (last) return hold(path, `${last} (rechecked before the write)`);
   const doc = `/tmp/da-${process.pid}.html`;
   writeFileSync(doc, `<body><header></header><main>${html}</main><footer></footer></body>`);
   const up = curl(['-X', 'POST', '-F', `data=@${doc};type=text/html`, `${DA_SOURCE}${path}.html`]);
@@ -130,14 +150,19 @@ function uploadPage(path) {
     upload: up.status, images: names.length, imagesFailed: failed, at: new Date().toISOString(),
   };
   if (up.status >= 300) {
+    // a failed write proves nothing about DA: keep the last verified baseline
+    if (pages[path]?.baseline) rec.baseline = pages[path].baseline;
     rec.error = up.body.slice(0, 300);
     return rec;
   }
+  delete conflicts[path];
   const back = curl([`${DA_SOURCE}${path}.html`]);
-  const main = (back.body.match(/<main>([\s\S]*)<\/main>/) || [])[1];
+  const main = back.status === 200 ? mainOf(back.body) : undefined;
   rec.matches = main !== undefined && norm(main) === norm(html);
+  // baseline only when DA holds exactly what we sent; anything else is held next time
+  if (rec.matches) rec.baseline = { sha256: fingerprint(main), at: rec.at };
   if (main !== undefined && !rec.matches) {
-    // DA normalised the markup: keep the local copy identical to DA
+    // DA normalised the markup (or someone saved meanwhile): keep the local copy identical to DA
     writeFileSync(file, main);
     rec.localUpdated = true;
   }
@@ -169,8 +194,9 @@ let skipped = 0;
 todo.forEach((p, i) => {
   const rec = uploadPage(p);
   if (rec.skipped) {
-    // the previous record (if any) stays: the page was not sent
+    // the previous record (if any) stays: the page was not sent; held pages are saved now
     skipped += 1;
+    save();
     console.log(`[${i + 1}/${todo.length}] ${p} SKIPPED: ${rec.skipped}`);
     return;
   }
