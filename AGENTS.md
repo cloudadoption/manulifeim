@@ -33,6 +33,7 @@ Edge Delivery Services. Read a block first. Omissions are in the repo or known.
 - `Template` metadata → `body.template-<name>`: home, plain, viewpoints, viewpoint (alias article), press-release-root, press-release, case-study-list, case-study-detail (alias case-study), search. Layouts in `styles/templates.css`, loaded only for viewpoint, case-study-detail, press-release, case-study-list.
 - Article / case study authoring: section 1 = header (date p, h1, summary p); body sections next; then one section with `Style: sidebar` (author, link-list, case-study-sidebar). Sections after the sidebar span full width.
 - Press release: first paragraph = date, h1 = 32px/300 title.
+- UI strings (carousel, listing, Read more): `scripts/placeholders.js`, DA sheet `/institutional/tw/en/placeholders` (Key | Text; source `tools/importer/placeholders.json`). English defaults stay in code; a new key needs both.
 - Index source: `INDEX_SOURCE` in `scripts/block-utils.js` (`native`; ADR-001 in `docs/DECISIONS.md`). Listings show published pages only; no runtime fallback.
 
 ## Manulife replica: live snapshots
