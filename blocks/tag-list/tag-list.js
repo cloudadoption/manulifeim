@@ -16,7 +16,7 @@
  * authored list moves into the details element as it is; in Canvas nothing moves.
  */
 import isAuthoring from '../../scripts/authoring.js';
-import { fetchIndex } from '../../scripts/block-utils.js';
+import { fetchIndex, readRows } from '../../scripts/block-utils.js';
 import { INDEX_URLS, SITE_ROOT, normalizeEntry } from '../../scripts/listing-core.js';
 
 function buildList(tags) {
@@ -33,21 +33,13 @@ function buildList(tags) {
 }
 
 export default async function decorate(block) {
-  let title = 'All Tags';
-  let base = `${SITE_ROOT}/viewpoints/all?tag=`;
-  let list = null;
-  [...block.children].forEach((row) => {
-    const cells = [...row.children];
-    const key = cells[0]?.textContent.trim().toLowerCase();
-    if (cells.length >= 2 && ['title', 'base'].includes(key) && !cells[1].querySelector('a')) {
-      row.dataset.config = key;
-      const value = cells[1].textContent.trim();
-      if (key === 'title') title = value || title;
-      else base = value || base;
-      return;
-    }
-    if (!list) list = row.querySelector('ul, ol');
+  const { config, items } = readRows(block, ['title', 'base'], {
+    hrefKeys: [],
+    accept: (cells) => !cells[1].querySelector('a'),
   });
+  const title = config.title || 'All Tags';
+  const base = config.base || `${SITE_ROOT}/viewpoints/all?tag=`;
+  const list = items.map((row) => row.querySelector('ul, ol')).find(Boolean) || null;
   if (isAuthoring()) return;
 
   const details = document.createElement('details');

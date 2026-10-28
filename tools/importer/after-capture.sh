@@ -16,4 +16,4 @@ node tools/importer/localize-images.mjs | tail -1
 node tools/importer/check-images.mjs | tail -2
 node tools/importer/check-content.mjs
 node tools/importer/upload-pending.mjs --limit "${1:-80}" | tail -4
-sh tools/importer/update-preview-index.sh | tail -3
+# the preview-index stand-in is not rebuilt: blocks read the native indices (docs/DECISIONS.md)

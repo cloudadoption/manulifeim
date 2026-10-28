@@ -55,17 +55,6 @@ html[quick-edit] .tag-list.padded {
   color: var(--color-primary);
 }
 
-/* config rows (Title, Base): hidden on pages, editable in Canvas */
-.tag-list > [data-config] {
-  display: none;
-}
-
-html[quick-edit] .tag-list > [data-config] {
-  display: flex;
-  gap: 16px;
-  font-size: 14px;
-}
-
 @media (width >= 321px) {
   .tag-list :is(ul, ol) {
     column-count: 2;

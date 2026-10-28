@@ -84,6 +84,7 @@
   /* layout and containers */
   --layout-rail-width: 0px;
   --header-height: 50px;
+  --alert-reserve: 81px;
   --width-reading: 600px;
   --width-inset: 800px;
   --width-form: 850px;
@@ -104,6 +105,7 @@
     --font-size-display: 64px;
     --font-size-page-title: 48px;
     --font-size-h2: 32px;
+    --alert-reserve: 57px;
   }
 }
 
@@ -193,8 +195,40 @@ body.appear {
 /* header space is reserved before the header block loads: 50px dark, 80px white from 801px.
    min-height: the loaded header grows with the site banner below the bar. */
 body > header {
-  min-height: var(--header-height);
+  --header-reserve: var(--header-height);
+
+  min-height: var(--header-reserve);
   background-color: var(--color-header-mobile);
+}
+
+/* site banner (nav section 4) space, CLS: reserved below the bar until the header has loaded,
+   unless the banner was dismissed this session (scripts.js sets html.site-alert-dismissed).
+   --alert-reserve is the current message's height (2 lines < 601px, 1 line from 621px). */
+html:not(.site-alert-dismissed) body > header {
+  --header-reserve: calc(var(--header-height) + var(--alert-reserve));
+
+  background-image: linear-gradient(transparent var(--header-height), var(--color-white) 0);
+}
+
+/* while the header block decorates it may be taller than the reserve for a frame */
+body > header:not(:has(> .header[data-block-status='loaded'])) {
+  height: var(--header-reserve);
+  overflow: clip;
+}
+
+body > header:has(> .header[data-block-status='loaded']) {
+  min-height: 0;
+}
+
+/* block settings rows (readRows, scripts/dom-utils.js): hidden on pages, editable in Canvas */
+main .block > [data-config] {
+  display: none;
+}
+
+html[quick-edit] main .block > [data-config] {
+  display: flex;
+  gap: 16px;
+  font-size: var(--font-size-small);
 }
 
 /* attestation prompt (live body.attestation__blur): scripts.js sets the class before first paint

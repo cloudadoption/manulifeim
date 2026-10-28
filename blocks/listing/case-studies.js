@@ -7,7 +7,7 @@ import {
 } from '../../scripts/listing-core.js';
 import { el } from '../../scripts/dom-utils.js';
 import {
-  icon, picture, updateUrl, emptyState, dropdown,
+  icon, picture, updateUrl, emptyState, dropdown, t,
 } from './listing-ui.js';
 
 const CS_SORTS = [['newest', 'Newest'], ['oldest', 'Oldest']];
@@ -34,7 +34,7 @@ function caseStudyCard(it, onPill) {
       { class: 'listing-cs-card-content' },
       el('h3', { class: 'listing-cs-title' }, el('a', { href: it.path }, it.title)),
       it.tags.length ? pills : null,
-      el('a', { class: 'listing-cs-more', href: it.path, 'aria-label': `Read more: ${it.title}` }, 'Read more', icon('arrow-right')),
+      el('a', { class: 'listing-cs-more', href: it.path, 'aria-label': t('readMoreAbout', 'Read more: {title}', { title: it.title }) }, t('readMore', 'Read more'), icon('arrow-right')),
     ),
   );
 }
@@ -79,7 +79,7 @@ export default function caseStudies(ctx) {
       });
       tabs.append(el('li', { class: 'listing-cs-tab-item' }, b));
     });
-    const clear = el('button', { type: 'button', class: `listing-cs-clear${anySelected ? ' active' : ''}`, disabled: !anySelected }, 'Clear all');
+    const clear = el('button', { type: 'button', class: `listing-cs-clear${anySelected ? ' active' : ''}`, disabled: !anySelected }, t('clearAll', 'Clear all'));
     clear.addEventListener('click', () => {
       const removed = Object.fromEntries(Object.keys(state.filters).map((k) => [k, null]));
       state.filters = {};
@@ -128,11 +128,13 @@ export default function caseStudies(ctx) {
     const sorter = el(
       'div',
       { class: 'listing-cs-sorter' },
-      el('h2', { class: 'listing-cs-count' }, `${count} ${count === 1 ? 'result matches' : 'results match'} your search`),
+      el('h2', { class: 'listing-cs-count' }, count === 1
+        ? t('resultMatches', '{count} result matches your search', { count })
+        : t('resultsMatch', '{count} results match your search', { count })),
       el(
         'div',
         { class: 'listing-cs-sort' },
-        el('span', { class: 'listing-cs-sort-caption' }, 'Sort by:'),
+        el('span', { class: 'listing-cs-sort-caption' }, t('sortBy', 'Sort by:')),
         dropdown(CS_SORTS, state.sort, (value) => {
           state.sort = value;
           state.shown = pageSize;
@@ -150,7 +152,7 @@ export default function caseStudies(ctx) {
     } else {
       results.append(el('div', { class: 'listing-cs-articles' }, visible.map((it) => caseStudyCard(it, toggle))));
       if (visible.length < filtered.length) {
-        const more = el('button', { type: 'button', class: 'listing-cs-load-more' }, 'Load more');
+        const more = el('button', { type: 'button', class: 'listing-cs-load-more' }, t('loadMore', 'Load more'));
         const loadMore = () => {
           state.shown += pageSize;
           ctx.render();
@@ -171,8 +173,8 @@ export default function caseStudies(ctx) {
         results.append(el(
           'div',
           { class: 'listing-cs-end' },
-          el('p', { class: 'listing-cs-end-title' }, 'You’ve reached the end'),
-          el('p', { class: 'listing-cs-end-caption' }, `Showing all ${count} results`),
+          el('p', { class: 'listing-cs-end-title' }, t('reachedEnd', 'You’ve reached the end')),
+          el('p', { class: 'listing-cs-end-caption' }, t('showingAll', 'Showing all {count} results', { count })),
         ));
       }
     }

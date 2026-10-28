@@ -7,7 +7,7 @@ import {
   INDEX_URLS, MONTHS, readIndexJson, normalizeEntry, isoDate, splitValues,
 } from './listing-core.js';
 
-export { el } from './dom-utils.js';
+export { el, readRows } from './dom-utils.js';
 
 /**
  * True for an authored cell that holds only an image (with or without its <p>).
@@ -193,6 +193,14 @@ export function buildAuthorInline(author, prefix) {
   return wrap;
 }
 
+/**
+ * Where index-driven blocks read their rows (docs/DECISIONS.md, ADR-001). `native`: the query
+ * indices AEM builds from published pages (tools/importer/query.yaml). `stand-in`: the
+ * preview-index sheet built from previewed pages (tools/importer/build-preview-index.mjs), for a
+ * site that is not published yet.
+ */
+export const INDEX_SOURCE = 'native';
+
 const indexCache = {};
 const PREVIEW_INDEX = '/institutional/tw/en/preview-index.json';
 const PREVIEW_SHEETS = {
@@ -227,23 +235,16 @@ async function fetchAllRows(path) {
 }
 
 /**
- * Fetches all rows of a query index (cached per path). Default: the site index
- * /institutional/tw/en/query-index.json (tools/importer/query.yaml). `?sheet=` works for
+ * Fetches all rows of a query index (cached per path), from the source INDEX_SOURCE names.
+ * Default: the site index /institutional/tw/en/query-index.json. `?sheet=` works for
  * multi-sheet JSON files.
  * @param {string} path
  * @returns {Promise<object[]>}
  */
 export async function fetchIndex(path = INDEX_URLS.all) {
   if (!indexCache[path]) {
-    indexCache[path] = fetchAllRows(path)
-      .then(async (rows) => {
-        if (rows.length) return rows;
-        // Edge Delivery indexes published pages only; while the site is preview-only, a
-        // generated stand-in with the same sheets is used (tools/importer/build-preview-index.mjs)
-        const sheet = PREVIEW_SHEETS[new URL(path, window.location.href).pathname];
-        return sheet ? fetchAllRows(`${PREVIEW_INDEX}?sheet=${sheet}`) : rows;
-      })
-      .catch(() => []);
+    const sheet = INDEX_SOURCE === 'stand-in' && PREVIEW_SHEETS[new URL(path, window.location.href).pathname];
+    indexCache[path] = fetchAllRows(sheet ? `${PREVIEW_INDEX}?sheet=${sheet}` : path).catch(() => []);
   }
   return indexCache[path];
 }

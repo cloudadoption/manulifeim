@@ -1,0 +1,104 @@
+{
+ "total": 24,
+ "offset": 0,
+ "limit": 24,
+ "data": [
+  {
+   "Key": "readMore",
+   "Text": "Read more"
+  },
+  {
+   "Key": "readMoreAbout",
+   "Text": "Read more: {title}"
+  },
+  {
+   "Key": "previous",
+   "Text": "Previous"
+  },
+  {
+   "Key": "next",
+   "Text": "Next"
+  },
+  {
+   "Key": "noResults",
+   "Text": "Sorry, no results match this criteria"
+  },
+  {
+   "Key": "search",
+   "Text": "Search"
+  },
+  {
+   "Key": "submit",
+   "Text": "Submit"
+  },
+  {
+   "Key": "viewDocument",
+   "Text": "View document"
+  },
+  {
+   "Key": "clearAll",
+   "Text": "Clear all"
+  },
+  {
+   "Key": "sortBy",
+   "Text": "Sort by:"
+  },
+  {
+   "Key": "resultMatches",
+   "Text": "{count} result matches your search"
+  },
+  {
+   "Key": "resultsMatch",
+   "Text": "{count} results match your search"
+  },
+  {
+   "Key": "loadMore",
+   "Text": "Load more"
+  },
+  {
+   "Key": "reachedEnd",
+   "Text": "You’ve reached the end"
+  },
+  {
+   "Key": "showingAll",
+   "Text": "Showing all {count} results"
+  },
+  {
+   "Key": "readBio",
+   "Text": "Read bio"
+  },
+  {
+   "Key": "carouselLabel",
+   "Text": "Highlights"
+  },
+  {
+   "Key": "slideControls",
+   "Text": "Slide controls"
+  },
+  {
+   "Key": "previousSlide",
+   "Text": "Previous Slide"
+  },
+  {
+   "Key": "nextSlide",
+   "Text": "Next Slide"
+  },
+  {
+   "Key": "slideOf",
+   "Text": "Slide {n} of {total}"
+  },
+  {
+   "Key": "slidePill",
+   "Text": "Slide {n}"
+  },
+  {
+   "Key": "slidePlay",
+   "Text": "Slide {n}: play"
+  },
+  {
+   "Key": "slidePause",
+   "Text": "Slide {n}: pause"
+  }
+ ],
+ ":type": "sheet"
+}

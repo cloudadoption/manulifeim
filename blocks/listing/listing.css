@@ -209,8 +209,13 @@ main > .section > .listing-wrapper {
 
 .listing .listing-vp-image img {
   display: block;
+
+  /* the block requests 500px renditions, mostly 1.908:1 (measured): an explicit width and
+     ratio hold the space until the image has loaded (CLS), then its own ratio applies */
+  width: 500px;
   max-width: 100%;
   height: auto;
+  aspect-ratio: auto 1908 / 1000;
   margin: 0 auto;
 }
 

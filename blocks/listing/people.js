@@ -1,8 +1,11 @@
-/* Listing (people): person cards from the people index (no DA page uses it yet). */
+/*
+ * Listing (people): person cards from the people index. No DA page uses it and /authors is 404
+ * on live; kept pending a decision (docs/DECISIONS.md ADR-002).
+ */
 import { applyFilters, sortItems, paginate } from '../../scripts/listing-core.js';
 import { el } from '../../scripts/dom-utils.js';
 import {
-  icon, picture, buildPagination, emptyState,
+  icon, picture, buildPagination, emptyState, t,
 } from './listing-ui.js';
 
 function personCard(it) {
@@ -20,7 +23,7 @@ function personCard(it) {
     el(
       'div',
       { class: 'listing-person-footer' },
-      el('a', { class: 'listing-person-more', href: it.path, 'aria-label': `Read more: ${it.title}` }, 'Read more', icon('chevron-right')),
+      el('a', { class: 'listing-person-more', href: it.path, 'aria-label': t('readMoreAbout', 'Read more: {title}', { title: it.title }) }, t('readMore', 'Read more'), icon('chevron-right')),
     ),
   );
 }

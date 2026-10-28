@@ -24,7 +24,8 @@
  */
 
 import isAuthoring from '../../scripts/authoring.js';
-import { isMediaCell } from '../../scripts/block-utils.js';
+import { isMediaCell, readRows } from '../../scripts/block-utils.js';
+import { fetchPlaceholders, placeholder } from '../../scripts/placeholders.js';
 
 function isEmptyParagraph(el) {
   return el.tagName === 'P' && !el.querySelector('img, picture') && !el.textContent.trim();
@@ -57,19 +58,20 @@ function eager(slide, first) {
 }
 
 function buildCarousel(block) {
-  let speed = 5;
-  const slides = [];
-  [...block.children].forEach((row) => {
-    const cells = [...row.children];
-    const label = cells[0]?.textContent.trim().toLowerCase();
-    if (cells.length >= 2 && label === 'speed' && !row.querySelector('picture')) {
-      const v = parseFloat(cells[1].textContent);
-      if (v > 0) speed = v;
-      row.dataset.config = 'speed';
-      return;
-    }
-    slides.push(row);
+  const { config, items: slides } = readRows(block, ['speed'], {
+    hrefKeys: [],
+    accept: (cells) => !cells.some((c) => c.querySelector('picture')),
   });
+  const v = parseFloat(config.speed);
+  const speed = v > 0 ? v : 5;
+  // UI labels: English now, the placeholders sheet's text once it has loaded (not awaited)
+  let ph = {};
+  const t = (key, fallback, vars) => placeholder(ph, key, fallback, vars);
+  const labelled = [];
+  const label = (node, key, fallback, vars) => {
+    labelled.push(() => node.setAttribute('aria-label', t(key, fallback, vars)));
+    labelled[labelled.length - 1]();
+  };
 
   slides.forEach((row, i) => {
     row.classList.add('hero-slide');
@@ -87,14 +89,18 @@ function buildCarousel(block) {
         }
       }
     });
-    if (!row.hasAttribute('aria-labelledby')) row.setAttribute('aria-label', `Slide ${i + 1} of ${slides.length}`);
+    if (!row.hasAttribute('aria-labelledby')) label(row, 'slideOf', 'Slide {n} of {total}', { n: i + 1, total: slides.length });
     // the first slide is the LCP image; the next one loads early so it never fades in grey
     if (i < 2) eager(row, i === 0);
   });
 
   block.setAttribute('role', 'region');
   block.setAttribute('aria-roledescription', 'carousel');
-  block.setAttribute('aria-label', 'Highlights');
+  label(block, 'carouselLabel', 'Highlights');
+  fetchPlaceholders().then((sheet) => {
+    ph = sheet;
+    labelled.forEach((apply) => apply());
+  });
   block.style.setProperty('--hero-speed', `${speed}s`);
 
   // one slide, or authoring in Canvas: all slides stacked, no controls and no timer
@@ -107,15 +113,15 @@ function buildCarousel(block) {
   const controls = document.createElement('div');
   controls.className = 'hero-controls';
   controls.setAttribute('role', 'group');
-  controls.setAttribute('aria-label', 'Slide controls');
+  label(controls, 'slideControls', 'Slide controls');
   const prev = document.createElement('button');
   prev.type = 'button';
   prev.className = 'hero-prev';
-  prev.setAttribute('aria-label', 'Previous Slide');
+  label(prev, 'previousSlide', 'Previous Slide');
   const next = document.createElement('button');
   next.type = 'button';
   next.className = 'hero-next';
-  next.setAttribute('aria-label', 'Next Slide');
+  label(next, 'nextSlide', 'Next Slide');
   const bar = document.createElement('div');
   bar.className = 'hero-progressbar';
   const pills = slides.map((_, i) => {
@@ -141,6 +147,13 @@ function buildCarousel(block) {
     timer = null;
   };
 
+  const labelPills = () => pills.forEach((p, i) => {
+    const n = i + 1;
+    if (i !== current) p.setAttribute('aria-label', t('slidePill', 'Slide {n}', { n }));
+    else p.setAttribute('aria-label', paused ? t('slidePlay', 'Slide {n}: play', { n }) : t('slidePause', 'Slide {n}: pause', { n }));
+  });
+  labelled.push(labelPills);
+
   const render = () => {
     const running = !paused && !held;
     // announce slide changes only when the user drives them
@@ -157,8 +170,8 @@ function buildCarousel(block) {
       p.classList.toggle('paused', active && paused);
       if (active) p.setAttribute('aria-current', 'true');
       else p.removeAttribute('aria-current');
-      p.setAttribute('aria-label', active ? `Slide ${i + 1}: ${paused ? 'play' : 'pause'}` : `Slide ${i + 1}`);
     });
+    labelPills();
     stopTimer();
     if (paused) return;
     // progress fill and slide timer in one: Web Animations keep working without CSS animation

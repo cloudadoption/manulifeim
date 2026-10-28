@@ -24,6 +24,7 @@ import {
   splitList,
   sortByDateDesc,
 } from '../../scripts/block-utils.js';
+import { fetchPlaceholders, placeholder } from '../../scripts/placeholders.js';
 
 const LIMIT = 2;
 
@@ -55,7 +56,7 @@ function buildAuthor(author) {
   return wrap;
 }
 
-function buildCard(item) {
+function buildCard(item, labels) {
   const li = document.createElement('li');
   li.className = 'related-articles-item';
   if (item.date) {
@@ -89,7 +90,7 @@ function buildCard(item) {
   more.className = 'related-articles-link-anchor';
   more.href = item.path;
   const span = document.createElement('span');
-  span.textContent = 'Read more';
+  span.textContent = placeholder(labels, 'readMore', 'Read more');
   more.append(span);
   linkWrap.append(more);
   li.append(linkWrap);
@@ -97,6 +98,7 @@ function buildCard(item) {
 }
 
 export default async function decorate(block) {
+  const labelsLoaded = fetchPlaceholders();
   let title = 'Related viewpoints';
   const items = [];
   const lookups = [];
@@ -112,9 +114,9 @@ export default async function decorate(block) {
       && !row.querySelector('h1, h2, h3, h4, h5, h6, picture');
     if (onlyLink) {
       const href = links[0].getAttribute('href');
-      const placeholder = { path: href, title: links[0].textContent.trim(), lookup: true };
-      items.push(placeholder);
-      lookups.push(placeholder);
+      const stub = { path: href, title: links[0].textContent.trim(), lookup: true };
+      items.push(stub);
+      lookups.push(stub);
       return;
     }
     const item = parseTeaserRow(row);
@@ -157,5 +159,6 @@ export default async function decorate(block) {
     block.hidden = true;
     return;
   }
-  final.forEach((item) => main.append(buildCard(item)));
+  const labels = await labelsLoaded;
+  final.forEach((item) => main.append(buildCard(item, labels)));
 }

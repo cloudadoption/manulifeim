@@ -20,9 +20,9 @@ Content-bus indices are always delivered as a single sheet, so there is no `?she
 | `people` | `/authors/*`, `/consultant-team/*` | `/institutional/tw/en/query-index-people.json` | ~6 | `listing (people)`, author header of `listing (viewpoints)` (`?author=`) |
 
 `fetchIndex()` (`scripts/block-utils.js`) pages through `offset` / `limit` (JSON answers at most
-1000 rows per request), so the default index works past 1000 pages. Every listing falls back to
-the default index (filtered by template / path) when its own target is missing or empty, so the
-blocks work with only `default` configured.
+1000 rows per request), so the default index works past 1000 pages. Each block reads only its own
+index (or its `Source` row); there is no fallback to `default` or to the preview stand-in.
+`INDEX_SOURCE` decides native vs stand-in ([docs/DECISIONS.md](../../docs/DECISIONS.md), ADR-001).
 
 ## Fields
 

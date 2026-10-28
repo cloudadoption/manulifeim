@@ -36,7 +36,9 @@ import {
   toPicture,
   toPath,
   sortByDateDesc,
+  readRows,
 } from '../../scripts/block-utils.js';
+import { fetchPlaceholders, placeholder } from '../../scripts/placeholders.js';
 
 /** A row that only holds one link (auto-filled from the index). */
 function linkOnlyRow(row) {
@@ -106,8 +108,8 @@ function authorItem(author) {
   return li;
 }
 
-/** Card from an index item, same markup as an authored card. */
-function itemFromIndex(item, withImage = true) {
+/** Card from an index item, same markup as an authored card; ph: placeholders sheet. */
+function itemFromIndex(item, withImage = true, ph = {}) {
   const li = el('li');
   if (withImage && item.image) li.append(el('div', 'cards-card-image', toPicture(item.image, '', '750')));
   const body = el('div', 'cards-card-body');
@@ -115,7 +117,7 @@ function itemFromIndex(item, withImage = true) {
   if (item.title) body.append(el('h2', '', item.title));
   if (item.authors && item.authors.length) body.append(el('ul', '', ...item.authors.map(authorItem)));
   if (item.summary) body.append(el('p', '', item.summary));
-  const a = el('a', 'link-cta', item.readMore || 'Read more');
+  const a = el('a', 'link-cta', item.readMore || placeholder(ph, 'readMore', 'Read more'));
   a.href = item.path;
   body.append(el('p', 'link-cta-wrapper', a));
   li.append(body);
@@ -123,11 +125,11 @@ function itemFromIndex(item, withImage = true) {
 }
 
 async function autofill(markers) {
-  const index = await fetchIndex();
+  const [index, ph] = await Promise.all([fetchIndex(), fetchPlaceholders()]);
   markers.forEach(({ li, href }) => {
     const path = toPath(href);
     const entry = index.find((e) => toPath(e.path) === path);
-    li.replaceWith(itemFromIndex(entry ? indexEntryToItem(entry) : { path: href, title: '' }));
+    li.replaceWith(itemFromIndex(entry ? indexEntryToItem(entry) : { path: href, title: '' }, true, ph));
   });
 }
 
@@ -142,19 +144,8 @@ export default async function decorate(block) {
   if (!['tiles', 'news', 'separate'].some((v) => cl.contains(v))) cl.add('teaser');
   const authoring = isAuthoring();
   const ul = el('ul', 'cards-list');
-  const config = {};
-  const rows = [];
-  [...block.children].forEach((row) => {
-    const cells = [...row.children];
-    const key = cells[0]?.textContent.trim().toLowerCase();
-    if (cl.contains('news') && cells.length >= 2 && ['source', 'limit'].includes(key)) {
-      const a = cells[1].querySelector('a');
-      config[key] = a ? a.getAttribute('href') : cells[1].textContent.trim();
-      row.dataset.config = key;
-      return;
-    }
-    rows.push(row);
-  });
+  // Source / Limit settings rows (news only)
+  const { config, items: rows } = readRows(block, cl.contains('news') ? ['source', 'limit'] : []);
 
   const tiles = cl.contains('tiles');
   const markers = [];
@@ -196,11 +187,11 @@ export default async function decorate(block) {
     // title and link only; the authored rows are the fallback
     const limit = parseInt(config.limit, 10) || 4;
     const base = toPath(config.source);
-    const index = await fetchIndex();
+    const [index, ph] = await Promise.all([fetchIndex(), fetchPlaceholders()]);
     const latest = sortByDateDesc(index
       .filter((e) => toPath(e.path).startsWith(`${base}/`))
       .map(indexEntryToItem)).slice(0, limit);
-    if (latest.length) ul.replaceChildren(...latest.map((item) => itemFromIndex({ ...item, summary: '' }, false)));
+    if (latest.length) ul.replaceChildren(...latest.map((item) => itemFromIndex({ ...item, summary: '' }, false, ph)));
   }
   if (markers.length) await autofill(markers);
 }
