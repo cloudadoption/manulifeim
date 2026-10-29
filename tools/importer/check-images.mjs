@@ -17,7 +17,9 @@ import {
 import { join } from 'path';
 import { pathToFileURL } from 'url';
 
-const LIVE = /^(?:https?:)?\/\/(?:www\.)?manulifeim\.com\//i;
+// also the live host with a second URL glued on: og:image "manulifeim.comhttps://..."
+// on live, "manulifeim.comhttps//..." after the importer's URL normalization
+const LIVE = /^(?:https?:)?\/\/(?:www\.)?manulifeim\.com(?:\/|https?:?\/\/)/i;
 export const PAGE_IMAGE_LIMIT = 200;
 
 /** Distinct image file names of a page's <img src> (query and path ignored). */

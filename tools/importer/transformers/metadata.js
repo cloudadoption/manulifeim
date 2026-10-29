@@ -125,8 +125,10 @@ function collect(document, templateName, ctx) {
   const strat = livePath.match(/\/institutional\/tw\/en\/strategies\/([^/]+)/i);
   if (strat) [, meta['Asset Class']] = strat;
 
+  // a second URL glued into the host (live "https://www.manulifeim.comhttps://author-tmp...")
+  // is no image; a URL in the query string is fine
   const og = headMeta(document, 'property', 'og:image');
-  if (og) meta.Image = og;
+  if (og && !/^(?:https?:)?\/\/[^/?#]*?https?:?\/\//i.test(og)) meta.Image = og;
 
   const canonical = document.querySelector('head link[rel="canonical"]') || document.querySelector('link[rel="canonical"]');
   if (canonical && canonical.getAttribute('href')) {
