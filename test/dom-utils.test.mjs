@@ -6,7 +6,7 @@ import { JSDOM } from 'jsdom';
 
 const { window } = new JSDOM('<!DOCTYPE html><body></body>');
 globalThis.document = window.document;
-const { el, readRows } = await import('../scripts/dom-utils.js');
+const { el, readRows, isChromePath } = await import('../scripts/dom-utils.js');
 
 const block = (html) => {
   const div = document.createElement('div');
@@ -53,4 +53,11 @@ test('readRows: hrefKeys, links in lists and the accept test', () => {
   });
   assert.equal(accepted.settings.length, 0);
   assert.equal(accepted.items.length, 1);
+});
+
+test('isChromePath: nav, footer, fragments and the block library skip the disclaimer', () => {
+  ['/nav', '/footer', '/institutional/tw/en/fragments/attestation', '/library/blocks/promo', '/library/blocks.json']
+    .forEach((p) => assert.equal(isChromePath(p), true, p));
+  ['/institutional/tw/en', '/institutional/tw/en/library', '/libraryx/a', '/navigation', '/drafts/x']
+    .forEach((p) => assert.equal(isChromePath(p), false, p));
 });
