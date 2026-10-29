@@ -14,10 +14,11 @@ import { join } from 'path';
 
 const images = JSON.parse(readFileSync('tools/importer/snapshots/_images.json', 'utf-8'));
 const byUrl = {};
-// images that fail on the live site itself (403/404 there too) are dropped from the page
+// images gone on the live site itself (404/410) are dropped from the page; a 403 is not proof
+// the asset is gone, so its markup stays live and check-images holds the page
 const dead = new Set();
 Object.entries(images).forEach(([u, e]) => {
-  if (!e.file && [403, 404, 410].includes(e.status)) {
+  if (!e.file && [404, 410].includes(e.status)) {
     [u, decodeURI(u), encodeURI(decodeURI(u))].forEach((k) => dead.add(k));
   }
   if (!e.file) return;
