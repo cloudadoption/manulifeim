@@ -13,7 +13,7 @@
  */
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import {
-  parseCsv, SNAP_DIR, ORIGIN, readState, readJson,
+  parseCsv, SNAP_DIR, ORIGIN, readState, readJson, gluedHost,
 } from './lib.mjs';
 
 const args = process.argv.slice(2);
@@ -65,7 +65,8 @@ const queue = {
 // images still to download are fetched in the gaps between pages (same-origin, in the page)
 const images = readJson(`${SNAP_DIR}/_images.json`, {});
 const firstPages = (opt('images-first', '') || '').split(',').filter(Boolean);
-const pending = Object.keys(images).filter((u) => !images[u].file && !images[u].status);
+const pending = Object.keys(images)
+  .filter((u) => !images[u].file && !images[u].status && !gluedHost(u));
 const first = pending.filter((u) => images[u].pages.some((p) => firstPages.includes(p)));
 queue.images = [...first, ...pending.filter((u) => !first.includes(u))].slice(0, Number(opt('images', 300)));
 writeFileSync(`${SNAP_DIR}/_queue.json`, JSON.stringify(queue, null, 2));

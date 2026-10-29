@@ -16,7 +16,7 @@
 import { readFileSync, unlinkSync, readdirSync } from 'fs';
 import { createHash } from 'crypto';
 import {
-  SNAP_DIR, MEDIA_DIR, readJson, writeFile, snapshotFile,
+  SNAP_DIR, MEDIA_DIR, readJson, writeFile, snapshotFile, gluedHost,
 } from './lib.mjs';
 import { sniffType, fixMediaFile, MIME } from './media.mjs';
 
@@ -37,9 +37,10 @@ const mediaName = (url, type) => {
 
 if (cmd === 'queue') {
   const size = Number(arg === '--size' ? val : 40);
-  const urls = Object.keys(images).filter((u) => !images[u].file && !images[u].status).slice(0, size);
+  const fetchable = (u) => !images[u].file && !images[u].status && !gluedHost(u);
+  const urls = Object.keys(images).filter(fetchable).slice(0, size);
   writeFile(`${SNAP_DIR}/_img-queue.json`, JSON.stringify({ urls }, null, 1));
-  const left = Object.keys(images).filter((u) => !images[u].file && !images[u].status).length;
+  const left = Object.keys(images).filter(fetchable).length;
   console.log(`queued ${urls.length} images, ${left - urls.length} more pending`);
 } else if (cmd === 'ingest') {
   const batch = JSON.parse(readFileSync(arg, 'utf-8'));

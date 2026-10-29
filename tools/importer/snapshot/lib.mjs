@@ -6,6 +6,13 @@ export const SNAP_DIR = 'tools/importer/snapshots';
 export const HOST_DIR = `${SNAP_DIR}/www.manulifeim.com`;
 export const MEDIA_DIR = 'content/media-da';
 
+/**
+ * Image URL with a second URL glued into the host (live og:image
+ * "https://www.manulifeim.comhttps://author-tmp..."), raw or normalized ("comhttps//").
+ * Never fetched: the queues skip it; its _images.json record and the page hold stay.
+ */
+export const gluedHost = (u) => /^(?:https?:)?\/\/[^/?#]*?https?:?\/\//i.test(u);
+
 export function parseCsv(text) {
   const out = [];
   let row = [];
