@@ -13,6 +13,7 @@ import {
   loadSections,
   loadCSS,
 } from './aem.js';
+import { isChromePath } from './dom-utils.js';
 
 if (window.trustedTypes && window.trustedTypes.createPolicy) {
   const innerTT = window.trustedTypes.createPolicy('tt-inner', {
@@ -220,8 +221,8 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   // blur the page before first paint until the disclaimer is accepted (modal loads after LCP);
-  // never in authoring, nor on the nav/footer/fragment documents
-  const chromePath = /^\/(nav|footer)$|\/fragments\//.test(window.location.pathname);
+  // never in authoring, nor on the nav/footer/fragment documents and the block library
+  const chromePath = isChromePath(window.location.pathname);
   const attestationPending = !isAuthoring() && !chromePath && !isAttestationAccepted();
   if (attestationPending) document.body.classList.add('attestation-blur');
   // the class survives the body swaps Canvas does between edits

@@ -4,6 +4,16 @@
  */
 
 /**
+ * Whether a path is a site part rather than a visitor page: nav, footer, fragments and the block
+ * library (/library/**, shown in DA's Insert block preview). These get no investor disclaimer.
+ * @param {string} pathname
+ * @returns {boolean}
+ */
+export function isChromePath(pathname) {
+  return /^\/(nav|footer)$|\/fragments\/|^\/library\//.test(pathname);
+}
+
+/**
  * Creates an element.
  * @param {string} tag
  * @param {object|string} [attrs] attributes (`class`, `text`, others as attributes; `true` =
