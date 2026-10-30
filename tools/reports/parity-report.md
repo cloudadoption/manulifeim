@@ -79,7 +79,7 @@ US Econometer (section tabs):
 - [fixed 30 Oct, 92bf463] Panel image about 1,020px wide on live, about 900px in EDS (Style centered = 75% of the content width inside the tab panel).
 
 Data (index / content, no code change):
-- 2 viewpoints and 4 press releases have no Publication Date, so listings sort them by upload time (top of 'latest viewpoints' on the home page): viewpoints/market-outlook/mainland-china-charting-path-reopening, viewpoints/private-markets/canadian-commercial-real-estate-outlook-economic-decline, about-us/press-releases/deriva-energys-north-allegheny-wind-farm-enters-commercial-operation, .../mim-announces-forest-climate-funds-second-close-bringing-total-commitments-up-to-3345-million, .../practice-press-release, .../test-release.
+- 2 viewpoints and 2 published press releases have no Publication Date (the two test press releases are preview only since 30 Oct), so listings sort them by upload time (top of 'latest viewpoints' on the home page): viewpoints/market-outlook/mainland-china-charting-path-reopening, viewpoints/private-markets/canadian-commercial-real-estate-outlook-economic-decline, about-us/press-releases/deriva-energys-north-allegheny-wind-farm-enters-commercial-operation, .../mim-announces-forest-climate-funds-second-close-bringing-total-commitments-up-to-3345-million. None of the four has a date in its page text, so the date has to come from the source page or an author.
 - Published test pages in the press release listing: about-us/press-releases/test-release, about-us/press-releases/practice-press-release.
 - about-us/press-releases/manulife-comvest-credit-partners-announces-record-fund-raise-of-5-4-billion: page title 'Manulife' (live <title>), live lists the article heading.
 
@@ -124,7 +124,7 @@ Fixed:
 Remaining:
 - [fixed 2026-10-27, CSS: empty title line] hero slide h1 starts with <br> on live (text 52px lower) - hero-carousel parser drops it (parser: hero-carousel)
 - [fixed 2026-10-27, approval code in <small>] AUM approval code '5796846' is <small> on live (13px), plain p in EDS (parser: disclosure)
-- [data not captured yet] latest viewpoints / latest news come from the index: other items than live (Aug 3 / Mar 31 press releases not indexed)
+- [index complete since 30 Oct: 157 press releases and 690 viewpoints indexed; the home page items were not compared with live again] latest viewpoints / latest news come from the index: other items than live (Aug 3 / Mar 31 press releases not indexed)
 - [accepted] header search box: Coveo web component renders on live, not in the static mirror; carousel autoplay; author photos hidden on live by JS fallback state
 
 ### 2. `/institutional/tw/en/about-us` (plain)
@@ -139,7 +139,7 @@ Fixed:
 Remaining:
 - [accepted: authored quirk on 3 of 40 live banners] hero h1 has a trailing <p>&nbsp;</p> on live (title 44px higher in EDS) (parser: hero-banner)
 - [fixed 2026-10-27, re-imported] 'Some of our memberships' h3 sits in a 6-6 column with an empty column on live (50% wide at 1000px); flattened to full width (parser: columns / page-model expandColumns)
-- [data not captured yet] Latest news from the index
+- [index complete since 30 Oct; not compared with live again] Latest news from the index
 
 ### 3. `/institutional/tw/en/pension-barometer` (plain)
 
@@ -167,7 +167,7 @@ Fixed:
 - `styles/styles.css`: viewpoints page title in a white band with 1px #ededed rule (live title--viewpoints)
 
 Remaining:
-- [data not captured yet] index has fewer items (10 vs 13 pages), some teaser images missing, author photos referenced from DA media 404
+- [index complete since 30 Oct: 120 fixed-income viewpoints indexed, page count not compared with live again; the 30 Oct sweep found every image on published pages loading] index has fewer items (10 vs 13 pages), some teaser images missing, author photos referenced from DA media 404
 - [data not captured yet] index title = page <title>, not the live teaser headline (e.g. 'Rising government bond yields' vs 'Why global government bond yields have risen') (parser: query.yaml)
 
 ### 5. `/institutional/tw/en/viewpoints/alternative-credit/abc-mac-how-multiasset-credit-strategies-offer-dynamic-performance` (viewpoint)
@@ -197,7 +197,7 @@ Fixed:
 - `blocks/hero/hero.css`: press root header padding 32px <=600px (live heroHeader)
 
 Remaining:
-- [data not captured yet] index has 26 press releases (live ~70, 7 pages); first item (Deriva Energy) has no date in the index
+- [count resolved 30 Oct: 157 press releases indexed; Deriva Energy still has no Publication Date, see Still open] index has 26 press releases (live ~70, 7 pages); first item (Deriva Energy) has no date in the index
 - [accepted] mirror shows the JS sticky copy of the category bar at the top
 
 ### 7. `/institutional/tw/en/about-us/press-releases/2020-investment-outlook` (press-release)
@@ -245,7 +245,7 @@ Fixed:
 - `blocks/listing/listing.js`: Topic/Theme filter bar is opt-in (`Filters | on`); the TW live app renders only the result count and sort
 
 Remaining:
-- [data not captured yet] 18 case studies in the index vs 62 on live
+- [resolved 30 Oct: 62 case studies indexed, as on live] 18 case studies in the index vs 62 on live
 - [accepted] card image heights differ by ~10px (image renditions); progressive loading is JS on both
 
 ### 11. `/institutional/tw/en/sustainable-investing-case-studies/environmental/developing-our-high-benefit-climate-methodology` (case-study-detail)
