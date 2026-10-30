@@ -32,7 +32,6 @@ import cardsTilesParser from './parsers/cards-tiles.js';
 import cardsArticlesParser from './parsers/cards-articles.js';
 import cardsNewsParser from './parsers/cards-news.js';
 import cardsCaseStudiesParser from './parsers/cards-case-studies.js';
-import titleParser from './parsers/title.js';
 import disclosureParser from './parsers/disclosure.js';
 import featureMarketingParser from './parsers/feature-marketing.js';
 import featureKickerParser from './parsers/feature-kicker.js';
@@ -80,7 +79,6 @@ const parsers = {
   'cards-articles': cardsArticlesParser,
   'cards-news': cardsNewsParser,
   'cards-case-studies': cardsCaseStudiesParser,
-  title: titleParser,
   disclosure: disclosureParser,
   'feature-marketing': featureMarketingParser,
   'feature-kicker': featureKickerParser,

@@ -89,12 +89,6 @@
           "instances": []
         },
         {
-          "name": "title",
-          "instances": [
-            ".richTitle"
-          ]
-        },
-        {
           "name": "disclosure",
           "instances": [
             ".disclosures",
@@ -602,12 +596,6 @@
           "instances": []
         },
         {
-          "name": "title",
-          "instances": [
-            ".richTitle"
-          ]
-        },
-        {
           "name": "disclosure",
           "instances": [
             ".disclosures",
@@ -833,12 +821,6 @@
         {
           "name": "cards-case-studies",
           "instances": []
-        },
-        {
-          "name": "title",
-          "instances": [
-            ".richTitle"
-          ]
         },
         {
           "name": "disclosure",
@@ -1751,12 +1733,6 @@
           "instances": []
         },
         {
-          "name": "title",
-          "instances": [
-            ".richTitle"
-          ]
-        },
-        {
           "name": "disclosure",
           "instances": [
             ".disclosures",
@@ -1973,12 +1949,6 @@
         {
           "name": "cards-case-studies",
           "instances": []
-        },
-        {
-          "name": "title",
-          "instances": [
-            ".richTitle"
-          ]
         },
         {
           "name": "disclosure",
@@ -2358,12 +2328,6 @@
           "instances": []
         },
         {
-          "name": "title",
-          "instances": [
-            ".richTitle"
-          ]
-        },
-        {
           "name": "disclosure",
           "instances": [
             ".disclosures",
@@ -2584,12 +2548,6 @@
         {
           "name": "cards-case-studies",
           "instances": []
-        },
-        {
-          "name": "title",
-          "instances": [
-            ".richTitle"
-          ]
         },
         {
           "name": "disclosure",
@@ -2871,12 +2829,6 @@
           "instances": []
         },
         {
-          "name": "title",
-          "instances": [
-            ".richTitle"
-          ]
-        },
-        {
           "name": "disclosure",
           "instances": [
             ".disclosures",
@@ -3093,12 +3045,6 @@
         {
           "name": "cards-case-studies",
           "instances": []
-        },
-        {
-          "name": "title",
-          "instances": [
-            ".richTitle"
-          ]
         },
         {
           "name": "disclosure",

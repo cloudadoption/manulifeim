@@ -50,7 +50,6 @@ export const BLOCKS = [
   { name: 'cards-articles', instances: ['.articleGroup'] },
   { name: 'cards-news', instances: ['.latest-news'] },
   { name: 'cards-case-studies', instances: [] },
-  { name: 'title', instances: ['.richTitle'] },
   { name: 'disclosure', instances: ['.disclosures', '.viewpointDisclaimer'] },
   { name: 'feature-marketing', instances: ['.marketingSection'] },
   { name: 'feature-kicker', instances: ['.featureKicker__component-wrapper'] },

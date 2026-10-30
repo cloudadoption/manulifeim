@@ -16,6 +16,8 @@
  *   (e.g. text in an fw-8 column next to an empty fw-4 one, or text next to a form)
  * - otherwise the columns are flattened in order
  * - junk components are dropped
+ * - richTitle (section heading, numbered heading or heading + link) -> its own section with
+ *   Style title-row: the heading and the link paragraph as default content (no Title block)
  * - navigationTabs whose panels hold only text and figures -> Tabs block; other navigationTabs
  *   with 2+ panels -> one section per panel with Section Metadata Tab: <label> (the site groups
  *   consecutive Tab sections into one tab set, scripts/section-tabs.js), blocks kept
@@ -28,7 +30,7 @@
  * Metadata after parsing.
  */
 import {
-  h, text, isEmpty, richText, image, linkFrom, linkParagraph, norm, stripUi,
+  h, text, isEmpty, richText, image, linkFrom, linkParagraph, norm, stripUi, inlineHtml,
 } from './dom.js';
 
 /* live components that are not content */
@@ -384,7 +386,21 @@ function expandTabSections(document, el) {
   return out;
 }
 
+/* richTitle -> nodes of a title-row section: its heading (live level, else h2; a styled <div>
+   inside is flattened, <em>/<i>/<b>/<sup> kept) and its link as a link paragraph */
+function titleNodes(document, el) {
+  const hd = el.querySelector('.richtitle__text, h1, h2, h3, h4, h5, h6');
+  const level = hd && /^H[1-6]$/.test(hd.tagName) ? Number(hd.tagName[1]) : 2;
+  const html = inlineHtml(hd);
+  const a = el.querySelector('.richtitle__link a');
+  return [html ? h(document, `h${level}`, html) : null, a ? linkFrom(document, a) : null].filter(Boolean);
+}
+
 function itemFor(document, i) {
+  if (i.kind === 'block' && i.name === 'title') {
+    const nodes = titleNodes(document, i.el);
+    return nodes.length ? [{ type: 'section', styles: ['title-row'], nodes }] : [];
+  }
   if (i.kind === 'strategy') return expandStrategy(i.el);
   if (i.kind === 'tabSections') return expandTabSections(document, i.el);
   if (i.kind === 'divider') return [{ type: 'divider' }];
@@ -453,7 +469,8 @@ export function toSections(items, opts = {}) {
       // explicit section (e.g. article sidebar) with its own styles
       current = null;
       const sec = start(it);
-      it.styles.forEach((st) => { if (!sec.styles.includes(st)) sec.styles.push(st); });
+      const styles = it.centered ? ['centered', ...it.styles] : it.styles;
+      styles.forEach((st) => { if (!sec.styles.includes(st)) sec.styles.push(st); });
       if (it.layout) sec.layout = it.layout;
       sec.nodes.push(...it.nodes);
       current = null;
