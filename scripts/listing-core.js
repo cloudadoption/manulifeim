@@ -372,7 +372,21 @@ export function applyFilters(items, filters) {
 const byTitle = (a, b) => a.title.localeCompare(b.title, 'en', { sensitivity: 'base' });
 
 /**
+ * Date order on the publication date only: dated items first (newest or oldest first), then
+ * the undated ones by title. The index lastModified (the preview time) is not a date: with it,
+ * every re-preview moved an undated page to the top.
+ * @param {number} dir -1 newest first, 1 oldest first
+ */
+const byDate = (dir) => (a, b) => {
+  const [ta, tb] = [a.ts || 0, b.ts || 0];
+  if (ta && tb) return ((ta - tb) * dir) || byTitle(a, b);
+  if (ta || tb) return ta ? -1 : 1;
+  return byTitle(a, b);
+};
+
+/**
  * Sorts items. newest (default) | oldest | title (a-z) | title-desc (z-a) | name | relevance
+ * Items without a publication date go after the dated ones, by title.
  * @param {object[]} items
  * @param {string} sort
  * @returns {object[]}
@@ -381,7 +395,7 @@ export function sortItems(items, sort = 'newest') {
   const list = [...items];
   switch (String(sort || 'newest').toLowerCase()) {
     case 'oldest':
-      return list.sort((a, b) => (a.sortTs - b.sortTs) || byTitle(a, b));
+      return list.sort(byDate(1));
     case 'title':
     case 'a-z':
       return list.sort(byTitle);
@@ -393,9 +407,9 @@ export function sortItems(items, sort = 'newest') {
       return list.sort((a, b) => last(a).localeCompare(last(b), 'en', { sensitivity: 'base' }) || byTitle(a, b));
     }
     case 'relevance':
-      return list.sort((a, b) => ((b.score || 0) - (a.score || 0)) || (b.sortTs - a.sortTs));
+      return list.sort((a, b) => ((b.score || 0) - (a.score || 0)) || byDate(-1)(a, b));
     default:
-      return list.sort((a, b) => (b.sortTs - a.sortTs) || byTitle(a, b));
+      return list.sort(byDate(-1));
   }
 }
 

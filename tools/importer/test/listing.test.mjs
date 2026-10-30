@@ -352,7 +352,10 @@ test('DOM listing (documents + people)', async () => {
   const tabs = [...block.querySelectorAll('.listing-tab-trigger')].map((b) => b.textContent);
   assert.deepEqual(tabs, ['All Types (12)', 'Documents (8)', 'Fact sheets (4)']);
   assert.equal(block.querySelectorAll('.listing-doc-item').length, 10);
-  assert.ok(block.querySelector('.listing-doc-link').getAttribute('href').endsWith('.pdf'));
+  // resources have no publication date: 'newest' lists them by title (not by preview time)
+  const docTitles = [...block.querySelectorAll('.listing-doc-item')].map((i) => i.querySelector('.listing-doc-link').textContent.trim());
+  assert.deepEqual(docTitles, [...docTitles].sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' })));
+  assert.ok([...block.querySelectorAll('.listing-doc-link')].some((a) => a.getAttribute('href').endsWith('.pdf')));
   block.querySelector('.listing-doc-search').value = 'nothing-matches';
   block.querySelector('.listing-doc-form').dispatchEvent(new w.Event('submit', { cancelable: true }));
   assert.equal(new URLSearchParams(w.location.search).get('q'), 'nothing-matches');
