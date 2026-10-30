@@ -235,8 +235,38 @@ export function unwrapSafeLink(href) {
   }
 }
 
+/* inline wrappers a link can sit in alone (<p><strong><a href="#">…</a></strong></p>) */
+const INLINE_WRAPPERS = ['STRONG', 'B', 'EM', 'I', 'U', 'SPAN'];
+
+/**
+ * A link to "#" goes nowhere on live (every live "#" link was checked in the snapshots on
+ * 2026-10-30: author "Read bio", tile and promo CTAs, list items, a richTitle link). A paragraph or
+ * list item that holds only such a link goes, and a list left empty with it; inside other text,
+ * or around an image, the content stays without the link.
+ * @param {Element} a link whose href is "#"
+ * @returns {'removed'|'unwrapped'}
+ */
+export function dropDeadLink(a) {
+  const label = a.textContent.trim();
+  let box = a;
+  while (box.parentElement && INLINE_WRAPPERS.includes(box.parentElement.tagName)
+    && box.parentElement.textContent.trim() === label) box = box.parentElement;
+  const holder = box.parentElement;
+  const alone = holder && ['P', 'LI'].includes(holder.tagName)
+    && holder.textContent.trim() === label && !holder.querySelector('img, picture');
+  if (!alone) {
+    a.replaceWith(...a.childNodes);
+    return 'unwrapped';
+  }
+  const list = holder.tagName === 'LI' ? holder.parentElement : null;
+  holder.remove();
+  if (list && ['UL', 'OL'].includes(list.tagName) && !list.querySelector('li')) list.remove();
+  return 'removed';
+}
+
 export function rewriteLinks(root, ctx) {
   root.querySelectorAll('a').forEach((a) => {
+    if (!root.contains(a)) return; // went with a dead link's paragraph
     // a title with line breaks (Outlook "Original URL: … Click to follow link.") breaks the
     // importer's markdown link syntax and leaks the raw link into the text; links need no title
     const title = a.getAttribute('title');
@@ -255,6 +285,12 @@ export function rewriteLinks(root, ctx) {
       }
     }
     if (!a.hasAttribute('href')) return;
+    // a live video button keeps its "#" (it opens a player on live; parsers/video.js resolves it)
+    if (a.getAttribute('href').trim() === '#' && !video) {
+      const how = dropDeadLink(a);
+      if (ctx.rules) ctx.rules[`dead-link-${how}`] = (ctx.rules[`dead-link-${how}`] || 0) + 1;
+      return;
+    }
     const res = rewriteHref(a.getAttribute('href'), ctx);
     if (ctx.rules) ctx.rules[res.rule] = (ctx.rules[res.rule] || 0) + 1;
     if (res.rule === 'javascript') {

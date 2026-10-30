@@ -24,7 +24,8 @@ segment). A page that is not in pages.csv falls back to the same sanitizing rule
 
 | # | live link | result | rule id |
 |---|---|---|---|
-| 1 | `#...`, `mailto:`, `tel:`, `sms:`, `data:` | unchanged | `keep-scheme` |
+| 0 | exactly `#` (goes nowhere on live: author "Read bio", tile / promo CTAs, list items; not a video button with `data-videomodal`) | a paragraph or list item holding only the link is removed (and a list left empty); inside other text or around an image the content stays, unlinked | `dead-link-removed`, `dead-link-unwrapped` |
+| 1 | `#...` (in-page anchor), `mailto:`, `tel:`, `sms:`, `data:` | unchanged | `keep-scheme` |
 | 2 | `javascript:` (share / copy / download actions) | link removed, text kept | `javascript` |
 | 3 | any host other than `www.manulifeim.com` / `manulifeim.com` (LinkedIn, bit.ly, jhinvestments.com, ...) | unchanged | `external` |
 | 4 | AEM-internal `/content/mim-institutional/tw/en/...(.html)` | mapped to `/institutional/tw/en/...`, then rules 7-15 | - |
