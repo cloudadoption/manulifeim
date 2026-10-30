@@ -2,6 +2,13 @@
 
 local dev server (localhost:3000, local code + preview content) vs offline mirror (localhost:3000/tools/importer/snapshots/mirror), full-page screenshots and computed styles at 1440 and 390 (spot checks at 700/1000).
 
+## 30 October 2026, visual gaps (main 92bf463, staged /drafts/repairs8/)
+
+- Title component: live has no size option; the size follows the context. Outside articles every title heading is 32px/300 (24px up to 600px); in articles (`.viewpoint-content .title`) h2 48px, h3 32px, h4 24px, h5/h6 16px, 300, at every width. Model: Section Metadata `Style: section-title` (the section's first heading; in an article flow the title starts a section that keeps the text after it). Measured after: uneven-recovery h2 48/300 (was 32/400), fixed-income h1 and h4 32/300 (were 48/300 and 16/700), multi-asset h3 32/300 (were 24/400); line breaks as live; 6px more above the article title than live. 252 published pages staged. Crops: `parity/r8-title-article-1440.jpg`, `parity/r8-title-plain-1440.jpg`.
+- Small videos: Video variant `small` (caption on the poster under "Play video" 24px/300, bulleted links under the poster) in a Layout section; article rows are 75% of the column from 801px and side by side from 961px (333px videos at x 195 / 552 at 1440 and 1000, as live); centered + Layout = 75% row (cqs 450px at x 298 / 772, as live); 3-3-3-3 short rows stay left (emerging-markets x 144 / 457 / 771, as live). 7 pages staged. Crops: `parity/r8-video-article-1440.jpg`, `parity/r8-video-cqs-1440.jpg`.
+- US Econometer: the tab-panel image shows at its natural width up to the content edge (1039px at x 298 at 1440, as live; 836px at 1100 where live overflows the window). Code only. Crop: `parity/r8-econometer-1440.jpg` (before = the old rule re-applied in the browser).
+- Pension Barometer: Section Metadata `Column: 1 / 2` on consecutive sections (Layout on Column 1) makes one row with a section per column (`scripts/section-columns.js`), so the promo sits under the yield-curve chart, the disclosure under the solvency chart, the form beside the 'Portfolio review' promo; columns 604px at x 144 / 772 (1440), 416px (1000), stacked 310px (390), as live. Crops: `parity/r8-pension-market-1440.jpg`, `parity/r8-pension-contact-1440.jpg`. The live chart images render taller in the mirror (inline SVG sized by JS on live).
+
 ## 30 October 2026, content-model fixes (main ad1216c, staged /drafts/repairs7/)
 
 - Team: live "Read more" is an authored per-member option (TeamMemberReadMore in the server HTML: 14 of 41 members on agriculture/team, none on the strategy "Managed by" teams). The Team block shows every bio in full by default; variant `read-more` or a per-member third cell "Read more" opts in (b123d93). 30 published pages staged with the option; 57 team pages without it on live need no content change. Crops (live | before | after): `parity/agri-team-1440-variant.jpg`, `parity/agri-team-1440-mixed.jpg`, `parity/agri-team-1440-no-read-more.jpg`.
@@ -42,7 +49,7 @@ Not differences: live `li` / `td` / `img` wrappers report 16px/16px black (their
 ### Open
 
 Pension Barometer (1440 mismatch):
-- Live places components inside 6-6 / 8-4 columns: 'Latest asset allocation views' promo under the yield-curve chart, the form with its consent text next to the 'Portfolio review' promo, the 'Asset and liability assumptions' disclosure next to the charts. EDS shows them full width in their own sections (`parity/pb-1440-market-overview.jpg`, `parity/pb-1440-want-to-learn-more.jpg`). Cause: content structure; the importer flattens columns that hold several components (page-model expandColumns), and Layout sections take one block per column. Needs a content model for several components per column (and a re-import), not CSS.
+- [fixed 30 Oct, Section Metadata Column, staged repairs8] Live places components inside 6-6 / 8-4 columns: 'Latest asset allocation views' promo under the yield-curve chart, the form with its consent text next to the 'Portfolio review' promo, the 'Asset and liability assumptions' disclosure next to the charts. EDS shows them full width in their own sections (`parity/pb-1440-market-overview.jpg`, `parity/pb-1440-want-to-learn-more.jpg`). Cause: content structure; the importer flattens columns that hold several components (page-model expandColumns), and Layout sections take one block per column. Needs a content model for several components per column (and a re-import), not CSS.
 - Table cell text is black (#000) on live, #282b3e in EDS; no live CSS rule sets it (it may come from the mirror), so it is left as is. Column widths (th width=20%/15%) are not imported (accepted 27 Oct).
 - Two 'Source:' lines sit outside the table card on live and in the table caption in EDS (importer: caption row).
 - 390: the hero uses a separate taller mobile crop on live (shows the top-left of the image); EDS shows the desktop image centred (importer: hero mobile image not imported).
@@ -57,11 +64,11 @@ Strategy pages (canadian-core):
 - Live 'Follow' button (logged-in feature) not replicated; disclosures were captured open on live; charts are tables by design.
 
 Uneven recovery (Video, 1440):
-- Live: two small videos (videoSmall in 4-4 columns) with 'Play video' and the caption on a dark overlay of the poster, transcript link below each. EDS: two large Video blocks stacked, caption below the poster (`parity/ur-1440-videos.jpg`). Cause: content structure (one section per Video block) and a small-video design variant the Video block does not have.
-- 'A crisis unlike any other ...' is a live title component with a large size option (48px/300); imported as a plain h2 (32px). Same on US Econometer (the panel h1 is the 32px option). Needs the importer to carry the title size option.
+- [fixed 30 Oct, Video small + Layout 6-6, staged repairs8] Live: two small videos (videoSmall in 4-4 columns) with 'Play video' and the caption on a dark overlay of the poster, transcript link below each. EDS: two large Video blocks stacked, caption below the poster (`parity/ur-1440-videos.jpg`). Cause: content structure (one section per Video block) and a small-video design variant the Video block does not have.
+- [fixed 30 Oct, Style section-title, staged repairs8] 'A crisis unlike any other ...' is a live title component with a large size option (48px/300); imported as a plain h2 (32px). Same on US Econometer (the panel h1 is the 32px option). Needs the importer to carry the title size option.
 
 US Econometer (section tabs):
-- Panel image about 1,020px wide on live, about 900px in EDS (Style centered = 75% of the content width inside the tab panel).
+- [fixed 30 Oct, 92bf463] Panel image about 1,020px wide on live, about 900px in EDS (Style centered = 75% of the content width inside the tab panel).
 
 Data (index / content, no code change):
 - 2 viewpoints and 4 press releases have no Publication Date, so listings sort them by upload time (top of 'latest viewpoints' on the home page): viewpoints/market-outlook/mainland-china-charting-path-reopening, viewpoints/private-markets/canadian-commercial-real-estate-outlook-economic-decline, about-us/press-releases/deriva-energys-north-allegheny-wind-farm-enters-commercial-operation, .../mim-announces-forest-climate-funds-second-close-bringing-total-commitments-up-to-3345-million, .../practice-press-release, .../test-release.
@@ -136,7 +143,7 @@ Fixed:
 - `blocks/form/form.css`: submit right-aligned >=601px (live reCAPTCHA sits left of it)
 
 Remaining:
-- [partly fixed 2026-10-27] nested promo ('Latest asset allocation views', 'Portfolio review'), the form and the 'Asset and liability assumptions' disclosure sit inside 6-6 / 8-4 columns on live; EDS shows them full width below (blocks cannot nest) (parser: columns / page-model expandColumns) -- text next to a form now sits side by side (Layout); columns holding several components (text + form + text, text + promo) still flatten
+- [fixed 30 Oct: Section Metadata Column, staged repairs8; partly fixed 2026-10-27] nested promo ('Latest asset allocation views', 'Portfolio review'), the form and the 'Asset and liability assumptions' disclosure sit inside 6-6 / 8-4 columns on live; EDS shows them full width below (blocks cannot nest) (parser: columns / page-model expandColumns) -- text next to a form now sits side by side (Layout); columns holding several components (text + form + text, text + promo) still flatten
 - [fixed 2026-10-27, re-imported] 'Q4 2025' is <sub><sup><strong> on live (31px bold); EDS keeps only <sup> (45px light) (parser: hero-banner)
 - [accepted: the Table block has no column widths] table column widths (th width=20%/15%) not imported (parser: table)
 - [fixed 2026-10-27, re-imported] marketoForm success text 'Thank you for reaching out...' imported as visible paragraph (parser: form (marketoForm))
