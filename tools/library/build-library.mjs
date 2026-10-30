@@ -36,7 +36,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 export const ORG_SITE = 'cloudadoption/manulifeim';
 export const MAX_ITEMS = 4;
 const SAMPLES = 5;
-const SKIP_BLOCKS = new Set(['header', 'footer', 'metadata', 'section-metadata', 'library-metadata', 'fragment', 'browse-by']);
+const SKIP_BLOCKS = new Set(['header', 'footer', 'metadata', 'section-metadata', 'library-metadata', 'fragment', 'browse-by', 'score-bars']);
 
 /** Blocks whose every row is an item authors add, delete and reorder. */
 export const MULTI = new Set(['cards', 'link-list', 'team', 'author', 'promo', 'section-nav', 'share', 'social-links']);
