@@ -15,14 +15,21 @@ import {
   h, image, block, text, linkParagraph, richText,
 } from '../utils/dom.js';
 import { absoluteAssetUrl } from '../utils/links.js';
+import VIDEO_ACCOUNTS from '../video-accounts.json';
 
-/** Brightcove player URL from an element carrying the live data-* attributes, or ''. */
+/**
+ * Brightcove player URL from an element carrying the live data-* attributes, or ''. A button
+ * without data-brightcoveid takes its account and player from video-accounts.json (checked
+ * against players.brightcove.net), else it has no URL.
+ */
 export function playerUrl(el) {
   const src = el && (el.matches('[data-videomodal]') ? el : el.querySelector('[data-videomodal]'));
   if (!src) return '';
   const video = (src.getAttribute('data-videomodal') || '').trim();
-  const account = (src.getAttribute('data-brightcoveid') || '').trim();
-  const player = (src.getAttribute('data-playerid') || '').trim() || 'default';
+  const known = VIDEO_ACCOUNTS[video];
+  let account = (src.getAttribute('data-brightcoveid') || '').trim();
+  let player = (src.getAttribute('data-playerid') || '').trim() || 'default';
+  if (!account && known) ({ account, player } = known);
   if (!/^\d+$/.test(video) || !/^\d+$/.test(account)) return '';
   return `https://players.brightcove.net/${account}/${player}_default/index.html?videoId=${video}`;
 }

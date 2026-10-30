@@ -1,0 +1,7 @@
+{
+  "_note": "Brightcove account for live video buttons without data-brightcoveid, checked 2026-10-30 against players.brightcove.net (default player): playback API 200 for this account, 404 for 640445594001",
+  "6169714962001": { "account": "207397170001", "player": "default", "name": "global-macro-outlook-q3-2020-video-1-mim" },
+  "6169891335001": { "account": "207397170001", "player": "default", "name": "global-macro-outlook-q3-2020-video-2-mim" },
+  "6148085086001": { "account": "207397170001", "player": "default", "name": "global-macro-outlook-q2-2020-covid-mim" },
+  "6148119517001": { "account": "207397170001", "player": "default", "name": "global-macro-outlook-q2-2020-global-economy-mim" }
+}
