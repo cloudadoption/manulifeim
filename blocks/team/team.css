@@ -234,6 +234,12 @@ html[quick-edit] .team .team-content > :nth-child(n+3) li {
   mask-image: url("../../icons/minus.svg");
 }
 
+/* Canvas: the per-member "Read more" option cell stays visible as a small note */
+.team .team-option {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
 @media (width >= 601px) {
   .team .team-content > :first-child {
     font-size: 32px;

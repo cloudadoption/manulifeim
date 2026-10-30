@@ -7,8 +7,11 @@
  * | Team  |                                                                         |
  * | photo | #### Kenglin Tan / Senior Portfolio Manager, Asia ex-Japan Equity (p) / bio paragraphs / list: **Education:** …, **Joined the company:** 2006, **Began career:** 2000 |
  *
- * Without a heading, the first bold paragraph is the name. Bios taller than 112px
- * collapse with a "Read more" / "Collapse" toggle (live TeamMemberReadMore).
+ * Without a heading, the first bold paragraph is the name. Every bio shows in full, unless
+ * the member opts in to a "Read more" / "Collapse" toggle (live TeamMemberReadMore, an
+ * authored per-member option): variant `read-more` (| Team (read-more) |) for every member,
+ * or a third cell "Read more" in a member's row for that member only. An opted-in bio taller
+ * than 112px collapses to 112px.
  * An optional LinkedIn link (linkedin.com) in the text cell becomes the profile link.
  *
  * Rows and cells get classes (team-member, team-photo, team-content); the name and title
@@ -74,6 +77,11 @@ function setupCollapse(bio) {
   ro.observe(bio);
 }
 
+/** The optional third cell of a member row that opts that member into the collapse. */
+function isReadMoreCell(cell) {
+  return !cell.querySelector('picture, img, a') && /^read more$/i.test(cell.textContent.trim());
+}
+
 /** A paragraph holding only a LinkedIn link (the profile link next to the name). */
 function isLinkedin(el) {
   const a = el.querySelector('a[href*="linkedin.com"]');
@@ -82,13 +90,20 @@ function isLinkedin(el) {
 
 export default function decorate(block) {
   const bios = [];
+  const all = block.classList.contains('read-more');
   [...block.children].forEach((row) => {
     row.classList.add('team-member');
     row.setAttribute('role', 'article');
     let content = null;
+    let readMore = all;
     [...row.children].forEach((cell) => {
       if (isMediaCell(cell)) cell.classList.add('team-photo');
-      else if (!content) {
+      else if (content && (isReadMoreCell(cell) || !cell.textContent.trim())) {
+        // the option cell: "Read more" opts this member in; an empty one is a placeholder
+        if (isReadMoreCell(cell)) readMore = true;
+        if (isAuthoring()) cell.classList.add('team-option');
+        else cell.remove();
+      } else if (!content) {
         content = cell;
         cell.classList.add('team-content');
       }
@@ -112,7 +127,7 @@ export default function decorate(block) {
       bio.className = 'team-bio';
       bioEls[0].before(bio);
       bio.append(...bioEls);
-      bios.push(bio);
+      if (readMore) bios.push(bio);
     }
   });
   bios.forEach((bio) => setupCollapse(bio));

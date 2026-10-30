@@ -5,15 +5,23 @@
  * Project contract (block-authoring.md, blocks/team/team.js):
  *   | Team |
  *   | photo | #### Name / p Title / bio paragraphs / list: **Education:** ..., **Joined the company:** ..., **Began career:** ... |
- * The live read-more markup (TeamMemberReadMore) is not imported; the block rebuilds it.
+ * Live "Read more" (TeamMemberReadMore) is an authored per-member option (in the server HTML):
+ * every member has it -> variant read-more (| Team (read-more) |); some members -> a third cell
+ * per row, "Read more" or empty; none -> plain Team (the block shows every bio in full).
  * A LinkedIn link in the bio stays as the profile link.
  */
 import {
   h, image, block, text, richText,
 } from '../utils/dom.js';
 
+const hasReadMore = (m) => !!m.querySelector('.teamMembers__readMore, [data-module="TeamMemberReadMore"]');
+
 export default function parse(element, { document }) {
-  const rows = [...element.querySelectorAll('.teamMembers__member')].map((m) => {
+  const members = [...element.querySelectorAll('.teamMembers__member')];
+  const marked = members.filter(hasReadMore).length;
+  const allMarked = marked > 0 && marked === members.length;
+  const someMarked = marked > 0 && !allMarked;
+  const rows = members.map((m) => {
     const content = [];
     const name = m.querySelector('.teamMembers__name');
     if (text(name)) content.push(h(document, 'h4', text(name)));
@@ -32,7 +40,9 @@ export default function parse(element, { document }) {
       }
     });
     const photo = image(document, m.querySelector('.teamMembers__photo, .teamMembers__photoWrapper img'));
-    return [photo || '', content];
+    const row = [photo || '', content];
+    if (someMarked) row.push(hasReadMore(m) ? 'Read more' : '');
+    return row;
   });
-  element.replaceWith(block(document, 'Team', [], rows));
+  element.replaceWith(block(document, 'Team', allMarked ? ['read-more'] : [], rows));
 }
