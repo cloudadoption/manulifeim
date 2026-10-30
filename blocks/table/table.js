@@ -34,7 +34,14 @@ export default function decorate(block) {
     && rows[0].querySelector('h1, h2, h3, h4, h5, h6, strong, b')) {
     title = rows.shift().firstElementChild;
   }
-  if (rows.length > 1 && isSingleCellRow(rows[rows.length - 1], maxCells)) {
+  // a caption is text (e.g. "Source: ..."); a last row holding only a link is a table row (the
+  // odd last strategy of a two-column strategy list)
+  const last = rows[rows.length - 1];
+  const linkOnly = (cell) => {
+    const links = cell ? cell.querySelectorAll('a[href]') : [];
+    return links.length === 1 && cell.textContent.trim() === links[0].textContent.trim();
+  };
+  if (rows.length > 1 && isSingleCellRow(last, maxCells) && !linkOnly(last.firstElementChild)) {
     caption = rows.pop().firstElementChild;
   }
 
