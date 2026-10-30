@@ -36,7 +36,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 export const ORG_SITE = 'cloudadoption/manulifeim';
 export const MAX_ITEMS = 4;
 const SAMPLES = 5;
-const SKIP_BLOCKS = new Set(['header', 'footer', 'metadata', 'section-metadata', 'library-metadata', 'fragment', 'browse-by', 'score-bars']);
+const SKIP_BLOCKS = new Set(['header', 'footer', 'metadata', 'section-metadata', 'library-metadata', 'fragment', 'browse-by']);
 
 /** Blocks whose every row is an item authors add, delete and reorder. */
 export const MULTI = new Set(['cards', 'link-list', 'team', 'author', 'promo', 'section-nav', 'share', 'social-links']);
@@ -65,7 +65,6 @@ export const DESCRIPTIONS = {
   table: 'Data table (header-row, header-column, no-header and card variants)',
   'tag-list': 'Tags of the page, linked to their listing',
   team: 'Team members, one per row: photo, then name, role and biography',
-  title: 'Page or section title row',
 };
 
 const KEYS = /^(source|title|link|limit|view|speed|type|filter|category|sort|tags?|path|query|label|heading|colou?r)$/i;
