@@ -57,3 +57,13 @@ test('a row label ending in "as of <date>" keeps the label and puts the date in 
   assert.equal(th.textContent, 'Strategy AUM (CAD) as of 6/30/2026');
   assert.equal(b.querySelectorAll('th')[0].querySelector('.table-date'), null);
 });
+
+test('the "as of <date>" split also works when the label is one paragraph (DA markup on the live pages)', async () => {
+  const { default: decorate } = await fresh();
+  const b = block('table header-column', [['<p>Style</p>', '<p>Multidiscipline</p>'], ['<p>Strategy AUM (CAD) as of 6/30/2026</p>', '<p>$ 9.4 billion</p>']]);
+  await decorate(b);
+  const th = b.querySelectorAll('th')[1];
+  assert.equal(th.querySelector('.table-date')?.textContent, 'as of 6/30/2026');
+  assert.equal(th.textContent, 'Strategy AUM (CAD) as of 6/30/2026');
+  assert.equal(b.querySelectorAll('th')[0].querySelector('.table-date'), null);
+});
