@@ -24,15 +24,18 @@ function isSingleCellRow(row, maxCells) {
  * 6/30/2026", the date a small regular note): the date part goes into span.table-date.
  */
 function splitAsOf(th) {
-  const t = th.firstChild;
-  if (th.childNodes.length !== 1 || !t || t.nodeType !== 3) return;
+  // the label is plain text, or one paragraph holding plain text (DA markup)
+  const only = th.childNodes.length === 1 ? th.firstChild : null;
+  const holder = only && only.nodeType === 1 && only.tagName === 'P' ? only : th;
+  const t = holder.firstChild;
+  if (holder.childNodes.length !== 1 || !t || t.nodeType !== 3) return;
   const m = t.textContent.match(/^(.*\S)\s+(as of \S.*)$/i);
   if (!m) return;
   const [, label, asOf] = m;
   const date = document.createElement('span');
   date.className = 'table-date';
   date.textContent = asOf;
-  th.replaceChildren(document.createTextNode(`${label} `), date);
+  holder.replaceChildren(document.createTextNode(`${label} `), date);
 }
 
 export default function decorate(block) {
