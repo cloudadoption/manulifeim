@@ -97,8 +97,11 @@ test('component root: a quarter-width pair is a centered Layout 6-6 section of s
   assert.equal(row.nodes.filter((v) => v.hasAttribute('data-mim-video-small')).length, 2);
 });
 
-test('text next to one video is not a video row (text, then the video, as before)', () => {
-  const items = itemsFor(document, [...document.querySelector('#fx-text-video > div').children]);
-  assert.deepEqual(items.map((i) => i.type), ['default', 'block']);
-  assert.equal(document.querySelector('#fx-text-video [data-mim-video-small]'), null);
+test('text next to one video (live cio-insight): one Layout 6-6 section, the text then Video (small)', () => {
+  const [row, ...rest] = toSections(itemsFor(document, [...document.querySelector('#fx-text-video > div').children]), { flow: true });
+  assert.equal(rest.length, 0);
+  assert.equal(row.layout, '6-6');
+  assert.deepEqual(row.styles, []);
+  assert.deepEqual(row.nodes.map((n) => n.tagName), ['H3', 'P', 'DIV']);
+  assert.ok(row.nodes[2].matches('.videoKicker[data-mim-video-small]'));
 });

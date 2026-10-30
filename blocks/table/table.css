@@ -160,13 +160,18 @@
 .table .table-caption {
   display: block;
   margin-top: 24px;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
+  line-height: 1;
   letter-spacing: var(--letter-spacing);
   color: var(--color-header-mobile);
 }
 
+/* live table2__caption: 12px, line height 12px; the paragraph takes the caption's type (it had
+   the 16px / 28px body text) */
 .table .table-caption p {
   margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
 }
 
 /* strategy Key facts (live strategyDetail__keyFacts): label (12px bold) over value (24px), no table
@@ -332,4 +337,10 @@ main > .section[data-nav-title='Key facts'] ~ .section.divider.table-container .
     font-size: var(--font-size-h3);
     line-height: var(--line-height-heading);
   }
+}
+
+/* "as of <date>" at the end of a row label (live strategyDetail__keyFactDate): regular, muted */
+.table .table-date {
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-muted);
 }

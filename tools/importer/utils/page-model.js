@@ -235,7 +235,8 @@ const VIDEO_LAYOUTS = { ...LAYOUTS, '4,4': '6-6' };
 
 /**
  * A row of small videos: 2+ columns of at most half the width, each empty or holding a videoKicker
- * optionally followed by a linkList2 (live "Download transcript (PDF)"), at least one video (an
+ * optionally followed by a linkList2 (live "Download transcript (PDF)"), or text beside a video
+ * (one column of text components, live cio-insight), at least one video (an
  * empty column keeps the video at the left, as live). -> one section with Layout
  * whose Video blocks have the variant small; the links go into their video as a list
  * (ul[data-mim-video-links], read by the video parser). null when the columns are anything else.
@@ -254,9 +255,15 @@ function videoRow(document, cols, all, centered) {
   const isLinks = (i) => i.kind === 'block' && i.name === 'link-list' && i.el.classList.contains('linkList2');
   const videoColumn = (list, k) => list.length <= 2 && isVideo(list[0])
     && (list.length === 1 || isLinks(list[1])) && widthOf(cols[k]) <= 6;
-  const ok = items.every((list, k) => list.length === 0 || videoColumn(list, k));
-  if (!ok || !items.some((list) => list.length)) return null;
-  const nodes = items.filter((list) => list.length).map(([video, links]) => {
+  // text beside a video (live cio-insight: a qw-4 text column next to a qw-4 videoSmall)
+  const textColumn = (list, k) => list.length > 0 && list.every((i) => i.kind === 'default') && widthOf(cols[k]) <= 6;
+  const ok = items.every((list, k) => list.length === 0 || videoColumn(list, k)
+    || textColumn(list, k));
+  if (!ok || !items.some((list, k) => list.length && videoColumn(list, k))) return null;
+  const nodes = items.flatMap((list, k) => {
+    if (!list.length) return [];
+    if (textColumn(list, k)) return columnModel(document, list).flatMap((it) => it.nodes);
+    const [video, links] = list;
     video.el.setAttribute('data-mim-video-small', '');
     if (links) {
       const ul = h(document, 'ul');
@@ -268,7 +275,7 @@ function videoRow(document, cols, all, centered) {
       if (ul.children.length) video.el.append(ul);
       links.el.remove();
     }
-    return video.el;
+    return [video.el];
   });
   return {
     type: 'section', styles: centered ? ['centered'] : [], nodes, layout, keepLayout: true,

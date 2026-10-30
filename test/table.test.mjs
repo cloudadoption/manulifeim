@@ -47,3 +47,13 @@ test('a last single-cell text row is still the caption', async () => {
   assert.match(b.textContent, /Source: Bank of Canada/);
   assert.equal([...b.querySelectorAll('td')].some((td) => /Source:/.test(td.textContent)), false, 'the source line is not a cell');
 });
+
+test('a row label ending in "as of <date>" keeps the label and puts the date in span.table-date', async () => {
+  const { default: decorate } = await fresh();
+  const b = block('table header-column', [['Style', 'Multidiscipline'], ['Strategy AUM (CAD) as of 6/30/2026', '$ 9.4 billion']]);
+  await decorate(b);
+  const th = b.querySelectorAll('th')[1];
+  assert.equal(th.querySelector('.table-date').textContent, 'as of 6/30/2026');
+  assert.equal(th.textContent, 'Strategy AUM (CAD) as of 6/30/2026');
+  assert.equal(b.querySelectorAll('th')[0].querySelector('.table-date'), null);
+});

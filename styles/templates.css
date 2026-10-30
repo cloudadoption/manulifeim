@@ -88,7 +88,17 @@
   margin-top: 0;
 }
 
+/* an image paragraph: centred; its line box as the live image figure (16px line height, 3px under
+   the image, not 9px), so the title or text after an article image sits where live has it */
 .template-viewpoint main > .section:not(:first-child, .sidebar) .default-content-wrapper > p:has(> picture:only-child) {
+  line-height: 1;
+  text-align: center;
+}
+
+/* the same for a picture straight in the wrapper (a lead image without its paragraph) */
+.template-viewpoint main > .section:not(:first-child, .sidebar) .default-content-wrapper > picture {
+  display: block;
+  line-height: 1;
   text-align: center;
 }
 

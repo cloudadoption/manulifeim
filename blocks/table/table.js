@@ -19,6 +19,22 @@ function isSingleCellRow(row, maxCells) {
   return maxCells > 1 && (cells.length === 1 || cells.slice(1).every((c) => !c.textContent.trim()));
 }
 
+/**
+ * A row label ending in "as of <date>" (live strategy Key facts: "Strategy AUM (USD) as of
+ * 6/30/2026", the date a small regular note): the date part goes into span.table-date.
+ */
+function splitAsOf(th) {
+  const t = th.firstChild;
+  if (th.childNodes.length !== 1 || !t || t.nodeType !== 3) return;
+  const m = t.textContent.match(/^(.*\S)\s+(as of \S.*)$/i);
+  if (!m) return;
+  const [, label, asOf] = m;
+  const date = document.createElement('span');
+  date.className = 'table-date';
+  date.textContent = asOf;
+  th.replaceChildren(document.createTextNode(`${label} `), date);
+}
+
 export default function decorate(block) {
   let mode = MODES.find((m) => block.classList.contains(m));
   if (!mode) {
@@ -63,6 +79,7 @@ export default function decorate(block) {
         if (headings[c]) el.dataset.title = headings[c];
       }
       el.append(...cell.childNodes);
+      if (isTh && el.scope === 'row') splitAsOf(el);
       tr.append(el);
     });
     tbody.append(tr);
