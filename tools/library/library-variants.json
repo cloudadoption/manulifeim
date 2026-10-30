@@ -1,5 +1,5 @@
 {
- "pages": 1190,
+ "pages": 1206,
  "variants": [
   {
    "name": "article-list",
@@ -23,11 +23,11 @@
    "key": "author",
    "multi": true,
    "shape": "i|tttt",
-   "blocks": 658,
-   "pages": 658,
+   "blocks": 665,
+   "pages": 665,
    "covered": 0,
-   "editableFields": 6309,
-   "pageFields": 7137,
+   "editableFields": 6377,
+   "pageFields": 7215,
    "samples": [
     {
      "page": "/institutional/tw/en/viewpoints/alternative-credit/a-primer-on-regulatory-capital-relief",
@@ -56,11 +56,11 @@
    "key": "cards",
    "multi": true,
    "shape": "i|ttitt",
-   "blocks": 106,
-   "pages": 99,
-   "covered": 85,
-   "editableFields": 1738,
-   "pageFields": 1865,
+   "blocks": 109,
+   "pages": 102,
+   "covered": 87,
+   "editableFields": 1787,
+   "pageFields": 1918,
    "samples": [
     {
      "page": "/institutional/tw/en/authors/frances-donald",
@@ -155,11 +155,11 @@
    "key": "cards (four, tiles)",
    "multi": true,
    "shape": "tt",
-   "blocks": 19,
-   "pages": 15,
+   "blocks": 21,
+   "pages": 17,
    "covered": 8,
    "editableFields": 82,
-   "pageFields": 189,
+   "pageFields": 217,
    "samples": [
     {
      "page": "/institutional/tw/en/coronavrius-conference-call/private-markets",
@@ -188,14 +188,18 @@
    "key": "cards (four)",
    "multi": true,
    "shape": "i|ttitt",
-   "blocks": 6,
-   "pages": 6,
-   "covered": 5,
-   "editableFields": 124,
-   "pageFields": 136,
+   "blocks": 7,
+   "pages": 7,
+   "covered": 6,
+   "editableFields": 142,
+   "pageFields": 154,
    "samples": [
     {
      "page": "/institutional/tw/en/investing-in-timber-and-farmland",
+     "index": 0
+    },
+    {
+     "page": "/institutional/tw/en/manulife-climate-action",
      "index": 0
     },
     {
@@ -208,10 +212,6 @@
     },
     {
      "page": "/institutional/tw/en/strategies/private-markets/private-equity-investments/private-equity-asia",
-     "index": 0
-    },
-    {
-     "page": "/institutional/tw/en/strategies/private-markets/private-markets-outlook",
      "index": 0
     }
    ]
@@ -242,11 +242,11 @@
    "key": "cards (one, overlap, tiles)",
    "multi": true,
    "shape": "i|ttttttt",
-   "blocks": 15,
-   "pages": 11,
+   "blocks": 18,
+   "pages": 12,
    "covered": 2,
    "editableFields": 16,
-   "pageFields": 46,
+   "pageFields": 49,
    "samples": [
     {
      "page": "/institutional/tw/en/real-estate-sri-report",
@@ -292,11 +292,11 @@
    "key": "cards (overlap, three, tiles)",
    "multi": true,
    "shape": "tt",
-   "blocks": 89,
-   "pages": 55,
+   "blocks": 90,
+   "pages": 56,
    "covered": 71,
    "editableFields": 520,
-   "pageFields": 719,
+   "pageFields": 737,
    "samples": [
     {
      "page": "/institutional/tw/en/about-us",
@@ -325,15 +325,19 @@
    "key": "cards (overlap, tiles)",
    "multi": true,
    "shape": "tt",
-   "blocks": 11,
-   "pages": 10,
+   "blocks": 14,
+   "pages": 12,
    "covered": 5,
-   "editableFields": 42,
-   "pageFields": 63,
+   "editableFields": 47,
+   "pageFields": 76,
    "samples": [
     {
      "page": "/institutional/tw/en/carbon-opportunities",
      "index": 0
+    },
+    {
+     "page": "/institutional/tw/en/liability-driven-investment",
+     "index": 1
     },
     {
      "page": "/institutional/tw/en/strategies/equity/global-climate-equity-strategy",
@@ -346,10 +350,6 @@
     {
      "page": "/institutional/tw/en/strategies/private-markets/senior-credit",
      "index": 0
-    },
-    {
-     "page": "/institutional/tw/en/strategies/private-markets/timberland/carbon-focused",
-     "index": 0
     }
    ]
   },
@@ -358,11 +358,11 @@
    "key": "cards (three, tiles)",
    "multi": true,
    "shape": "tt",
-   "blocks": 137,
-   "pages": 104,
-   "covered": 85,
-   "editableFields": 539,
-   "pageFields": 979,
+   "blocks": 142,
+   "pages": 108,
+   "covered": 88,
+   "editableFields": 557,
+   "pageFields": 1024,
    "samples": [
     {
      "page": "/institutional/tw/en/capabilities/cqs",
@@ -381,8 +381,8 @@
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/pension-barometer",
-     "index": 0
+     "page": "/institutional/tw/en/manulife-climate-action",
+     "index": 1
     }
    ]
   },
@@ -391,11 +391,11 @@
    "key": "cards (tiles)",
    "multi": true,
    "shape": "tt",
-   "blocks": 37,
-   "pages": 27,
+   "blocks": 38,
+   "pages": 28,
    "covered": 31,
    "editableFields": 196,
-   "pageFields": 301,
+   "pageFields": 308,
    "samples": [
     {
      "page": "/institutional/tw/en/company-policies",
@@ -457,11 +457,11 @@
    "key": "case-study-sidebar",
    "multi": false,
    "shape": "i / t / t|l",
-   "blocks": 61,
-   "pages": 61,
-   "covered": 61,
-   "editableFields": 244,
-   "pageFields": 244,
+   "blocks": 62,
+   "pages": 62,
+   "covered": 62,
+   "editableFields": 248,
+   "pageFields": 248,
    "samples": [
     {
      "page": "/institutional/tw/en/sustainable-investing-case-studies/environmental/acquiring-a-forest-in-maine-for-carbon-sequestration",
@@ -489,28 +489,16 @@
    "name": "columns",
    "key": "columns",
    "multi": false,
-   "shape": "tt|i",
-   "blocks": 26,
-   "pages": 17,
-   "covered": 10,
-   "editableFields": 51,
-   "pageFields": 99,
+   "shape": "tt|ti",
+   "blocks": 25,
+   "pages": 15,
+   "covered": 3,
+   "editableFields": 52,
+   "pageFields": 102,
    "samples": [
     {
-     "page": "/institutional/tw/en/viewpoints/market-outlook/latest-cio-insight",
+     "page": "/institutional/tw/en/liability-driven-investment",
      "index": 0
-    },
-    {
-     "page": "/institutional/tw/en/viewpoints/market-outlook/latest-cio-insight",
-     "index": 1
-    },
-    {
-     "page": "/institutional/tw/en/viewpoints/market-outlook/latest-cio-insight",
-     "index": 2
-    },
-    {
-     "page": "/institutional/tw/en/viewpoints/market-outlook/latest-cio-insight",
-     "index": 3
     }
    ]
   },
@@ -518,16 +506,16 @@
    "name": "columns",
    "key": "columns (3-3-3-3)",
    "multi": false,
-   "shape": "i|i|i|i",
-   "blocks": 5,
-   "pages": 4,
-   "covered": 3,
+   "shape": "iiii|iiii|iiii|iii",
+   "blocks": 3,
+   "pages": 3,
+   "covered": 1,
    "editableFields": 18,
-   "pageFields": 46,
+   "pageFields": 38,
    "samples": [
     {
-     "page": "/institutional/tw/en/emerging-markets",
-     "index": 1
+     "page": "/institutional/tw/en/carbon-opportunities",
+     "index": 0
     }
    ]
   },
@@ -569,11 +557,11 @@
    "key": "columns (6-6)",
    "multi": false,
    "shape": "tt|tit",
-   "blocks": 23,
-   "pages": 13,
-   "covered": 5,
-   "editableFields": 65,
-   "pageFields": 131,
+   "blocks": 30,
+   "pages": 15,
+   "covered": 8,
+   "editableFields": 93,
+   "pageFields": 214,
    "samples": [
     {
      "page": "/institutional/tw/en/canada-2024-outlook-mounting-challenges-with-limited-upside",
@@ -590,11 +578,11 @@
    "key": "columns (8-4)",
    "multi": false,
    "shape": "tt|ti",
-   "blocks": 23,
-   "pages": 23,
-   "covered": 19,
-   "editableFields": 87,
-   "pageFields": 138,
+   "blocks": 24,
+   "pages": 24,
+   "covered": 20,
+   "editableFields": 91,
+   "pageFields": 142,
    "samples": [
     {
      "page": "/institutional/tw/en/strategies/equity/bank-opportunities",
@@ -623,11 +611,11 @@
    "key": "disclosure",
    "multi": false,
    "shape": "t|ttttttt",
-   "blocks": 263,
-   "pages": 194,
-   "covered": 81,
-   "editableFields": 830,
-   "pageFields": 1457,
+   "blocks": 273,
+   "pages": 202,
+   "covered": 84,
+   "editableFields": 861,
+   "pageFields": 1510,
    "samples": [
     {
      "page": "/institutional/tw/en/canada-2024-outlook-mounting-challenges-with-limited-upside",
@@ -638,15 +626,15 @@
      "index": 1
     },
     {
-     "page": "/institutional/tw/en/multi-asset-outlook",
+     "page": "/institutional/tw/en/macro-themes-2024",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/nature-positive-ecosystem",
-     "index": 2
+     "page": "/institutional/tw/en/macro-themes-2025",
+     "index": 0
     },
     {
-     "page": "/institutional/tw/en/resources/documents/institutional-investor-manulifes-forest-fund-gambit-luring-investors",
+     "page": "/institutional/tw/en/multi-asset-outlook",
      "index": 0
     }
    ]
@@ -656,11 +644,11 @@
    "key": "disclosure (inset, open)",
    "multi": false,
    "shape": "t|ttttttttttt",
-   "blocks": 1,
-   "pages": 1,
+   "blocks": 2,
+   "pages": 2,
    "covered": 1,
-   "editableFields": 12,
-   "pageFields": 12,
+   "editableFields": 13,
+   "pageFields": 14,
    "samples": [
     {
      "page": "/institutional/tw/en/viewpoints/market-outlook/global-markets-at-key-inflection-point-six-working-assumptions",
@@ -672,31 +660,31 @@
    "name": "disclosure",
    "key": "disclosure (inset)",
    "multi": false,
-   "shape": "t|tttttttttt",
-   "blocks": 702,
-   "pages": 682,
-   "covered": 525,
-   "editableFields": 5960,
-   "pageFields": 8948,
+   "shape": "t|ttttttttt",
+   "blocks": 791,
+   "pages": 715,
+   "covered": 653,
+   "editableFields": 6676,
+   "pageFields": 10024,
    "samples": [
     {
-     "page": "/institutional/tw/en/viewpoints/alternative-credit/cqs-clo-equity",
+     "page": "/institutional/tw/en/strategies/equity/emerging-market-equity",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/viewpoints/alternative-credit/opportunities-in-abs-markets",
-     "index": 0
+     "page": "/institutional/tw/en/strategies/equity/emerging-market-equity",
+     "index": 1
     },
     {
-     "page": "/institutional/tw/en/viewpoints/alternative-credit/opportunities-in-asset-backed-securities",
-     "index": 0
+     "page": "/institutional/tw/en/strategies/equity/financial-industries",
+     "index": 2
     },
     {
-     "page": "/institutional/tw/en/viewpoints/alternative-credit/regulatory-capital",
-     "index": 0
+     "page": "/institutional/tw/en/strategies/equity/greater-china",
+     "index": 2
     },
     {
-     "page": "/institutional/tw/en/viewpoints/equity/2024-market-outlook-asia-pacific-reits",
+     "page": "/institutional/tw/en/strategies/equity/japan-core-equity",
      "index": 0
     }
    ]
@@ -782,6 +770,23 @@
   },
   {
    "name": "feature",
+   "key": "feature (blue, marketing, overlap)",
+   "multi": false,
+   "shape": "it|i",
+   "blocks": 2,
+   "pages": 2,
+   "covered": 1,
+   "editableFields": 5,
+   "pageFields": 7,
+   "samples": [
+    {
+     "page": "/institutional/tw/en/liability-driven-investment",
+     "index": 0
+    }
+   ]
+  },
+  {
+   "name": "feature",
    "key": "feature (blue, marketing)",
    "multi": false,
    "shape": "ttt|i",
@@ -802,11 +807,11 @@
    "key": "feature (green, marketing, overlap, short)",
    "multi": false,
    "shape": "tt|i",
-   "blocks": 48,
-   "pages": 41,
-   "covered": 26,
-   "editableFields": 109,
-   "pageFields": 137,
+   "blocks": 49,
+   "pages": 42,
+   "covered": 27,
+   "editableFields": 112,
+   "pageFields": 140,
    "samples": [
     {
      "page": "/institutional/tw/en/canada-2024-outlook-mounting-challenges-with-limited-upside",
@@ -817,15 +822,15 @@
      "index": 0
     },
     {
+     "page": "/institutional/tw/en/macro-themes-2024",
+     "index": 0
+    },
+    {
      "page": "/institutional/tw/en/multi-asset-outlook",
      "index": 0
     },
     {
      "page": "/institutional/tw/en/natural-capital",
-     "index": 0
-    },
-    {
-     "page": "/institutional/tw/en/privates",
      "index": 0
     }
    ]
@@ -835,11 +840,11 @@
    "key": "feature (green, marketing, overlap)",
    "multi": false,
    "shape": "itt|i",
-   "blocks": 14,
-   "pages": 11,
-   "covered": 9,
-   "editableFields": 46,
-   "pageFields": 57,
+   "blocks": 15,
+   "pages": 12,
+   "covered": 10,
+   "editableFields": 50,
+   "pageFields": 61,
    "samples": [
     {
      "page": "/institutional/tw/en/about-us",
@@ -854,11 +859,11 @@
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/strategies/equity",
+     "page": "/institutional/tw/en/liability-driven-investment",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/strategies/multi-asset-solutions",
+     "page": "/institutional/tw/en/strategies/equity",
      "index": 0
     }
    ]
@@ -868,11 +873,11 @@
    "key": "feature (green, marketing, short)",
    "multi": false,
    "shape": "tt|i",
-   "blocks": 13,
-   "pages": 13,
-   "covered": 12,
-   "editableFields": 38,
-   "pageFields": 48,
+   "blocks": 17,
+   "pages": 15,
+   "covered": 16,
+   "editableFields": 50,
+   "pageFields": 60,
    "samples": [
     {
      "page": "/institutional/tw/en/canada-2024-outlook-mounting-challenges-with-limited-upside",
@@ -883,16 +888,16 @@
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/manulife-permanent-cropland-plus-fund",
+     "page": "/institutional/tw/en/macro-themes-2024",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/multi-asset-outlook",
+     "page": "/institutional/tw/en/macro-themes-2025",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/real-assets-sri-report",
-     "index": 0
+     "page": "/institutional/tw/en/macro-themes-2025",
+     "index": 1
     }
    ]
   },
@@ -959,11 +964,11 @@
    "key": "feature (marketing, navy, overlap, short)",
    "multi": false,
    "shape": "tt|i",
-   "blocks": 65,
-   "pages": 43,
-   "covered": 49,
-   "editableFields": 169,
-   "pageFields": 200,
+   "blocks": 67,
+   "pages": 44,
+   "covered": 51,
+   "editableFields": 175,
+   "pageFields": 206,
    "samples": [
     {
      "page": "/institutional/tw/en/canada-2024-outlook-mounting-challenges-with-limited-upside",
@@ -992,11 +997,11 @@
    "key": "feature (marketing, navy, overlap)",
    "multi": false,
    "shape": "itt|i",
-   "blocks": 14,
-   "pages": 12,
+   "blocks": 15,
+   "pages": 13,
    "covered": 6,
-   "editableFields": 37,
-   "pageFields": 54,
+   "editableFields": 38,
+   "pageFields": 57,
    "samples": [
     {
      "page": "/institutional/tw/en/about-us",
@@ -1017,11 +1022,11 @@
    "key": "feature (marketing, navy, short)",
    "multi": false,
    "shape": "tt|i",
-   "blocks": 10,
-   "pages": 9,
-   "covered": 8,
-   "editableFields": 27,
-   "pageFields": 32,
+   "blocks": 12,
+   "pages": 10,
+   "covered": 10,
+   "editableFields": 33,
+   "pageFields": 38,
    "samples": [
     {
      "page": "/institutional/tw/en/canada-2024-outlook-mounting-challenges-with-limited-upside",
@@ -1036,12 +1041,12 @@
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/nature-positive-ecosystem",
+     "page": "/institutional/tw/en/macro-themes-2025",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/privates",
-     "index": 0
+     "page": "/institutional/tw/en/macro-themes-2025",
+     "index": 1
     }
    ]
   },
@@ -1050,11 +1055,11 @@
    "key": "feature (marketing, navy)",
    "multi": false,
    "shape": "itt|i",
-   "blocks": 9,
-   "pages": 6,
+   "blocks": 10,
+   "pages": 7,
    "covered": 8,
-   "editableFields": 35,
-   "pageFields": 38,
+   "editableFields": 38,
+   "pageFields": 42,
    "samples": [
     {
      "page": "/institutional/tw/en/capabilities/fixed-income",
@@ -1083,11 +1088,11 @@
    "key": "feature (marketing, overlap, purple, short)",
    "multi": false,
    "shape": "tt|i",
-   "blocks": 25,
-   "pages": 18,
-   "covered": 20,
-   "editableFields": 67,
-   "pageFields": 74,
+   "blocks": 26,
+   "pages": 19,
+   "covered": 21,
+   "editableFields": 70,
+   "pageFields": 77,
    "samples": [
     {
      "page": "/institutional/tw/en/global-credit",
@@ -1098,16 +1103,16 @@
      "index": 0
     },
     {
+     "page": "/institutional/tw/en/macro-themes-2024",
+     "index": 0
+    },
+    {
      "page": "/institutional/tw/en/strategies/private-markets/private-equity-and-credit/junior-credit",
      "index": 0
     },
     {
      "page": "/institutional/tw/en/strategies/private-markets/private-equity-and-credit/junior-credit",
      "index": 1
-    },
-    {
-     "page": "/institutional/tw/en/strategies/private-markets/private-equity-and-credit/primary-funds",
-     "index": 0
     }
    ]
   },
@@ -1116,11 +1121,11 @@
    "key": "feature (marketing, overlap, purple)",
    "multi": false,
    "shape": "itt|i",
-   "blocks": 12,
-   "pages": 12,
-   "covered": 6,
-   "editableFields": 31,
-   "pageFields": 44,
+   "blocks": 13,
+   "pages": 13,
+   "covered": 7,
+   "editableFields": 35,
+   "pageFields": 48,
    "samples": [
     {
      "page": "/institutional/tw/en/about-us",
@@ -1135,11 +1140,11 @@
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/strategies/equity",
+     "page": "/institutional/tw/en/liability-driven-investment",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/strategies/global-fixed-income",
+     "page": "/institutional/tw/en/strategies/equity",
      "index": 0
     }
    ]
@@ -1208,24 +1213,12 @@
    "key": "figure",
    "multi": false,
    "shape": "t / i / t",
-   "blocks": 794,
+   "blocks": 788,
    "pages": 216,
-   "covered": 558,
-   "editableFields": 1674,
-   "pageFields": 2488,
+   "covered": 555,
+   "editableFields": 1665,
+   "pageFields": 2473,
    "samples": [
-    {
-     "page": "/institutional/tw/en/global-macro-outlook",
-     "index": 0
-    },
-    {
-     "page": "/institutional/tw/en/global-macro-outlook",
-     "index": 1
-    },
-    {
-     "page": "/institutional/tw/en/global-macro-outlook",
-     "index": 2
-    },
     {
      "page": "/institutional/tw/en/multi-asset-outlook",
      "index": 0
@@ -1233,6 +1226,18 @@
     {
      "page": "/institutional/tw/en/viewpoints/alternative-credit/european-credit-an-income-investors-best-kept-secret",
      "index": 0
+    },
+    {
+     "page": "/institutional/tw/en/viewpoints/alternative-credit/opportunities-in-asset-backed-securities",
+     "index": 0
+    },
+    {
+     "page": "/institutional/tw/en/viewpoints/alternative-credit/opportunities-in-asset-backed-securities",
+     "index": 1
+    },
+    {
+     "page": "/institutional/tw/en/viewpoints/alternative-credit/opportunities-in-asset-backed-securities",
+     "index": 2
     }
    ]
   },
@@ -1258,11 +1263,11 @@
    "key": "figure (card)",
    "multi": false,
    "shape": "t / i / t",
-   "blocks": 326,
-   "pages": 68,
-   "covered": 224,
-   "editableFields": 672,
-   "pageFields": 910,
+   "blocks": 338,
+   "pages": 70,
+   "covered": 230,
+   "editableFields": 690,
+   "pageFields": 939,
    "samples": [
     {
      "page": "/institutional/tw/en/resilient-solutions",
@@ -1290,27 +1295,15 @@
    "name": "figure",
    "key": "figure (left)",
    "multi": false,
-   "shape": "ttt / i",
-   "blocks": 7,
+   "shape": "tt / i",
+   "blocks": 4,
    "pages": 4,
-   "covered": 5,
-   "editableFields": 22,
-   "pageFields": 26,
+   "covered": 3,
+   "editableFields": 10,
+   "pageFields": 14,
    "samples": [
     {
      "page": "/institutional/tw/en/carbon-opportunities",
-     "index": 0
-    },
-    {
-     "page": "/institutional/tw/en/carbon-opportunities",
-     "index": 1
-    },
-    {
-     "page": "/institutional/tw/en/carbon-opportunities",
-     "index": 2
-    },
-    {
-     "page": "/institutional/tw/en/investing-in-timber-and-farmland",
      "index": 0
     }
    ]
@@ -1319,32 +1312,16 @@
    "name": "figure",
    "key": "figure (right)",
    "multi": false,
-   "shape": "tl / i / t",
-   "blocks": 11,
-   "pages": 6,
-   "covered": 5,
-   "editableFields": 26,
-   "pageFields": 51,
+   "shape": "tt / i",
+   "blocks": 6,
+   "pages": 5,
+   "covered": 4,
+   "editableFields": 12,
+   "pageFields": 31,
    "samples": [
     {
-     "page": "/institutional/tw/en/multi-asset-outlook",
+     "page": "/institutional/tw/en/carbon-opportunities",
      "index": 0
-    },
-    {
-     "page": "/institutional/tw/en/multi-asset-outlook",
-     "index": 1
-    },
-    {
-     "page": "/institutional/tw/en/multi-asset-outlook",
-     "index": 2
-    },
-    {
-     "page": "/institutional/tw/en/multi-asset-outlook",
-     "index": 3
-    },
-    {
-     "page": "/institutional/tw/en/multi-asset-outlook",
-     "index": 4
     }
    ]
   },
@@ -1352,31 +1329,31 @@
    "name": "form",
    "key": "form",
    "multi": false,
-   "shape": "t|t|t / t|t|t / t|t|t / t|t|t / t|t|t / t|t|t / t|t|t / t|tt",
-   "blocks": 18,
-   "pages": 18,
+   "shape": "t|t|t / t|t|t / t|t|t / t|t|t / t|t|t / t|tt",
+   "blocks": 19,
+   "pages": 19,
    "covered": 5,
-   "editableFields": 120,
-   "pageFields": 408,
+   "editableFields": 122,
+   "pageFields": 426,
    "samples": [
     {
-     "page": "/institutional/tw/en/strategies/private-markets/infrastructure",
+     "page": "/institutional/tw/en/contact-us",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/strategies/private-markets/private-credit",
+     "page": "/institutional/tw/en/liability-driven-investment",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/strategies/private-markets/private-equity-investments",
+     "page": "/institutional/tw/en/strategies/private-markets/real-assets/manulife-real-estate-core-plus-strategy",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/strategies/private-markets/real-estate",
+     "page": "/institutional/tw/en/strategies/private-markets/real-estate-credit",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/strategies/private-markets/timberland",
+     "page": "/institutional/tw/en/strong-foundation-in-fixed-income",
      "index": 0
     }
    ]
@@ -1454,6 +1431,23 @@
   },
   {
    "name": "hero",
+   "key": "hero (banner, overlap, tall)",
+   "multi": false,
+   "shape": "i|tt",
+   "blocks": 1,
+   "pages": 1,
+   "covered": 1,
+   "editableFields": 3,
+   "pageFields": 3,
+   "samples": [
+    {
+     "page": "/institutional/tw/en/liability-driven-investment",
+     "index": 0
+    }
+   ]
+  },
+  {
+   "name": "hero",
    "key": "hero (banner, overlap)",
    "multi": false,
    "shape": "i|tt",
@@ -1519,11 +1513,11 @@
    "key": "hero (banner)",
    "multi": false,
    "shape": "i|tt",
-   "blocks": 19,
-   "pages": 19,
-   "covered": 18,
-   "editableFields": 55,
-   "pageFields": 66,
+   "blocks": 22,
+   "pages": 22,
+   "covered": 21,
+   "editableFields": 64,
+   "pageFields": 77,
    "samples": [
     {
      "page": "/institutional/tw/en/consultant-team",
@@ -1538,11 +1532,11 @@
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/pension-strategy",
+     "page": "/institutional/tw/en/manulife-climate-action",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/real-estate-research",
+     "page": "/institutional/tw/en/pension-strategy",
      "index": 0
     }
    ]
@@ -1602,11 +1596,11 @@
    "key": "hero (page-header)",
    "multi": false,
    "shape": "tt",
-   "blocks": 75,
-   "pages": 75,
-   "covered": 66,
-   "editableFields": 132,
-   "pageFields": 156,
+   "blocks": 77,
+   "pages": 77,
+   "covered": 68,
+   "editableFields": 136,
+   "pageFields": 160,
    "samples": [
     {
      "page": "/institutional/tw/en/about-us/press-releases",
@@ -1635,11 +1629,11 @@
    "key": "link-list",
    "multi": true,
    "shape": "t",
-   "blocks": 1376,
-   "pages": 688,
-   "covered": 1376,
-   "editableFields": 4912,
-   "pageFields": 4912,
+   "blocks": 1392,
+   "pages": 695,
+   "covered": 1392,
+   "editableFields": 4969,
+   "pageFields": 4969,
    "samples": [
     {
      "page": "/institutional/tw/en/capabilities/cqs",
@@ -1685,11 +1679,11 @@
    "key": "link-list (inline)",
    "multi": true,
    "shape": "t|l",
-   "blocks": 13,
-   "pages": 11,
+   "blocks": 15,
+   "pages": 13,
    "covered": 11,
-   "editableFields": 24,
-   "pageFields": 26,
+   "editableFields": 26,
+   "pageFields": 30,
    "samples": [
     {
      "page": "/institutional/tw/en/capabilities/multi-asset-solutions",
@@ -1802,11 +1796,11 @@
    "key": "promo (blue)",
    "multi": true,
    "shape": "i|ttt|t",
-   "blocks": 2,
-   "pages": 1,
+   "blocks": 3,
+   "pages": 2,
    "covered": 2,
-   "editableFields": 10,
-   "pageFields": 10,
+   "editableFields": 12,
+   "pageFields": 14,
    "samples": [
     {
      "page": "/institutional/tw/en/global-intelligence/2h-2021",
@@ -1889,11 +1883,11 @@
    "key": "promo (green)",
    "multi": true,
    "shape": "i|ttt|t",
-   "blocks": 22,
-   "pages": 20,
-   "covered": 18,
-   "editableFields": 100,
-   "pageFields": 110,
+   "blocks": 25,
+   "pages": 23,
+   "covered": 19,
+   "editableFields": 109,
+   "pageFields": 123,
    "samples": [
     {
      "page": "/institutional/tw/en/about-us/press-releases/manulife-investment-management-completes-acquisition-of-cqs",
@@ -1921,31 +1915,31 @@
    "name": "promo",
    "key": "promo (navy)",
    "multi": true,
-   "shape": "i|tt|t",
+   "shape": "i|ttt|t",
    "blocks": 68,
    "pages": 62,
-   "covered": 66,
+   "covered": 44,
    "editableFields": 270,
-   "pageFields": 317,
+   "pageFields": 319,
    "samples": [
     {
-     "page": "/institutional/tw/en/capabilities/equity",
+     "page": "/institutional/tw/en/about-us",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/cqs/multi-asset-credit",
+     "page": "/institutional/tw/en/canada-2024-outlook-mounting-challenges-with-limited-upside",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/cqs/multi-asset-credit-strategy",
+     "page": "/institutional/tw/en/capabilities/cqs",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/investing-in-timber-and-farmland",
+     "page": "/institutional/tw/en/capabilities/fixed-income",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/qmsr",
+     "page": "/institutional/tw/en/carbon-opportunities",
      "index": 0
     }
    ]
@@ -1955,11 +1949,11 @@
    "key": "related-articles",
    "multi": false,
    "shape": "t|t / ttit / ttit",
-   "blocks": 357,
-   "pages": 357,
-   "covered": 213,
-   "editableFields": 2438,
-   "pageFields": 4045,
+   "blocks": 360,
+   "pages": 360,
+   "covered": 214,
+   "editableFields": 2448,
+   "pageFields": 4087,
    "samples": [
     {
      "page": "/institutional/tw/en/viewpoints/alternative-credit/european-credit-an-income-investors-best-kept-secret",
@@ -2005,8 +1999,8 @@
    "key": "section-nav (anchors, left)",
    "multi": true,
    "shape": "",
-   "blocks": 51,
-   "pages": 51,
+   "blocks": 53,
+   "pages": 53,
    "covered": 0,
    "editableFields": 0,
    "pageFields": 0,
@@ -2038,8 +2032,8 @@
    "key": "section-nav (anchors)",
    "multi": true,
    "shape": "",
-   "blocks": 79,
-   "pages": 77,
+   "blocks": 83,
+   "pages": 81,
    "covered": 0,
    "editableFields": 0,
    "pageFields": 0,
@@ -2088,11 +2082,11 @@
    "key": "share",
    "multi": true,
    "shape": "t",
-   "blocks": 684,
-   "pages": 684,
-   "covered": 684,
-   "editableFields": 4104,
-   "pageFields": 4104,
+   "blocks": 691,
+   "pages": 691,
+   "covered": 691,
+   "editableFields": 4146,
+   "pageFields": 4146,
    "samples": [
     {
      "page": "/institutional/tw/en/viewpoints/alternative-credit/a-primer-on-regulatory-capital-relief",
@@ -2188,11 +2182,11 @@
    "key": "table (card, header-row)",
    "multi": false,
    "shape": "t / t|t|t|t|t|t|t|t|t|t|t / t|t|t|t|t|t|t|t|t|t|t / t|t|t|t|t|t|t|t|t|t|t / t|t|t|t|t|t|t|t|t|t|t / t|t|t|t|t|t|t|t|t|t|t / t|t|t|t|t|t|t|t|t|t|t / t / t|t|t|t|t|t|t|t|t|t|t / t|t|t|t|t|t|t|t|t|t|t / t",
-   "blocks": 28,
-   "pages": 17,
+   "blocks": 29,
+   "pages": 18,
    "covered": 4,
    "editableFields": 369,
-   "pageFields": 1031,
+   "pageFields": 1053,
    "samples": [
     {
      "page": "/institutional/tw/en/viewpoints/multi-asset-solutions/foresight-june-2022-market-outlook",
@@ -2217,11 +2211,11 @@
    "key": "table (card, no-header)",
    "multi": false,
    "shape": "t / t|t / t|t / t|t / t|t / t|t / t",
-   "blocks": 10,
-   "pages": 7,
+   "blocks": 14,
+   "pages": 8,
    "covered": 2,
    "editableFields": 24,
-   "pageFields": 115,
+   "pageFields": 130,
    "samples": [
     {
      "page": "/institutional/tw/en/viewpoints/fixed-income/the-high-yield-market-isnt-signaling-a-recession",
@@ -2233,16 +2227,65 @@
    "name": "table",
    "key": "table (header-column)",
    "multi": false,
-   "shape": "t|t / t|t / t|tt / t|t",
-   "blocks": 5,
-   "pages": 2,
-   "covered": 1,
-   "editableFields": 14,
-   "pageFields": 40,
+   "shape": "t|t / t|t / t|t / t|t / t|t / t|t",
+   "blocks": 109,
+   "pages": 28,
+   "covered": 15,
+   "editableFields": 204,
+   "pageFields": 1932,
    "samples": [
     {
-     "page": "/institutional/tw/en/viewpoints/multi-asset-solutions/outsourced-chief-investment-officer-going-above-and-beyond",
-     "index": 1
+     "page": "/institutional/tw/en/strategies/equity/emerging-market-equity",
+     "index": 0
+    },
+    {
+     "page": "/institutional/tw/en/strategies/equity/financial-industries",
+     "index": 0
+    },
+    {
+     "page": "/institutional/tw/en/strategies/equity/global-focus",
+     "index": 0
+    },
+    {
+     "page": "/institutional/tw/en/strategies/equity/global-healthcare",
+     "index": 0
+    },
+    {
+     "page": "/institutional/tw/en/strategies/equity/global-quality-value",
+     "index": 0
+    }
+   ]
+  },
+  {
+   "name": "table",
+   "key": "table (header-row-column)",
+   "multi": false,
+   "shape": "t / t|t|t / t|t|t / t|t|t / t",
+   "blocks": 209,
+   "pages": 27,
+   "covered": 104,
+   "editableFields": 1144,
+   "pageFields": 4664,
+   "samples": [
+    {
+     "page": "/institutional/tw/en/strategies/equity/emerging-market-equity",
+     "index": 2
+    },
+    {
+     "page": "/institutional/tw/en/strategies/equity/emerging-market-equity",
+     "index": 3
+    },
+    {
+     "page": "/institutional/tw/en/strategies/equity/emerging-market-equity",
+     "index": 4
+    },
+    {
+     "page": "/institutional/tw/en/strategies/equity/emerging-market-equity",
+     "index": 5
+    },
+    {
+     "page": "/institutional/tw/en/strategies/equity/financial-industries",
+     "index": 2
     }
    ]
   },
@@ -2250,24 +2293,16 @@
    "name": "table",
    "key": "table (header-row)",
    "multi": false,
-   "shape": "t|t|t|t / t|t|t|t",
-   "blocks": 27,
-   "pages": 14,
-   "covered": 3,
-   "editableFields": 55,
-   "pageFields": 327,
+   "shape": "t|t|t|t|t|t|t|t|t|t|t / t|t|t|t|t|t|t|t|t|t|t / t|t|t|t|t|t|t|t|t|t|t / t|t|t|t|t|t|t|t|t|t|t / t|t|t|t|t|t|t|t|t|t|t / t|t|t|t|t|t|t|t|t|t|t / t / t|t|t|t|t|t|t|t|t|t|t / t|t|t|t|t|t|t|t|t|t|t / t",
+   "blocks": 30,
+   "pages": 15,
+   "covered": 1,
+   "editableFields": 92,
+   "pageFields": 517,
    "samples": [
     {
-     "page": "/institutional/tw/en/viewpoints/equity/transitioning-to-indias-next-stage-of-growth",
-     "index": 4
-    },
-    {
-     "page": "/institutional/tw/en/viewpoints/equity/transitioning-to-indias-next-stage-of-growth",
-     "index": 5
-    },
-    {
-     "page": "/institutional/tw/en/viewpoints/market-outlook/debt-monetization-constraints-global-implications",
-     "index": 1
+     "page": "/institutional/tw/en/viewpoints/multi-asset-solutions/foresight-asset-allocation-update-november-2022",
+     "index": 0
     }
    ]
   },
@@ -2284,6 +2319,23 @@
    "samples": [
     {
      "page": "/institutional/tw/en/viewpoints/private-markets/building-confidence-in-the-voluntary-carbon-market-the-icvcm-s",
+     "index": 0
+    }
+   ]
+  },
+  {
+   "name": "tabs",
+   "key": "tabs",
+   "multi": false,
+   "shape": "t|tlit / t|tlit / t|tlit / t|tlit / t|tlit",
+   "blocks": 5,
+   "pages": 5,
+   "covered": 1,
+   "editableFields": 30,
+   "pageFields": 79,
+   "samples": [
+    {
+     "page": "/institutional/tw/en/multi-asset-outlook",
      "index": 0
     }
    ]
@@ -2326,11 +2378,11 @@
    "key": "tag-list (padded)",
    "multi": false,
    "shape": "t|t / l",
-   "blocks": 684,
-   "pages": 684,
-   "covered": 684,
-   "editableFields": 2052,
-   "pageFields": 2052,
+   "blocks": 691,
+   "pages": 691,
+   "covered": 691,
+   "editableFields": 2073,
+   "pageFields": 2073,
    "samples": [
     {
      "page": "/institutional/tw/en/viewpoints/alternative-credit/a-primer-on-regulatory-capital-relief",
@@ -2359,11 +2411,11 @@
    "key": "team",
    "multi": true,
    "shape": "i|tttl",
-   "blocks": 122,
-   "pages": 85,
-   "covered": 82,
-   "editableFields": 2115,
-   "pageFields": 2256,
+   "blocks": 124,
+   "pages": 87,
+   "covered": 83,
+   "editableFields": 2144,
+   "pageFields": 2288,
    "samples": [
     {
      "page": "/institutional/tw/en/capabilities/cqs",
@@ -2388,27 +2440,35 @@
    ]
   },
   {
-   "name": "title",
-   "key": "title",
+   "name": "video",
+   "key": "video",
    "multi": false,
-   "shape": "t",
-   "blocks": 3,
-   "pages": 1,
-   "covered": 3,
-   "editableFields": 3,
-   "pageFields": 3,
+   "shape": "itt",
+   "blocks": 24,
+   "pages": 11,
+   "covered": 18,
+   "editableFields": 54,
+   "pageFields": 70,
    "samples": [
     {
-     "page": "/institutional/tw/en/viewpoints/private-markets/real-assets-opportunities",
+     "page": "/institutional/tw/en/capabilities/cqs",
      "index": 0
     },
     {
-     "page": "/institutional/tw/en/viewpoints/private-markets/real-assets-opportunities",
+     "page": "/institutional/tw/en/global-credit",
+     "index": 0
+    },
+    {
+     "page": "/institutional/tw/en/viewpoints/market-outlook/global-macro-outlook-an-uneven-recovery",
+     "index": 0
+    },
+    {
+     "page": "/institutional/tw/en/viewpoints/market-outlook/global-macro-outlook-an-uneven-recovery",
      "index": 1
     },
     {
-     "page": "/institutional/tw/en/viewpoints/private-markets/real-assets-opportunities",
-     "index": 2
+     "page": "/institutional/tw/en/viewpoints/market-outlook/global-macro-outlook-navigating-covid-19",
+     "index": 0
     }
    ]
   }
@@ -2444,7 +2504,9 @@
   ],
   "growth": [
    "/institutional/tw/en/viewpoints/equity/2025-outlook-greater-china-equities",
-   "/institutional/tw/en/viewpoints/equity/2025-outlook-greater-china-equities"
+   "/institutional/tw/en/viewpoints/equity/2025-outlook-greater-china-equities",
+   "/institutional/tw/en/viewpoints/equity/greater-china-equities-2h-2025-outlook",
+   "/institutional/tw/en/viewpoints/equity/greater-china-equities-2h-2025-outlook"
   ],
   "target": [
    "/institutional/tw/en/viewpoints/equity/china-and-hong-kong-equity-markets-update"
