@@ -2,6 +2,12 @@
 
 local dev server (localhost:3000, local code + preview content) vs offline mirror (localhost:3000/tools/importer/snapshots/mirror), full-page screenshots and computed styles at 1440 and 390 (spot checks at 700/1000).
 
+## 30 October 2026, content-model fixes (main ad1216c, staged /drafts/repairs7/)
+
+- Team: live "Read more" is an authored per-member option (TeamMemberReadMore in the server HTML: 14 of 41 members on agriculture/team, none on the strategy "Managed by" teams). The Team block shows every bio in full by default; variant `read-more` or a per-member third cell "Read more" opts in (b123d93). 30 published pages staged with the option; 57 team pages without it on live need no content change. Crops (live | before | after): `parity/agri-team-1440-variant.jpg`, `parity/agri-team-1440-mixed.jpg`, `parity/agri-team-1440-no-read-more.jpg`.
+- Strategy: the chart sub-headings "Average annual total returns" and "Portfolio characteristics" are imported again as h3 (all 26 strategy pages staged); the data tables after Key facts have the live look: 14px regular labels, right-aligned values, 12px bold header row, a real table that scrolls sideways when narrow (22c8f97, ad1216c). Crops: `parity/cc-1440-performance.jpg`, `parity/cc-1440-characteristics.jpg`. Open: the legend dots (inline-styled `<i>` on live).
+- Listings: undated items after the dated ones, by title (68b4b23).
+
 ## 30 October 2026 re-check (branch visual-parity)
 
 Method: a dev server with the branch code and main's preview content (aem up --url main--manulifeim--cloudadoption.aem.page, no local content folder) against the offline mirror of the saved snapshots (/tools/importer/snapshots/mirror, no request to www.manulifeim.com; its only remote load is one OneTrust CSS url on cdn.cookielaw.org). Per page and width: every visible h1-h6 / p / li / a / img / button / th / td / dt / dd in main and the footer, matched by tag + text (box, size, weight, line height, colour, family), plus full-page screenshots; crops in `tools/reports/parity/` (live left, EDS right). Mirrors added for the new page kinds (built offline with snapshot/mirror.mjs). The US-econometer snapshot was captured with the attestation dialog open (page locked and blurred); the comparison unlocks it before measuring.
