@@ -8,6 +8,8 @@
  * Id / Nav Title so the page's anchor navigation still lands on it.
  * Output, existing project blocks only:
  *   ## Panel heading
+ *   ### Chart heading (when the panel also has one: Performance > Average annual total
+ *       returns, Characteristics > Portfolio characteristics)
  *   as of 9/30/2026 (paragraph)
  *   | Table (header-column) |            Key facts: one row per fact (name | value)
  *   | Table (header-row-column) |        each rendered data table (swatches dropped)
@@ -29,8 +31,10 @@ function tableRows(document, table) {
 
 export default function parse(element, { document }) {
   const out = [];
-  const heading = text(element.querySelector('.strategyDetail__heading, .strategyDetail__chartHeading'));
-  if (heading) out.push(h(document, 'h2', heading));
+  const panel = text(element.querySelector('.strategyDetail__heading'));
+  const chart = text(element.querySelector('.strategyDetail__chartHeading'));
+  if (panel) out.push(h(document, 'h2', panel));
+  if (chart) out.push(h(document, panel ? 'h3' : 'h2', chart));
   const asOf = text(element.querySelector('.strategyDetail__subheading, .strategyDetail__chartSubheading'));
   if (asOf) out.push(h(document, 'p', asOf));
 

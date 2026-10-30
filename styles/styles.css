@@ -110,6 +110,10 @@
 }
 
 @media (width >= 801px) {
+  main > .section.divider.table-container[data-nav-title] > .default-content-wrapper:first-child > h2:first-child + h3 {
+    margin-top: 64px;
+  }
+
   :root {
     --spacing-section-y: 24px;
     --spacing-section-x: 32px;
@@ -642,11 +646,23 @@ main > .section.divider.table-container[data-nav-title] > .default-content-wrapp
   line-height: var(--line-height-heading);
 }
 
-main > .section.divider.table-container[data-nav-title] > .default-content-wrapper:first-child > h2:first-child + p {
+main > .section.divider.table-container[data-nav-title] > .default-content-wrapper:first-child > h2:first-child + p,
+main > .section.divider.table-container[data-nav-title] > .default-content-wrapper:first-child > h2:first-child + h3 + p {
   margin-top: 0;
   font-size: var(--font-size-xs);
   line-height: var(--line-height-xs);
   color: var(--color-text-muted);
+}
+
+/* a panel with its own chart heading (Performance > Average annual total returns,
+   Characteristics > Portfolio characteristics): live strategyDetail__chartHeading, 32px below
+   the panel heading (64px from 801px), its "as of" line 8px below */
+main > .section.divider.table-container[data-nav-title] > .default-content-wrapper:first-child > h2:first-child + h3 {
+  margin-top: 32px;
+  margin-bottom: 8px;
+  font-size: var(--font-size-h2);
+  font-weight: 400;
+  line-height: var(--line-height-heading);
 }
 
 /* section tabs (scripts/section-tabs.js, blocks/tabs variant sections): closed panels; beats

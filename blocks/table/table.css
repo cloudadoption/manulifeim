@@ -198,6 +198,64 @@ main > .section[data-nav-title='Key facts'] .table.header-column tr td {
   line-height: var(--line-height-heading);
 }
 
+/* stacked tables in the strategy panels bleed to the section padding (the panels have no 24px
+   column inset, so the default -24px row margin overflowed the page by 8px at 390px) */
+main > .section[data-nav-title='Key facts'] ~ .section.divider.table-container .table tr {
+  margin-inline: calc(var(--spacing-section-x) * -1);
+}
+
+/* strategy data tables (live strategyDetail__table, the panels after Key facts): a real table at
+   every width (scrolls sideways when narrow), 14px regular labels, right-aligned values, 12px
+   bold header row, 16px cell padding */
+main > .section[data-nav-title='Key facts'] ~ .section.divider.table-container .table.header-row-column .table-figure {
+  overflow-x: auto;
+}
+
+main > .section[data-nav-title='Key facts'] ~ .section.divider.table-container .table.header-row-column table {
+  display: table;
+}
+
+main > .section[data-nav-title='Key facts'] ~ .section.divider.table-container .table.header-row-column tbody {
+  display: table-row-group;
+}
+
+main > .section[data-nav-title='Key facts'] ~ .section.divider.table-container .table.header-row-column tr,
+main > .section[data-nav-title='Key facts'] ~ .section.divider.table-container .table.header-row-column tr:first-child {
+  display: table-row;
+  margin: 0;
+  padding: 0;
+}
+
+main > .section[data-nav-title='Key facts'] ~ .section.divider.table-container .table.header-row-column tr :is(td, th) {
+  display: table-cell;
+  width: auto;
+  margin: 0;
+  padding: 16px;
+  font-size: var(--font-size-small);
+  font-weight: 400;
+  line-height: var(--line-height-small);
+  text-align: right;
+  vertical-align: middle;
+}
+
+main > .section[data-nav-title='Key facts'] ~ .section.divider.table-container .table.header-row-column tr :is(td, th):first-child {
+  font-size: var(--font-size-small);
+  font-weight: 400;
+  line-height: var(--line-height-small);
+  text-align: left;
+}
+
+main > .section[data-nav-title='Key facts'] ~ .section.divider.table-container .table.header-row-column tr:first-child :is(td, th),
+main > .section[data-nav-title='Key facts'] ~ .section.divider.table-container .table.header-row-column tr:first-child :is(td, th):first-child {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  line-height: var(--line-height-xs);
+}
+
+main > .section[data-nav-title='Key facts'] ~ .section.divider.table-container .table.header-row-column :is(td, th)[data-title]::before {
+  content: none;
+}
+
 @media (width >= 601px) {
   .table .table-title {
     font-size: 32px;

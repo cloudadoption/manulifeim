@@ -155,6 +155,18 @@ test('strategy-section parser: Key facts and data tables as Table blocks, disclo
   assert.deepEqual(headings, ['Key facts', 'Performance']);
 });
 
+test('strategy-section parser: a panel with its own chart heading keeps it as h3 before the date (live Performance > Average annual total returns)', () => {
+  const [, perf] = document.querySelectorAll('#fx-strategy section.strategyDetail__section');
+  const root = perf.parentElement;
+  strategy(perf, { document });
+  const h2 = [...root.querySelectorAll('h2')].find((h) => h.textContent === 'Performance');
+  const h3 = h2.nextElementSibling;
+  assert.equal(h3.tagName, 'H3');
+  assert.equal(h3.textContent, 'Average annual total returns');
+  assert.match(h3.nextElementSibling.textContent, /^as of 9\/30\/2026/);
+  assert.equal(blockName(h3.nextElementSibling.nextElementSibling), 'Table (header-row-column)');
+});
+
 test('strategy-section parser: a chart-only panel keeps heading, date and disclosure, no table', () => {
   const sections = document.querySelectorAll('#fx-strategy section.strategyDetail__section');
   const chart = sections[sections.length - 1];
