@@ -1,5 +1,5 @@
-/* video (videoKicker / videoSmall): poster with a play button; the player opens in the
-   modal of scripts/video.js (styles/lazy-styles.css). */
+/* video (videoKicker / videoSmall): poster with a play button and the caption on it; the
+   player opens in the modal of scripts/video.js (styles/lazy-styles.css). */
 
 .video {
   max-width: 600px;
@@ -10,42 +10,57 @@
   margin: 0;
 }
 
+/* live videoSmall (every live video): 16:9 poster, the play button, its label and the caption
+   at the bottom over a full-height navy gradient */
 .video .video-media {
   position: relative;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   width: 100%;
-  padding: 0;
+  aspect-ratio: 16 / 9;
+  padding: 24px;
   overflow: hidden;
   font: inherit;
   color: var(--color-white);
   text-align: left;
   background: var(--color-text);
   border: 0;
+  box-shadow: var(--shadow-bar);
 }
 
 .video button.video-media {
   cursor: pointer;
 }
 
-.video .video-media picture,
+.video .video-media picture {
+  position: absolute;
+  inset: 0;
+}
+
 .video .video-media img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
 }
 
 .video button.video-media::after {
   position: absolute;
   inset: 0;
   content: '';
-  background: linear-gradient(to top, rgb(0 0 0 / 60%), transparent 60%);
+  background: linear-gradient(to bottom, rgb(40 43 62 / 0%), var(--color-text));
+}
+
+.video .video-play-icon,
+.video .video-play-label,
+.video .video-caption {
+  position: relative;
+  z-index: 1;
+  flex: none;
 }
 
 .video .video-play-icon {
-  position: absolute;
-  bottom: 16px;
-  left: 16px;
-  z-index: 1;
   width: 40px;
   height: 40px;
   background: var(--color-white);
@@ -64,73 +79,30 @@
 }
 
 .video .video-play-label {
-  position: absolute;
-  bottom: 24px;
-  left: 68px;
-  z-index: 1;
-  font-weight: 600;
-  line-height: 24px;
-}
-
-.video .video-caption {
-  margin-top: 8px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--color-text-muted);
-}
-
-/* small (live videoSmall in a column): 16:9 poster, the play button, its label and the
-   caption at the bottom over a full-height navy gradient; the column sets the width */
-.video.small {
-  max-width: none;
-  margin: 0;
-}
-
-.video.small .video-media {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  aspect-ratio: 16 / 9;
-  padding: 24px;
-  box-shadow: var(--shadow-bar);
-}
-
-.video.small .video-media picture {
-  position: absolute;
-  inset: 0;
-}
-
-.video.small .video-media img {
-  height: 100%;
-  object-fit: cover;
-}
-
-.video.small button.video-media::after {
-  background: linear-gradient(to bottom, rgb(40 43 62 / 0%), var(--color-text));
-}
-
-.video.small .video-play-icon,
-.video.small .video-play-label,
-.video.small .video-caption {
-  position: relative;
-  inset: auto;
-  z-index: 1;
-  flex: none;
-}
-
-.video.small .video-play-label {
   margin-top: 19px;
   font-size: var(--font-size-h3);
   font-weight: var(--font-weight-light);
   line-height: var(--line-height-heading);
 }
 
-.video.small .video-caption {
+.video .video-caption {
   margin: 0;
   font-size: var(--font-size-small);
   line-height: var(--line-height-small);
   color: var(--color-white);
 }
+
+/* small (live videoSmall in a column): the column sets the width; 24px under the poster (live
+   .videoKicker margin), which is also the gap to the next stacked video or to the links */
+.video.small {
+  max-width: none;
+  margin: 0;
+}
+
+.video.small .video-figure {
+  margin-bottom: 24px;
+}
+
 
 .video button.video-media:hover .video-play-icon,
 .video button.video-media:focus-visible .video-play-icon {
@@ -180,4 +152,22 @@
 .video .video-links a:hover,
 .video .video-links a:focus {
   text-decoration: underline;
+}
+
+/* small: the poster's 24px margin is the space above the links; stacked up to 800px live
+   leaves 24px after them (not after the last video of a row: styles.css); from 801px the next
+   video or the row end follows them directly */
+.video.small .video-links {
+  margin-bottom: 24px;
+  padding-top: 0;
+}
+
+.video.small .video-links li:first-child {
+  margin-top: 0;
+}
+
+@media (width >= 801px) {
+  .video.small .video-links {
+    margin-bottom: 0;
+  }
 }

@@ -821,6 +821,23 @@ main > .section > .section-column > div + div {
   margin-top: 32px;
 }
 
+/* a continued column with Style divider (live divider inside a column): 1px rule, 32px above and
+   below (64px from 601px) */
+main > .section > .section-column > .section-column-divider {
+  margin: 32px 0;
+  border: 0;
+  border-top: 1px solid var(--color-border-strong);
+}
+
+/* a row of small videos: the videos keep their own 24px below (blocks/video), no row gap */
+main > .section[data-layout]:has(> .video-wrapper > .video.small) {
+  row-gap: 0;
+}
+
+main > .section[data-layout] > .video-wrapper:last-child > .video.small .video-links {
+  margin-bottom: 0;
+}
+
 /* the divider rule of a Layout section spans the row */
 main > .section.divider[data-layout]::before {
   flex: 0 0 100%;
@@ -838,7 +855,8 @@ main > .section.centered[data-layout] > div > * {
     padding-inline: 32px;
   }
 
-  main > .section.divider::before {
+  main > .section.divider::before,
+  main > .section > .section-column > .section-column-divider {
     margin: 64px 0;
   }
 

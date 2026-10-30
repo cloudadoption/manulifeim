@@ -50,7 +50,8 @@ test('video block: poster, play button, caption; click opens the player modal wi
   assert.ok(button, 'play button');
   assert.ok(button.querySelector('picture img'), 'poster inside the button');
   assert.equal(button.getAttribute('aria-label'), 'Play video: Building the case for healthy real estate webinar');
-  assert.equal(block.querySelector('figcaption').textContent.trim(), 'Building the case for healthy real estate webinar');
+  assert.equal(button.querySelector('.video-caption').textContent.trim(), 'Building the case for healthy real estate webinar', 'caption on the poster (live videoSmall)');
+  assert.equal(block.querySelector('figcaption'), null);
   assert.equal(block.querySelectorAll('a').length, 0, 'player and transcript links are consumed');
   button.click();
   await settle();
@@ -81,7 +82,7 @@ test('video block: rows split over cells and no transcript; without a player lin
   await decorate(plain);
   assert.equal(plain.querySelector('button'), null);
   assert.ok(plain.querySelector('div.video-media picture'));
-  assert.equal(plain.querySelector('figcaption').textContent, 'Caption only');
+  assert.equal(plain.querySelector('div.video-media .video-caption').textContent, 'Caption only');
 });
 
 test('video small: the caption sits in the poster after the play label; a list of links follows the poster', async () => {
@@ -103,12 +104,12 @@ test('video small: the caption sits in the poster after the play label; a list o
   assert.equal(list.querySelector('a').textContent, 'Download transcript (PDF)', 'a listed link stays a link (not the modal transcript)');
 });
 
-test('video (default): a list of links also shows under the poster, the caption stays a figcaption', async () => {
+test('video (default): a list of links also shows under the poster, the caption is on the poster', async () => {
   const { default: decorate } = await fresh('../blocks/video/video.js');
   const block = blockFrom(`<div><div><picture><img src="/media-da/p.jpg" alt=""></picture><p><a href="${PLAYER}">${PLAYER}</a></p>
     <p>Caption</p><ul><li><a href="/x.pdf">Download</a></li><li><a href="/y.pdf">Slides</a></li></ul></div></div>`);
   await decorate(block);
-  assert.equal(block.querySelector('figcaption').textContent, 'Caption');
+  assert.equal(block.querySelector('button.video-media .video-caption').textContent, 'Caption');
   assert.deepEqual([...block.querySelectorAll('ul.video-links a')].map((a) => a.textContent), ['Download', 'Slides']);
 });
 

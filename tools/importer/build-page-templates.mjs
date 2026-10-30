@@ -63,7 +63,7 @@ export const BLOCKS = [
   { name: 'link-list', instances: ['.linkList2', 'section.viewpoint-links'] },
   { name: 'author', instances: ['.mim-authors'] },
   { name: 'figure', instances: ['.landingImage2', '.landingimage'] },
-  { name: 'table', instances: ['.table2', '.table.parbase'] },
+  { name: 'table', instances: ['.table2', '.table.parbase', '.strategyDetailTable'] },
   { name: 'team', instances: ['.teamMembers'] },
   { name: 'social-links', instances: ['.social'] },
   { name: 'related-articles', instances: ['.related-viewpoints'] },

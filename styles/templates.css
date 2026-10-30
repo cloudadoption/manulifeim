@@ -140,11 +140,28 @@
   padding-inline: 0;
 }
 
+/* a single Video in the article (live videoKicker): the content column (792px at 1440), not
+   the 600px reading column; in a centered section (live qw-8) 75% of the column from 801px,
+   24px from the edges below */
+.template-viewpoint main > .section:not(:first-child, .sidebar, .sidebar ~ .section) > .video-wrapper {
+  max-width: none;
+}
+
+.template-viewpoint main > .section:not(:first-child, .sidebar, .sidebar ~ .section) .video:not(.small) {
+  max-width: none;
+}
+
+.template-viewpoint main > .section.centered:not(:first-child, .sidebar, .sidebar ~ .section) > .video-wrapper {
+  width: auto;
+  margin-inline: 24px;
+}
+
 /* Layout 6-6 in the article body (live quarter-width column-container with two qw-4 columns,
-   e.g. two small videos): stacked 24px from the edges; from 801px a row of 75% of the column
+   e.g. two small videos): 32px above, none below (live column-container); stacked 24px from
+   the edges; from 801px a row of 75% of the column
    (the 920px column next to the sidebar from 1101px), side by side from 961px, left-aligned */
 .template-viewpoint main > .section[data-layout="6-6"]:not(:first-child, .sidebar, .sidebar ~ .section) {
-  margin: 32px 0;
+  margin: 32px 0 0;
   padding: 0 24px;
 }
 
@@ -152,11 +169,6 @@
   width: 100%;
   max-width: none;
   margin: 0;
-}
-
-/* the next row of the same set: 32px between them, as between live column containers */
-.template-viewpoint main > .section[data-layout="6-6"]:not(:first-child, .sidebar, .sidebar ~ .section) + .template-viewpoint main > .section[data-layout="6-6"]:not(:first-child, .sidebar, .sidebar ~ .section) {
-  margin-top: 0;
 }
 
 /* ---------------------------------------------------------------- case-study-detail */
@@ -347,9 +359,14 @@
     padding-inline: 0;
   }
 
+  .template-viewpoint main > .section.centered:not(:first-child, .sidebar, .sidebar ~ .section) > .video-wrapper {
+    width: 100%;
+    margin-inline: 0;
+  }
+
   .template-viewpoint main > .section[data-layout="6-6"]:not(:first-child, .sidebar, .sidebar ~ .section) {
     justify-content: flex-start;
-    gap: 24px;
+    gap: 0 24px;
     padding-inline: calc((100% - var(--width-centered)) / 2);
   }
 }

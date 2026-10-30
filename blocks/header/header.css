@@ -604,10 +604,13 @@
     display: none;
   }
 
+  /* the search box gives way first (live .search-input: 85px wide at 801px, 294px at 1010px),
+     so the buttons stay inside the bar; min-width 0 lets it shrink below the input's width */
   .header .header-search {
     position: static;
     visibility: visible;
     flex: 0 6 700px;
+    min-width: 0;
     width: auto;
     height: auto;
     margin: 0 16px;

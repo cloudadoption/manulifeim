@@ -48,7 +48,7 @@ test('Column 1 starts a new row; a section without Column ends one; a lone Colum
     section('', text('plain')),
     section('data-column="1"', text('lone')),
   ].join('');
-  assert.deepEqual(columnRows(main).map((r) => r.map((s) => s.textContent)), [['a1', 'a2'], ['b1', 'b2', 'b3']]);
+  assert.deepEqual(columnRows(main).map((r) => r.map((c) => c.map((s) => s.textContent))), [[['a1'], ['a2']], [['b1'], ['b2'], ['b3']]]);
   buildSectionColumns(main);
   assert.deepEqual([...main.children].map((s) => s.querySelectorAll(':scope > .section-column').length), [2, 3, 0, 0]);
   assert.equal(main.lastElementChild.textContent, 'lone');
@@ -59,4 +59,30 @@ test('no Column metadata: nothing changes', () => {
   const before = main.innerHTML;
   assert.equal(buildSectionColumns(main), 0);
   assert.equal(main.innerHTML, before);
+});
+
+test('the same Column number again continues the column; Style divider puts a rule before it', () => {
+  main.innerHTML = [
+    section('data-layout="6-6" data-column="1"', text('Get in touch') + blockWrap('form')),
+    section('id="consent" data-column="1"', text('By submitting this form')).replace('class="section"', 'class="section divider"'),
+    section('data-column="2"', blockWrap('promo')),
+    section('data-column="1"', text('next row 1')),
+    section('data-column="2"', text('next row 2')),
+  ].join('');
+  assert.equal(buildSectionColumns(main), 2);
+  const [row, next] = [...main.children];
+  assert.equal(main.children.length, 2);
+  const [col1, col2] = row.querySelectorAll(':scope > .section-column');
+  assert.deepEqual([...col1.children].map((c) => c.className), ['default-content-wrapper', 'form-wrapper', 'section-column-divider', 'default-content-wrapper']);
+  assert.equal(col1.querySelector('hr').id, 'consent', 'the merged section id moves onto its rule');
+  assert.equal(col1.lastElementChild.textContent, 'By submitting this form');
+  assert.deepEqual([...col2.children].map((c) => c.className), ['promo-wrapper']);
+  assert.equal(next.querySelectorAll(':scope > .section-column').length, 2, 'Column 1 after Column 2 starts the next row');
+});
+
+test('a continued column without Style divider adds its content without a rule', () => {
+  main.innerHTML = [section('data-column="1"', text('a')), section('data-column="1"', text('b')), section('data-column="2"', text('c'))].join('');
+  buildSectionColumns(main);
+  assert.equal(main.querySelectorAll('hr').length, 0);
+  assert.equal(main.querySelector('.section-column').textContent, 'ab');
 });

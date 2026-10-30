@@ -178,7 +178,8 @@
           "name": "table",
           "instances": [
             ".table2",
-            ".table.parbase"
+            ".table.parbase",
+            ".strategyDetailTable"
           ]
         },
         {
@@ -685,7 +686,8 @@
           "name": "table",
           "instances": [
             ".table2",
-            ".table.parbase"
+            ".table.parbase",
+            ".strategyDetailTable"
           ]
         },
         {
@@ -912,7 +914,8 @@
           "name": "table",
           "instances": [
             ".table2",
-            ".table.parbase"
+            ".table.parbase",
+            ".strategyDetailTable"
           ]
         },
         {
@@ -1822,7 +1825,8 @@
           "name": "table",
           "instances": [
             ".table2",
-            ".table.parbase"
+            ".table.parbase",
+            ".strategyDetailTable"
           ]
         },
         {
@@ -2040,7 +2044,8 @@
           "name": "table",
           "instances": [
             ".table2",
-            ".table.parbase"
+            ".table.parbase",
+            ".strategyDetailTable"
           ]
         },
         {
@@ -2417,7 +2422,8 @@
           "name": "table",
           "instances": [
             ".table2",
-            ".table.parbase"
+            ".table.parbase",
+            ".strategyDetailTable"
           ]
         },
         {
@@ -2639,7 +2645,8 @@
           "name": "table",
           "instances": [
             ".table2",
-            ".table.parbase"
+            ".table.parbase",
+            ".strategyDetailTable"
           ]
         },
         {
@@ -2918,7 +2925,8 @@
           "name": "table",
           "instances": [
             ".table2",
-            ".table.parbase"
+            ".table.parbase",
+            ".strategyDetailTable"
           ]
         },
         {
@@ -3136,7 +3144,8 @@
           "name": "table",
           "instances": [
             ".table2",
-            ".table.parbase"
+            ".table.parbase",
+            ".strategyDetailTable"
           ]
         },
         {

@@ -77,6 +77,7 @@ export const BLOCK_COMPONENTS = {
   'related-viewpoints': 'related-articles',
   social: 'social-links',
   table2: 'table',
+  strategyDetailTable: 'table',
   teamMembers: 'team',
   landingImage2: 'figure',
   landingimage: 'figure',
@@ -356,16 +357,26 @@ export function expandColumns(document, cc, { noRow = false } = {}) {
 }
 
 /* one section per column (Column 1, 2, ...; Layout on the first): default runs and blocks in
-   order; a divider inside a column is dropped */
+   order; a divider inside a column continues the column in a new section with the same Column
+   and Style divider (a divider at the start or the end of a column is dropped) */
 function columnSections(document, items, layout) {
-  const columns = items.map((list) => columnModel(document, list.filter((i) => i.kind !== 'divider')));
-  return columns.map((col, k) => ({
-    type: 'section',
-    styles: [],
-    nodes: col.flatMap((it) => (it.type === 'default' ? it.nodes : [it.el])),
-    column: k + 1,
-    ...(k ? {} : { layout }),
-  }));
+  return items.flatMap((list, k) => {
+    const parts = [[]];
+    list.forEach((i) => {
+      if (i.kind === 'divider') parts.push([]);
+      else parts[parts.length - 1].push(i);
+    });
+    return parts.filter((part) => part.length).map((part, p) => {
+      const col = columnModel(document, part);
+      return {
+        type: 'section',
+        styles: p ? ['divider'] : [],
+        nodes: col.flatMap((it) => (it.type === 'default' ? it.nodes : [it.el])),
+        column: k + 1,
+        ...(k || p ? {} : { layout }),
+      };
+    });
+  });
 }
 
 /* model items of one column: default runs merged, blocks / nested containers as items */

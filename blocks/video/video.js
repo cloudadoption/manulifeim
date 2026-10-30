@@ -15,8 +15,9 @@
  * is the transcript. A bulleted list of links (e.g. "Download transcript (PDF)") is shown as
  * links under the poster. Without a player link the block shows the poster and caption only.
  *
- * Variant small (live videoSmall in a column): the caption sits on the poster under the play
- * button. Two side by side: put them in one section with Section Metadata Layout 6-6.
+ * The caption sits on the poster under the play button (live videoSmall, every live video).
+ * Variant small (a video in a column): the column sets the width. Two side by side: put them in
+ * one section with Section Metadata Layout 6-6.
  */
 import { isVideoUrl, openVideo } from '../../scripts/video.js';
 import { fetchPlaceholders, placeholder } from '../../scripts/placeholders.js';
@@ -64,7 +65,6 @@ export default async function decorate(block) {
   const {
     picture, video, transcript, caption, links,
   } = readContent(block);
-  const small = block.classList.contains('small');
   const ph = await fetchPlaceholders();
   const figure = document.createElement('figure');
   figure.className = 'video-figure';
@@ -94,15 +94,14 @@ export default async function decorate(block) {
   figure.append(media);
 
   if (caption.length) {
-    // small: the caption is part of the poster (inside the button, after the play label)
-    const figcaption = document.createElement(small ? 'span' : 'figcaption');
-    figcaption.className = 'video-caption';
+    // the caption is part of the poster (inside the button, after the play label)
+    const text = document.createElement('span');
+    text.className = 'video-caption';
     caption.forEach((n) => {
-      if (n.nodeType === 1 && n.tagName === 'P') figcaption.append(...n.childNodes);
-      else figcaption.append(n);
+      if (n.nodeType === 1 && n.tagName === 'P') text.append(...n.childNodes);
+      else text.append(n);
     });
-    if (small) media.append(figcaption);
-    else figure.append(figcaption);
+    media.append(text);
   }
   block.replaceChildren(figure);
   if (links) {

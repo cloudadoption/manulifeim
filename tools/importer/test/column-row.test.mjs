@@ -3,7 +3,8 @@
 /*
  * Offline tests: a live column-container whose columns are all filled, one holding several
  * components with a block among them (Pension Barometer: chart + promo, form beside a promo),
- * becomes one section per column with Section Metadata Column 1, 2 (Layout on the first;
+ * becomes one section per column with Section Metadata Column 1, 2 (Layout on the first; a divider
+ * inside a column continues it in a section with the same Column and Style divider;
  * scripts/section-columns.js merges them). In a flow it keeps the old model. A column with one
  * component each stays a Layout section. Fixture: tools/importer/test/fixtures/column-row.html.
  * No browser, no network.
@@ -46,9 +47,10 @@ test('chart with a promo under it: Column 1 (Layout 6-6) | Column 2 with text, i
   ]);
 });
 
-test('form beside a promo: the form and its texts in Column 1, the divider inside the column dropped', () => {
+test('form beside a promo: the form in Column 1, the text after the divider continues Column 1 with Style divider', () => {
   assert.deepEqual(view(toSections(itemsFor(document, [containers()[1]]))), [
-    { meta: { Layout: '6-6', Column: '1' }, nodes: ['p', '[marketoForm]', 'p'] },
+    { meta: { Layout: '6-6', Column: '1' }, nodes: ['p', '[marketoForm]'] },
+    { meta: { Style: 'divider', Column: '1' }, nodes: ['p'] },
     { meta: { Column: '2' }, nodes: ['[simpleBanner]'] },
   ]);
 });

@@ -1,8 +1,9 @@
 /* eslint-disable */
 /* global WebImporter */
 /*
- * Parser: table. Live: .table2 (Table, card + headerRowColumn) and the rich-text
- * .table.parbase tables of older articles.
+ * Parser: table. Live: .table2 (Table, card + headerRowColumn), the rich-text
+ * .table.parbase tables of older articles and .strategyDetailTable (the card of strategy links on
+ * the capability pages: no header row).
  * Project contract (block-authoring.md, blocks/table/table.js); library Table shape
  * (one block row per data row; "no header" variant name is the project's `no-header`):
  *   | Table (card, header-row-column) |
@@ -22,9 +23,9 @@ const MODES = {
 };
 
 export default function parse(element, { document }) {
-  const main = element.querySelector('.table2__main');
+  const main = element.querySelector('.table2__main, .strategyDetailTable__main');
   const variants = [];
-  if (main && main.classList.contains('table2__main--card')) variants.push('card');
+  if (main && /__main--card/.test(main.className)) variants.push('card');
   const style = main ? main.getAttribute('data-table-style') : '';
   const table = element.querySelector('table');
   if (!table) {
