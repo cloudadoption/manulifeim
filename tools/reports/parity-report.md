@@ -2,6 +2,14 @@
 
 local dev server (localhost:3000, local code + preview content) vs offline mirror (localhost:3000/tools/importer/snapshots/mirror), full-page screenshots and computed styles at 1440 and 390 (spot checks at 700/1000).
 
+## 30 October 2026, round-8 follow-ups (main fea6684, staged /drafts/repairs9/)
+
+- Header 801-1100px: the search box shrinks first (live 85px at 801, 294px at 1010), so the buttons stay in the bar; search, button group and Register at the live x positions at 801, 900, 1010, 1101 and 1440. Crops (live / before / after, stacked): `parity/r9-header-801.jpg`, `parity/r9-header-900.jpg`, `parity/r9-header-1010.jpg`. The mirror leaves the live search widget blank; its box takes the same space.
+- Pension Barometer consent text: a section with the same `Column` number continues the column, `Style: divider` draws the rule (64px above and below at 1440, 32px at 390, as live). Staged. Crop: `parity/r9-pension-consent-1440.jpg`.
+- Small video rows: 24px under the poster (live .videoKicker margin), no row gap; emerging-markets rows 252px apart at 1440 (were 228), every video at the live position at 1440, 900, 800 and 390. Code only. Crop: `parity/r9-emerging-videos-1440.jpg`.
+- Single videos: the Video default has the live videoSmall look (16:9, caption on the poster); in articles 792px (content column) or 690px in a centered section at 1440, as live, on the 4 pages. Code only, no content change. Crops: `parity/r9-video-single-centered-1440.jpg`, `parity/r9-video-single-wide-1440.jpg`.
+- capabilities/fixed-income and strategies/global-fixed-income: the live strategyDetailTable came in as a block named after its first row; now Table (card, no-header) with the 10 live rows (importer maps it; a last link-only row stays a row). Staged.
+
 ## 30 October 2026, visual gaps (main 92bf463, staged /drafts/repairs8/)
 
 - Title component: live has no size option; the size follows the context. Outside articles every title heading is 32px/300 (24px up to 600px); in articles (`.viewpoint-content .title`) h2 48px, h3 32px, h4 24px, h5/h6 16px, 300, at every width. Model: Section Metadata `Style: section-title` (the section's first heading; in an article flow the title starts a section that keeps the text after it). Measured after: uneven-recovery h2 48/300 (was 32/400), fixed-income h1 and h4 32/300 (were 48/300 and 16/700), multi-asset h3 32/300 (were 24/400); line breaks as live; 6px more above the article title than live. 252 published pages staged. Crops: `parity/r8-title-article-1440.jpg`, `parity/r8-title-plain-1440.jpg`.
