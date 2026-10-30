@@ -110,10 +110,6 @@
 }
 
 @media (width >= 801px) {
-  main > .section.divider.table-container[data-nav-title] > .default-content-wrapper:first-child > h2:first-child + h3 {
-    margin-top: 64px;
-  }
-
   :root {
     --spacing-section-y: 24px;
     --spacing-section-x: 32px;
@@ -835,6 +831,10 @@ main > .section[data-layout]:last-child {
 }
 
 @media (width >= 801px) {
+  main > .section.divider.table-container[data-nav-title] > .default-content-wrapper:first-child > h2:first-child + h3 {
+    margin-top: 64px;
+  }
+
   body > header {
     background-color: var(--color-white);
   }
