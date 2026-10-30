@@ -9,8 +9,24 @@
  * Colour: per-row third cell, else block variant, else green.
  * Rows become promo items and cells promo-image / promo-content / promo-colour in place
  * (Canvas edits them); a plain link alone in its paragraph is the arrow link.
+ * Video promo: the link is a Brightcove player URL ("Watch now"); a link named "Transcript"
+ * in the same cell becomes the player's transcript (scripts/video.js opens both in a modal).
  */
 import { isMediaCell } from '../../scripts/block-utils.js';
+import { isVideoUrl } from '../../scripts/video.js';
+
+/** Video promo: the "Transcript" link moves onto the player link (shown in the modal). */
+function attachTranscript(cell) {
+  const links = [...cell.querySelectorAll('a[href]')];
+  const video = links.find((a) => isVideoUrl(a.getAttribute('href')));
+  const transcript = links.find((a) => a !== video && /^transcript$/i.test(a.textContent.trim()));
+  if (!video || !transcript) return;
+  video.dataset.transcript = transcript.href;
+  const p = transcript.closest('p');
+  const ownParagraph = p && p.parentElement === cell
+    && p.textContent.trim() === transcript.textContent.trim();
+  (ownParagraph ? p : transcript).remove();
+}
 
 const COLOURS = ['green', 'navy', 'blue', 'gold', 'violet', 'white'];
 
@@ -33,6 +49,7 @@ export default function decorate(block) {
         [...cell.children].forEach((el) => {
           if (el.tagName === 'P' && !el.textContent.trim() && !el.querySelector('picture')) el.remove();
         });
+        attachTranscript(cell);
         const heading = cell.querySelector('h1, h2, h3, h4, h5, h6');
         if (heading) {
           heading.id = heading.id || `promo-title-${Math.random().toString(36).slice(2, 8)}`;

@@ -1,0 +1,91 @@
+/* tabs (navigationTabs): tab list with an underlined active tab, one panel visible;
+   a panel with an image puts text and image side by side from 801px. */
+
+.tabs {
+  margin: 32px 0;
+}
+
+.tabs .tabs-list {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--color-border-strong);
+}
+
+.tabs .tabs-tab {
+  flex: 0 0 auto;
+  padding: 12px 16px;
+  margin-bottom: -1px;
+  font: inherit;
+  font-weight: 600;
+  line-height: 24px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-bottom: 4px solid transparent;
+}
+
+.tabs .tabs-tab[aria-selected='true'] {
+  color: var(--color-text);
+  border-bottom-color: var(--color-primary);
+}
+
+.tabs .tabs-tab:hover {
+  color: var(--color-text);
+}
+
+.tabs .tabs-panel {
+  padding: 32px 0 0;
+}
+
+.tabs .tabs-panel[hidden] {
+  display: none;
+}
+
+.tabs .tabs-tab:focus-visible,
+.tabs .tabs-panel:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.tabs .tabs-panel-text > :first-child {
+  margin-top: 0;
+}
+
+.tabs .tabs-panel-image {
+  margin-top: 24px;
+}
+
+.tabs .tabs-panel-image picture,
+.tabs .tabs-panel-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.tabs .tabs-panel-image p {
+  margin: 0;
+}
+
+/* authoring (Canvas): rows stay visible */
+.tabs .tabs-item {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-border-strong);
+}
+
+@media (width >= 801px) {
+  .tabs .tabs-panel-media:not([hidden]) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  .tabs .tabs-panel-image {
+    margin-top: 0;
+  }
+}
