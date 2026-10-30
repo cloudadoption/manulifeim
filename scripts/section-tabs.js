@@ -17,12 +17,24 @@
 
 let count = 0;
 
+/**
+ * The tab label as authored. Edge Delivery stores a Section Metadata value that holds commas as
+ * a list and delivers it joined with "," (DA "June 15, 2023" -> data-tab "June 15,2023"), so
+ * every comma gets its space back; a label without a comma is only trimmed.
+ * @param {string} value data-tab value
+ * @returns {string}
+ */
+export function tabLabel(value) {
+  return String(value || '').split(',').map((part) => part.trim()).filter(Boolean)
+    .join(', ');
+}
+
 /** Runs of consecutive `main > div[data-tab]` sections: [[{ label, sections: [] }, ...], ...] */
 export function tabGroups(main) {
   const groups = [];
   let group = null;
   [...main.children].forEach((section) => {
-    const label = section.tagName === 'DIV' ? (section.dataset.tab || '').trim() : '';
+    const label = section.tagName === 'DIV' ? tabLabel(section.dataset.tab) : '';
     if (!label) {
       group = null;
       return;

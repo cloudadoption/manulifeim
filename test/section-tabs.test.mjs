@@ -14,11 +14,13 @@ function setup(hash = '') {
 let n = 0;
 const fresh = async () => {
   n += 1;
-  const [{ default: build, tabGroups }, { default: decorate }] = await Promise.all([
+  const [{ default: build, tabGroups, tabLabel }, { default: decorate }] = await Promise.all([
     import(`../scripts/section-tabs.js?t=${n}`),
     import(`../blocks/tabs/tabs.js?t=${n}`),
   ]);
-  return { build, tabGroups, decorate };
+  return {
+    build, tabGroups, tabLabel, decorate,
+  };
 };
 
 // sections as Edge Delivery renders them: Section Metadata Tab -> data-tab, Layout -> data-layout
@@ -154,4 +156,21 @@ test('the label | content form still works next to a section tab set', async () 
   const sections = decorateBlock(main, decorate);
   assert.equal(sections.querySelectorAll('[role=tab]').length, 3);
   assert.notEqual(classic.querySelector('[role=tab]').id, sections.querySelector('[role=tab]').id);
+});
+
+test('a label with a comma reads as authored: the delivered list value gets its spaces back', async () => {
+  setup();
+  const { build, decorate, tabLabel } = await fresh();
+  // US Econometer: DA "June 15, 2023", delivered data-tab "June 15,2023"
+  assert.equal(tabLabel('June 15,2023'), 'June 15, 2023');
+  assert.equal(tabLabel('June 15, 2023'), 'June 15, 2023');
+  assert.equal(tabLabel('A, B,C'), 'A, B, C');
+  // labels without a comma stay as they are
+  ['Developed-market equites', 'Alternatives/real assets', '1985–1999', 'Consumers (ex-auto)'].forEach((l) => assert.equal(tabLabel(l), l));
+  assert.equal(tabLabel('  Fixed income '), 'Fixed income');
+  const main = document.querySelector('main');
+  main.innerHTML = '<div data-tab="June 15,2023" class="centered"><h1>June 15, 2023</h1></div><div data-tab="May 8,2023" class="centered"><h1>May 8, 2023</h1></div>';
+  build(main);
+  const block = decorateBlock(main, decorate);
+  assert.deepEqual([...block.querySelectorAll('[role=tab]')].map((t) => t.textContent), ['June 15, 2023', 'May 8, 2023']);
 });
