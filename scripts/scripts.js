@@ -274,6 +274,12 @@ async function loadLazy(doc) {
 
   if (footer) await loadFooter(footer);
 
+  // Brightcove player links open the player in a modal (blocks/video does its own poster)
+  if (main && main.querySelector('a[href*="players.brightcove.net"]')) {
+    const { decorateVideoLinks } = await import('./video.js');
+    decorateVideoLinks(main);
+  }
+
   if (main && getMetadata('links').trim().toLowerCase() === 'new-tab') {
     const { default: openLinksInNewTab } = await import('./link-target.js');
     openLinksInNewTab(main, new URL(window.location.href));

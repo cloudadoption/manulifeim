@@ -1,7 +1,7 @@
 {
- "total": 24,
+ "total": 28,
  "offset": 0,
- "limit": 24,
+ "limit": 28,
  "data": [
   {
    "Key": "readMore",
@@ -98,6 +98,22 @@
   {
    "Key": "slidePause",
    "Text": "Slide {n}: pause"
+  },
+  {
+   "Key": "videoPlay",
+   "Text": "Play video"
+  },
+  {
+   "Key": "videoDialog",
+   "Text": "Video"
+  },
+  {
+   "Key": "videoClose",
+   "Text": "Close"
+  },
+  {
+   "Key": "videoTranscript",
+   "Text": "Transcript"
   }
  ],
  ":type": "sheet"
