@@ -41,6 +41,10 @@ export const BLOCKS = [
   { name: 'hero-page-header', instances: ['.heroHeader2', '.pressReleaseRoot__header'] },
   { name: 'section-nav-anchors', instances: ['.innerNavigationBar'] },
   { name: 'section-nav-links', instances: ['.pressCategories__inner'] },
+  // before figure: a Tabs block takes the figures of its panels
+  { name: 'tabs', instances: ['.navigationTabs'] },
+  { name: 'strategy-section', instances: ['section.strategyDetail__section'] },
+  { name: 'video', instances: ['.videoKicker'] },
   { name: 'columns', instances: ['.column-container[data-mim-columns]'] },
   { name: 'cards-tiles', instances: ['.infoContainer'] },
   { name: 'cards-articles', instances: ['.articleGroup'] },

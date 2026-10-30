@@ -20,9 +20,10 @@ const CHROME = [
   'script', 'style', 'noscript', 'link',
 ];
 
-/* junk inside <main> (also dropped by the page model; removed here for safety) */
+/* junk inside <main> (also dropped by the page model; removed here for safety);
+   .strategyDetail is content (strategy-section parser), only its follow button is UI */
 const JUNK = [
-  '.ghost', '.trending-topics2', '.consentModal', '.subscribe', '.strategyDetail',
+  '.ghost', '.trending-topics2', '.consentModal', '.subscribe', '.strategyDetail__follow',
   '.viewpoint-detail__print-authors', '.share-controls', '.imageToggle', '.strategyTag',
   '.sort-viewpoints', '.caseStudyDetail__bottom', '.pressCategories__wrapper--stuckable',
   '.cc-select__bg', 'iframe[src*="onetrust"]',
