@@ -64,10 +64,10 @@ beforeEach(() => {
 const blockName = (table) => table.querySelector('tr th').textContent;
 const rows = (table) => [...table.querySelectorAll(':scope > tr')].slice(1);
 
-test('page model: videoKicker -> video block; tab sets with figure panels -> tabs, others stay default; strategyDetail -> its panels', () => {
+test('page model: videoKicker -> video block; tab sets with figure panels -> tabs, others -> Tab sections; strategyDetail -> its panels', () => {
   assert.deepEqual(classify(document.querySelector('#fx-video .videoKicker')), { kind: 'block', name: 'video' });
   assert.deepEqual(classify(document.querySelector('#fx-tabs .navigationTabs')), { kind: 'block', name: 'tabs' });
-  assert.deepEqual(classify(document.querySelector('#fx-tabs-table .navigationTabs')), { kind: 'default', name: 'navigationTabs' });
+  assert.deepEqual(classify(document.querySelector('#fx-tabs-table .navigationTabs')), { kind: 'tabSections' });
   assert.deepEqual(classify(document.querySelector('#fx-strategy .strategyDetail')), { kind: 'strategy' });
   const items = itemsFor(document, [document.querySelector('#fx-strategy .strategyDetail')]);
   // every <hr> is a divider item (repeats collapse into one Style: divider in toSections)

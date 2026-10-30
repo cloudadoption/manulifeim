@@ -16,7 +16,9 @@
  *   (e.g. text in an fw-8 column next to an empty fw-4 one, or text next to a form)
  * - otherwise the columns are flattened in order
  * - junk components are dropped
- * - navigationTabs whose panels hold only text and figures -> Tabs block (others flatten)
+ * - navigationTabs whose panels hold only text and figures -> Tabs block; other navigationTabs
+ *   with 2+ panels -> one section per panel with Section Metadata Tab: <label> (the site groups
+ *   consecutive Tab sections into one tab set, scripts/section-tabs.js), blocks kept
  * - strategyDetail -> one section per data panel (Key facts, Performance, ...), with the
  *   panel's sectionBreak as Id / Nav Title and its divider (strategy-section parser)
  *
@@ -113,6 +115,7 @@ export function classify(el) {
   if (cl.includes('column-container')) return { kind: 'columns' };
   if (cl.includes('strategyDetail')) return { kind: 'strategy' };
   if (cl.includes('navigationTabs') && tabsBlock(el)) return { kind: 'block', name: 'tabs' };
+  if (cl.includes('navigationTabs') && el.querySelectorAll('.navigationTabs__contentItem').length > 1) return { kind: 'tabSections' };
   if (cl.includes('table') && cl.includes('parbase')) return { kind: 'block', name: 'table' };
   if (cl.includes('search') && !cl.includes('search-mim')) return { kind: 'block', name: 'search' };
   const blockClass = cl.find((c) => BLOCK_COMPONENTS[c] && c !== 'search');
@@ -360,8 +363,30 @@ function expandStrategy(el) {
   return items;
 }
 
+let tabPanels = 0;
+
+/* navigationTabs whose panels hold blocks: the title as default content, then every panel's
+   items tagged with its label (tab) and a panel key (tabPanel); toSections gives each panel its
+   own section(s) with Section Metadata Tab. Dividers and breaks inside a panel are dropped. */
+function expandTabSections(document, el) {
+  const out = [];
+  const title = text(el.querySelector('.navigationTabs__title'));
+  if (title) out.push({ type: 'default', nodes: [h(document, 'h2', title)] });
+  el.querySelectorAll('.navigationTabs__contentItem').forEach((item) => {
+    const label = text(item.querySelector('.navigationTabs__contentTitle'));
+    const inner = item.querySelector('.navigationTabs__contentInner') || item;
+    if (!label) return;
+    tabPanels += 1;
+    itemsFor(document, [...inner.children])
+      .filter((it) => it.type !== 'divider' && it.type !== 'sectionBreak')
+      .forEach((it) => out.push({ ...it, tab: label, tabPanel: tabPanels }));
+  });
+  return out;
+}
+
 function itemFor(document, i) {
   if (i.kind === 'strategy') return expandStrategy(i.el);
+  if (i.kind === 'tabSections') return expandTabSections(document, i.el);
   if (i.kind === 'divider') return [{ type: 'divider' }];
   if (i.kind === 'sectionBreak') return [{ type: 'sectionBreak', el: i.el }];
   if (i.kind === 'columns') return expandColumns(document, i.el);
@@ -389,16 +414,22 @@ export function toSections(items, opts = {}) {
   const sections = [];
   let pending = { styles: [] };
   let current = null;
-  const start = () => {
+  const start = (it = {}) => {
     current = {
       nodes: [], styles: [...pending.styles], id: pending.id, navTitle: pending.navTitle,
     };
+    if (it.tab) {
+      current.tab = it.tab;
+      current.tabPanel = it.tabPanel;
+    }
     pending = { styles: [] };
     sections.push(current);
     return current;
   };
   items.forEach((item) => {
     let it = item;
+    // a tab panel never shares a section with other content or another panel
+    if (current && current.tabPanel !== it.tabPanel) current = null;
     if (it.type === 'divider') {
       if (!pending.styles.includes('divider')) pending.styles.push('divider');
       current = null;
@@ -414,12 +445,14 @@ export function toSections(items, opts = {}) {
     if (it.type === 'section' && it.layout && opts.flow) {
       // flow templates (article, press release body) keep column content in the flow;
       // their column widths come from styles/templates.css
-      it = { type: 'default', nodes: it.nodes };
+      it = {
+        type: 'default', nodes: it.nodes, tab: it.tab, tabPanel: it.tabPanel,
+      };
     }
     if (it.type === 'section') {
       // explicit section (e.g. article sidebar) with its own styles
       current = null;
-      const sec = start();
+      const sec = start(it);
       it.styles.forEach((st) => { if (!sec.styles.includes(st)) sec.styles.push(st); });
       if (it.layout) sec.layout = it.layout;
       sec.nodes.push(...it.nodes);
@@ -428,10 +461,13 @@ export function toSections(items, opts = {}) {
     }
     const centered = !!it.centered;
     let sec;
-    if (opts.flow && current && !centered && !current.centered) {
+    if (it.tab && current && !current.layout) {
+      // the items of one panel share its section (centered when its first item is)
+      sec = current;
+    } else if (opts.flow && current && !centered && !current.centered) {
       sec = current;
     } else {
-      sec = start();
+      sec = start(it);
       if (centered) {
         sec.centered = true;
         if (!sec.styles.includes('centered')) sec.styles.push('centered');
@@ -439,7 +475,7 @@ export function toSections(items, opts = {}) {
     }
     if (it.type === 'default') sec.nodes.push(...it.nodes);
     else sec.nodes.push(it.el);
-    current = opts.flow && !centered ? sec : null;
+    current = (opts.flow && !centered) || it.tab ? sec : null;
   });
   return sections.filter((s) => s.nodes.length);
 }
@@ -462,6 +498,7 @@ export function renderSections(document, sections) {
     if (s.navTitle) meta['Nav Title'] = s.navTitle;
     if (s.id && (!s.navTitle || s.id !== slug(s.navTitle))) meta.Id = s.id;
     if (s.layout) meta.Layout = s.layout;
+    if (s.tab) meta.Tab = s.tab;
     div.setAttribute('data-mim', JSON.stringify(meta));
     s.nodes.forEach((n) => div.append(n));
     page.append(div);
