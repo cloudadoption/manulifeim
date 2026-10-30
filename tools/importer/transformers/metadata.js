@@ -29,9 +29,11 @@ import {
 
 const SUFFIX = / \| Manulife Investment Management$/;
 
-function headMeta(document, attr, key) {
+function headMeta(document, attr, key, raw = false) {
   const m = document.querySelector(`head meta[${attr}="${key}"]`) || document.querySelector(`meta[${attr}="${key}"]`);
-  return m ? norm(m.getAttribute('content')) : '';
+  if (!m) return '';
+  // a URL keeps its inner whitespace: DAM names can hold double spaces ("Viewpoint -  How …")
+  return raw ? (m.getAttribute('content') || '').trim() : norm(m.getAttribute('content'));
 }
 
 function pageTitle(document) {
@@ -127,7 +129,7 @@ function collect(document, templateName, ctx) {
 
   // a second URL glued into the host (live "https://www.manulifeim.comhttps://author-tmp...")
   // is no image; a URL in the query string is fine
-  const og = headMeta(document, 'property', 'og:image');
+  const og = headMeta(document, 'property', 'og:image', true);
   if (og && !/^(?:https?:)?\/\/[^/?#]*?https?:?\/\//i.test(og)) meta.Image = og;
 
   const canonical = document.querySelector('head link[rel="canonical"]') || document.querySelector('link[rel="canonical"]');
