@@ -14,6 +14,7 @@ import {
   loadCSS,
 } from './aem.js';
 import { isChromePath } from './dom-utils.js';
+import buildSectionTabs from './section-tabs.js';
 
 if (window.trustedTypes && window.trustedTypes.createPolicy) {
   const innerTT = window.trustedTypes.createPolicy('tt-inner', {
@@ -133,6 +134,8 @@ async function loadFonts() {
  */
 function buildAutoBlocks(main) {
   try {
+    // sections with Section Metadata `Tab`: one tab set per run (not grouped in Canvas)
+    if (!isAuthoring()) buildSectionTabs(main);
     // auto load `*/fragments/*` references
     const fragments = [...main.querySelectorAll('a[href*="/fragments/"]')].filter((f) => f.pathname.includes('/fragments/') && !f.closest('.fragment'));
     if (fragments.length > 0) {

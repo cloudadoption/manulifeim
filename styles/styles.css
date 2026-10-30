@@ -632,6 +632,12 @@ button.button.accent:focus-visible {
   padding-bottom: var(--spacing-section-edge);
 }
 
+/* section tabs (scripts/section-tabs.js, blocks/tabs variant sections): closed panels; beats
+   the display of the section layouts */
+main > .section[data-tab][hidden] {
+  display: none;
+}
+
 /* default content of component-root pages comes from a live column-container, whose
    container adds 24px side padding up to 800px (flow templates style their own body;
    page titles are live title components without it) */

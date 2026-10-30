@@ -1,5 +1,6 @@
 /* tabs (navigationTabs): tab list with an underlined active tab, one panel visible;
-   a panel with an image puts text and image side by side from 801px. */
+   a panel with an image puts text and image side by side from 801px.
+   Variant sections: only the tab list; the panels are the following sections. */
 
 .tabs {
   margin: 32px 0;
@@ -88,4 +89,17 @@
   .tabs .tabs-panel-image {
     margin-top: 0;
   }
+}
+
+/* variant sections: the tab list section sits right above the open panel section */
+.tabs.sections {
+  margin: 0;
+}
+
+main > .section.tabs-container > .tabs-wrapper {
+  padding-bottom: 0;
+}
+
+main > .section.tabs-container ~ .section[data-tab] > div:first-child {
+  padding-top: 32px;
 }
