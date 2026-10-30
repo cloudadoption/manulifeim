@@ -56,6 +56,10 @@
   /* type scale (base = live <= 600; the larger steps are set at 601px) */
   --font-size-display: 48px;
   --font-size-page-title: 40px;
+
+  /* live Title component in articles: fixed at every width */
+  --font-size-title-xl: 48px;
+  --font-size-title-l: 32px;
   --font-size-h2: 24px;
   --font-size-h3: 24px;
   --font-size-h4: 16px;
@@ -704,6 +708,14 @@ main > .section.narrow > div > * {
   margin-inline: auto;
 }
 
+/* section-title (live Title component): the section's first heading, light, 24px (32px from 601px)
+   at any level; in articles the size follows the level (styles/templates.css) */
+main > .section.section-title > .default-content-wrapper:first-child > :is(h1, h2, h3, h4, h5, h6):first-child {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-light);
+  line-height: var(--line-height-heading);
+}
+
 /* title-row (live richTitle): a section heading with an optional link at the right; the
    live component has no column-container side padding */
 main > .section.title-row > .default-content-wrapper {
@@ -803,6 +815,24 @@ main > .section[data-layout]:last-child {
   padding: 0;
 }
 
+/* section columns (scripts/section-columns.js): each column holds several wrappers, 32px apart
+   (live components in a column-container column) */
+main > .section > .section-column > div + div {
+  margin-top: 32px;
+}
+
+/* the divider rule of a Layout section spans the row */
+main > .section.divider[data-layout]::before {
+  flex: 0 0 100%;
+}
+
+/* centered + Layout (live quarter-width container with columns, e.g. two small videos): the
+   row is 75% of the content from 801px; the blocks keep their own width and alignment */
+main > .section.centered[data-layout] > div > * {
+  width: auto;
+  text-align: start;
+}
+
 @media (width >= 601px) {
   main > .section.narrow > div {
     padding-inline: 32px;
@@ -848,6 +878,13 @@ main > .section[data-layout]:last-child {
     width: var(--width-centered);
   }
 
+  /* an image paragraph in a centered tab panel (live image component in a quarter-width tab,
+     e.g. US Econometer): its natural width, from the column start up to the content edge */
+  main > .section.centered[data-tab] > .default-content-wrapper > p > picture:only-child > img {
+    width: auto;
+    max-width: calc(100% * 7 / 6);
+  }
+
   main > .section.narrow > div {
     padding-inline: 64px;
   }
@@ -857,6 +894,17 @@ main > .section[data-layout]:last-child {
     justify-content: space-between;
     gap: 0;
     padding-inline: var(--spacing-section-x);
+  }
+
+  /* 12.5% of the content on each side, after the section padding */
+  main > .section.centered[data-layout] {
+    padding-inline: calc(var(--spacing-section-x) * 0.75 + 12.5%);
+  }
+
+  /* a short row keeps its wrappers at the left (live empty columns keep their place) */
+  main > .section[data-layout="3-3-3-3"] {
+    justify-content: flex-start;
+    column-gap: calc(64px / 3);
   }
 
   main > .section[data-layout="3-3-3-3"] > div {

@@ -11,8 +11,12 @@
  * |   [Transcript](…/transcript.srt) (optional)                                         |
  *
  * Content may also be split over several rows; it is read by kind, not by position.
- * The player link is the one to players.brightcove.net; any other link is the transcript.
- * Without a player link the block shows the poster and caption only.
+ * The player link is the one to players.brightcove.net; any other link in its own paragraph
+ * is the transcript. A bulleted list of links (e.g. "Download transcript (PDF)") is shown as
+ * links under the poster. Without a player link the block shows the poster and caption only.
+ *
+ * Variant small (live videoSmall in a column): the caption sits on the poster under the play
+ * button. Two side by side: put them in one section with Section Metadata Layout 6-6.
  */
 import { isVideoUrl, openVideo } from '../../scripts/video.js';
 import { fetchPlaceholders, placeholder } from '../../scripts/placeholders.js';
@@ -20,8 +24,13 @@ import { fetchPlaceholders, placeholder } from '../../scripts/placeholders.js';
 /** Sorts the authored content into poster, player link, transcript link and caption nodes. */
 function readContent(block) {
   const found = {
-    picture: null, video: null, transcript: null, caption: [],
+    picture: null, video: null, transcript: null, caption: [], links: null,
   };
+  const isLinkList = (el) => el && el.matches('ul, ol') && el.children.length
+    && [...el.children].every((li) => {
+      const a = li.querySelector('a[href]');
+      return a && li.textContent.trim() === a.textContent.trim();
+    });
   [...block.querySelectorAll(':scope > div > div')].forEach((cell) => {
     [...cell.childNodes].forEach((node) => {
       if (node.nodeType === 3 && !node.textContent.trim()) return;
@@ -29,6 +38,10 @@ function readContent(block) {
       const picture = el && (el.matches('picture') ? el : el.querySelector('picture, img'));
       if (picture && !found.picture && !(el.textContent || '').trim()) {
         found.picture = picture.closest('picture') || picture;
+        return;
+      }
+      if (isLinkList(el) && !found.links) {
+        found.links = el;
         return;
       }
       const links = el ? [...(el.matches('a') ? [el] : el.querySelectorAll('a[href]'))] : [];
@@ -49,8 +62,9 @@ function readContent(block) {
 
 export default async function decorate(block) {
   const {
-    picture, video, transcript, caption,
+    picture, video, transcript, caption, links,
   } = readContent(block);
+  const small = block.classList.contains('small');
   const ph = await fetchPlaceholders();
   const figure = document.createElement('figure');
   figure.className = 'video-figure';
@@ -80,15 +94,21 @@ export default async function decorate(block) {
   figure.append(media);
 
   if (caption.length) {
-    const figcaption = document.createElement('figcaption');
+    // small: the caption is part of the poster (inside the button, after the play label)
+    const figcaption = document.createElement(small ? 'span' : 'figcaption');
     figcaption.className = 'video-caption';
     caption.forEach((n) => {
       if (n.nodeType === 1 && n.tagName === 'P') figcaption.append(...n.childNodes);
       else figcaption.append(n);
     });
-    figure.append(figcaption);
+    if (small) media.append(figcaption);
+    else figure.append(figcaption);
   }
   block.replaceChildren(figure);
+  if (links) {
+    links.classList.add('video-links');
+    block.append(links);
+  }
   if (!video && transcript) {
     // no player: the transcript stays a plain link under the poster
     const p = document.createElement('p');

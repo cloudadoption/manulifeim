@@ -147,13 +147,23 @@ function viewpointsListModel(document, main) {
   return toSections(items, {});
 }
 
+/* press release: the live title component holding the h1 is the release title (date, h1, body
+   flow; styles/templates.css), not a Style section-title section. It is read as rich text, as
+   before. */
+function pressReleaseModel(document, main) {
+  main.querySelectorAll('.title').forEach((t) => {
+    if (t.querySelector('h1')) t.classList.replace('title', 'text');
+  });
+  return componentRootModel(document, main, { flow: true });
+}
+
 const MODELS = {
   viewpoints: (d, m) => (m.querySelector('.viewpointsList2') ? viewpointsListModel(d, m) : componentRootModel(d, m, {})),
   viewpoint: articleModel,
   'case-study-detail': caseStudyDetailModel,
   'case-study-list': caseStudyListModel,
   'press-release-root': pressRootModel,
-  'press-release': (d, m) => componentRootModel(d, m, { flow: true }),
+  'press-release': pressReleaseModel,
 };
 
 function buildSections(document, templateName) {

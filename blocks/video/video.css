@@ -72,6 +72,66 @@
   line-height: 24px;
 }
 
+.video .video-caption {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+/* small (live videoSmall in a column): 16:9 poster, the play button, its label and the
+   caption at the bottom over a full-height navy gradient; the column sets the width */
+.video.small {
+  max-width: none;
+  margin: 0;
+}
+
+.video.small .video-media {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  aspect-ratio: 16 / 9;
+  padding: 24px;
+  box-shadow: var(--shadow-bar);
+}
+
+.video.small .video-media picture {
+  position: absolute;
+  inset: 0;
+}
+
+.video.small .video-media img {
+  height: 100%;
+  object-fit: cover;
+}
+
+.video.small button.video-media::after {
+  background: linear-gradient(to bottom, rgb(40 43 62 / 0%), var(--color-text));
+}
+
+.video.small .video-play-icon,
+.video.small .video-play-label,
+.video.small .video-caption {
+  position: relative;
+  inset: auto;
+  z-index: 1;
+  flex: none;
+}
+
+.video.small .video-play-label {
+  margin-top: 19px;
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-light);
+  line-height: var(--line-height-heading);
+}
+
+.video.small .video-caption {
+  margin: 0;
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+  color: var(--color-white);
+}
+
 .video button.video-media:hover .video-play-icon,
 .video button.video-media:focus-visible .video-play-icon {
   background: var(--color-primary-light);
@@ -82,13 +142,42 @@
   outline-offset: 2px;
 }
 
-.video .video-caption {
-  margin-top: 8px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--color-text-muted);
-}
-
 .video .video-transcript {
   margin: 8px 0 0;
+}
+
+/* links under the poster (live linkList2 after the video) */
+.video .video-links {
+  margin: 0;
+  padding: 10px 16px 0;
+  list-style: none;
+}
+
+.video .video-links li {
+  margin: 14px 0 0;
+}
+
+.video .video-links a {
+  display: inline-flex;
+  align-items: flex-start;
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-small);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.video .video-links a::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin: 3px 5px 0 0;
+  background-color: currentcolor;
+  mask: url("../../icons/arrow-right-circle.svg") center / contain no-repeat;
+}
+
+.video .video-links a:hover,
+.video .video-links a:focus {
+  text-decoration: underline;
 }

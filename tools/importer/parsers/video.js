@@ -10,6 +10,8 @@
  *   |   caption (optional) / [Transcript](url) (optional, from data-transcript-url)      |
  * Poster, player link, caption and transcript share the one content cell.
  * Without a video id the component stays default content (poster + caption).
+ * In a row of small videos (utils/page-model.js videoRow: data-mim-video-small) the block is
+ * Video (small) and the column's links (ul[data-mim-video-links]) follow as a bulleted list.
  */
 import {
   h, image, block, text, linkParagraph, richText,
@@ -55,5 +57,11 @@ export default function parse(element, { document }) {
   if (caption) content.push(h(document, 'p', caption));
   const transcript = transcriptUrl(element);
   if (transcript) content.push(linkParagraph(document, transcript, 'Transcript'));
-  element.replaceWith(block(document, 'Video', [], [[content]]));
+  const links = element.querySelector('ul[data-mim-video-links]');
+  if (links) {
+    links.removeAttribute('data-mim-video-links');
+    content.push(links);
+  }
+  const variants = element.hasAttribute('data-mim-video-small') ? ['small'] : [];
+  element.replaceWith(block(document, 'Video', variants, [[content]]));
 }

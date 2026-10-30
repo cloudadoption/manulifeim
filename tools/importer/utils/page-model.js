@@ -18,6 +18,9 @@
  * - junk components are dropped
  * - richTitle (section heading, numbered heading or heading + link) -> its own section with
  *   Style title-row: the heading and the link paragraph as default content (no Title block)
+ * - title (plain heading component, sized by its context on live) -> starts a section with
+ *   Style section-title (in a flow the content after it stays in that section); a title in a
+ *   Columns cell or a tab panel stays a plain heading
  * - navigationTabs whose panels hold only text and figures -> Tabs block; other navigationTabs
  *   with 2+ panels -> one section per panel with Section Metadata Tab: <label> (the site groups
  *   consecutive Tab sections into one tab set, scripts/section-tabs.js), blocks kept
@@ -226,11 +229,56 @@ const LAYOUTS = {
   '8,4': '8-4', '6,6': '6-6', '4,4,4': '4-4-4', '3,3,3,3': '3-3-3-3',
 };
 
+/* layouts of a row of small videos (two qw-4 columns of a quarter-width container = 6-6) */
+const VIDEO_LAYOUTS = { ...LAYOUTS, '4,4': '6-6' };
+
+/**
+ * A row of small videos: 2+ columns of at most half the width, each empty or holding a videoKicker
+ * optionally followed by a linkList2 (live "Download transcript (PDF)"), at least one video (an
+ * empty column keeps the video at the left, as live). -> one section with Layout
+ * whose Video blocks have the variant small; the links go into their video as a list
+ * (ul[data-mim-video-links], read by the video parser). null when the columns are anything else.
+ */
+function videoRow(document, cols, all, centered) {
+  const layout = VIDEO_LAYOUTS[cols.map(widthOf).join(',')];
+  if (!layout) return null;
+  // empty helpers next to the video (e.g. an html-container holding a style tag) do not count
+  const blank = (el) => {
+    const c = el.cloneNode(true);
+    c.querySelectorAll('style, script').forEach((s) => s.remove());
+    return isEmpty(c);
+  };
+  const items = all.map((list) => list.filter((i) => !(i.kind === 'default' && blank(i.el))));
+  const isVideo = (i) => i.kind === 'block' && i.name === 'video';
+  const isLinks = (i) => i.kind === 'block' && i.name === 'link-list' && i.el.classList.contains('linkList2');
+  const videoColumn = (list, k) => list.length <= 2 && isVideo(list[0])
+    && (list.length === 1 || isLinks(list[1])) && widthOf(cols[k]) <= 6;
+  const ok = items.every((list, k) => list.length === 0 || videoColumn(list, k));
+  if (!ok || !items.some((list) => list.length)) return null;
+  const nodes = items.filter((list) => list.length).map(([video, links]) => {
+    video.el.setAttribute('data-mim-video-small', '');
+    if (links) {
+      const ul = h(document, 'ul');
+      ul.setAttribute('data-mim-video-links', '');
+      links.el.querySelectorAll('a[href]').forEach((a) => {
+        const lp = linkFrom(document, a);
+        if (lp) ul.append(h(document, 'li', lp.firstElementChild));
+      });
+      if (ul.children.length) video.el.append(ul);
+      links.el.remove();
+    }
+    return video.el;
+  });
+  return {
+    type: 'section', styles: centered ? ['centered'] : [], nodes, layout, keepLayout: true,
+  };
+}
+
 /**
  * Expands a column-container into model items:
  * [{type:'columns', el}] | [{type:'default', nodes}] | [{type:'block', el}] | [{type:'divider'}]
  */
-export function expandColumns(document, cc) {
+export function expandColumns(document, cc, { noRow = false } = {}) {
   const container = cc.querySelector(':scope > .column-container__container');
   if (!container) {
     // press release date holder: <div class="column-container"><time>
@@ -245,6 +293,26 @@ export function expandColumns(document, cc) {
   const contentCols = items.filter((list) => list.some((i) => (i.kind === 'default' && !isEmpty(i.el)) || isFigure(i))).length;
   const nested = items.flat().filter((i) => i.kind !== 'default' && !isFigure(i));
   const out = [];
+
+  const videos = cols.length >= 2 ? videoRow(document, cols, items, centered) : null;
+  if (videos) return [videos];
+
+  // every column filled, one holding 2+ components and a block among them (a promo under a
+  // chart, a form beside a promo): one section per column with Section Metadata Column
+  // (scripts/section-columns.js). toSections picks: a flow keeps the old model (row.flow).
+  const rowLayout = LAYOUTS[cols.map(widthOf).join(',')];
+  const plain = (i) => i.kind === 'default' || i.kind === 'divider' || (i.kind === 'block' && i.name !== 'title');
+  // components of a column as the model counts them: a run of default components is one
+  const runs = (list) => list.filter((i, k) => i.kind !== 'default' || k === 0 || list[k - 1].kind !== 'default').length;
+  if (!noRow && rowLayout && !centered && cols.length >= 2 && items.every((list) => list.length)
+    && nested.some((i) => i.kind === 'block') && items.some((list) => runs(list) > 1)
+    && items.flat().every(plain)) {
+    return [{
+      type: 'columnRow',
+      flow: () => expandColumns(document, cc, { noRow: true }),
+      row: () => columnSections(document, items, rowLayout),
+    }];
+  }
 
   if (cols.length >= 2 && contentCols >= 2) {
     const widths = cols.map(widthOf).join(',');
@@ -263,8 +331,9 @@ export function expandColumns(document, cc) {
     && groups.flat().every((it) => it.type === 'default' || it.type === 'block')
     && (last < cols.length - 1 || groups.flat().some((it) => it.type === 'block'))) {
     const nodes = groups.flat().flatMap((it) => (it.type === 'default' ? it.nodes : [it.el]));
+    // Style section-title reaches the first column's heading only
     return [{
-      type: 'section', styles: [], nodes, layout,
+      type: 'section', styles: [...(groups[0][0].startStyles || [])], nodes, layout,
     }];
   }
 
@@ -272,8 +341,9 @@ export function expandColumns(document, cc) {
   let run = null;
   groups.flat().forEach((it) => {
     if (it.type === 'default') {
-      if (!run) {
+      if (!run || it.startStyles) {
         run = { type: 'default', nodes: [], centered };
+        if (it.startStyles) run.startStyles = it.startStyles;
         out.push(run);
       }
       run.nodes.push(...it.nodes);
@@ -283,6 +353,19 @@ export function expandColumns(document, cc) {
     out.push({ ...it, centered });
   });
   return out;
+}
+
+/* one section per column (Column 1, 2, ...; Layout on the first): default runs and blocks in
+   order; a divider inside a column is dropped */
+function columnSections(document, items, layout) {
+  const columns = items.map((list) => columnModel(document, list.filter((i) => i.kind !== 'divider')));
+  return columns.map((col, k) => ({
+    type: 'section',
+    styles: [],
+    nodes: col.flatMap((it) => (it.type === 'default' ? it.nodes : [it.el])),
+    column: k + 1,
+    ...(k ? {} : { layout }),
+  }));
 }
 
 /* model items of one column: default runs merged, blocks / nested containers as items */
@@ -295,6 +378,8 @@ function columnModel(document, list) {
       if (!nodes.length) return;
       if (!run) {
         run = { type: 'default', nodes: [] };
+        // a title opening a column run starts its section (a later one stays a plain heading)
+        if (i.name === 'title') run.startStyles = ['section-title'];
         out.push(run);
       }
       run.nodes.push(...nodes);
@@ -409,7 +494,8 @@ function itemFor(document, i) {
   if (i.kind === 'block') return emptyBlock(i.el, i.name) ? [] : [{ type: 'block', el: i.el, name: i.name }];
   if (i.kind === 'default') {
     const nodes = toDefault(document, i.el, i.name);
-    return nodes.length ? [{ type: 'default', nodes }] : [];
+    if (!nodes.length) return [];
+    return [i.name === 'title' ? { type: 'default', nodes, startStyles: ['section-title'] } : { type: 'default', nodes }];
   }
   return [];
 }
@@ -426,7 +512,11 @@ export function itemsFor(document, elements) {
  *   (split at dividers / breaks)
  * @returns {{nodes: Element[], styles: string[], id?: string, navTitle?: string}[]}
  */
-export function toSections(items, opts = {}) {
+export function toSections(list, opts = {}) {
+  // a row of column sections in a flow keeps the old model (Columns block, blocks after it)
+  const items = list.flatMap((it) => (it.type === 'columnRow'
+    ? (opts.flow ? it.flow() : it.row()).map((x) => ({ ...x, tab: it.tab, tabPanel: it.tabPanel }))
+    : [it]));
   const sections = [];
   let pending = { styles: [] };
   let current = null;
@@ -458,7 +548,11 @@ export function toSections(items, opts = {}) {
       current = null;
       return;
     }
-    if (it.type === 'section' && it.layout && opts.flow) {
+    if (it.type === 'section' && it.layout && opts.flow && it.keepLayout) {
+      // a row of small videos keeps its Layout in a flow; the article sets its width
+      // (styles/templates.css), so no centered
+      it = { ...it, styles: it.styles.filter((st) => st !== 'centered') };
+    } else if (it.type === 'section' && it.layout && opts.flow) {
       // flow templates (article, press release body) keep column content in the flow;
       // their column widths come from styles/templates.css
       it = {
@@ -472,16 +566,19 @@ export function toSections(items, opts = {}) {
       const styles = it.centered ? ['centered', ...it.styles] : it.styles;
       styles.forEach((st) => { if (!sec.styles.includes(st)) sec.styles.push(st); });
       if (it.layout) sec.layout = it.layout;
+      if (it.column) sec.column = it.column;
       sec.nodes.push(...it.nodes);
       current = null;
       return;
     }
     const centered = !!it.centered;
+    // a title starts its section, except inside a tab panel (the panel keeps one section)
+    const lead = !it.tab && it.startStyles ? it.startStyles : [];
     let sec;
     if (it.tab && current && !current.layout) {
       // the items of one panel share its section (centered when its first item is)
       sec = current;
-    } else if (opts.flow && current && !centered && !current.centered) {
+    } else if (opts.flow && current && !centered && !current.centered && !lead.length) {
       sec = current;
     } else {
       sec = start(it);
@@ -489,6 +586,7 @@ export function toSections(items, opts = {}) {
         sec.centered = true;
         if (!sec.styles.includes('centered')) sec.styles.push('centered');
       }
+      lead.forEach((st) => { if (!sec.styles.includes(st)) sec.styles.push(st); });
     }
     if (it.type === 'default') sec.nodes.push(...it.nodes);
     else sec.nodes.push(it.el);
@@ -516,6 +614,7 @@ export function renderSections(document, sections) {
     if (s.id && (!s.navTitle || s.id !== slug(s.navTitle))) meta.Id = s.id;
     if (s.layout) meta.Layout = s.layout;
     if (s.tab) meta.Tab = s.tab;
+    if (s.column) meta.Column = String(s.column);
     div.setAttribute('data-mim', JSON.stringify(meta));
     s.nodes.forEach((n) => div.append(n));
     page.append(div);

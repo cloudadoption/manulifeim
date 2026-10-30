@@ -92,6 +92,34 @@
   text-align: center;
 }
 
+/* Style section-title in the article (live .viewpoint-content .title): the size follows the level at
+   every width; h1 keeps the 24px / 32px of styles.css. The section continues the flow: no top
+   margin of its own (the wrapper before it keeps its 32px), 32px under the heading. */
+.template-viewpoint main > .section.section-title:not(:first-child, .sidebar, .sidebar ~ .section) > .default-content-wrapper:first-child {
+  margin-top: 0;
+}
+
+.template-viewpoint main > .section.section-title > .default-content-wrapper:first-child > :is(h1, h2, h3, h4, h5, h6):first-child {
+  margin-bottom: 32px;
+}
+
+.template-viewpoint main > .section.section-title > .default-content-wrapper:first-child > h2:first-child {
+  font-size: var(--font-size-title-xl);
+}
+
+.template-viewpoint main > .section.section-title > .default-content-wrapper:first-child > h3:first-child {
+  font-size: var(--font-size-title-l);
+}
+
+.template-viewpoint main > .section.section-title > .default-content-wrapper:first-child > h4:first-child {
+  font-size: var(--font-size-h3);
+}
+
+.template-viewpoint main > .section.section-title > .default-content-wrapper:first-child > :is(h5, h6):first-child {
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-heading);
+}
+
 /* sidebar */
 .template-viewpoint main > .section.sidebar {
   padding: 24px 16px;
@@ -110,6 +138,25 @@
    and centred from 1101px */
 .template-viewpoint main > .section.sidebar ~ .section > div {
   padding-inline: 0;
+}
+
+/* Layout 6-6 in the article body (live quarter-width column-container with two qw-4 columns,
+   e.g. two small videos): stacked 24px from the edges; from 801px a row of 75% of the column
+   (the 920px column next to the sidebar from 1101px), side by side from 961px, left-aligned */
+.template-viewpoint main > .section[data-layout="6-6"]:not(:first-child, .sidebar, .sidebar ~ .section) {
+  margin: 32px 0;
+  padding: 0 24px;
+}
+
+.template-viewpoint main > .section[data-layout="6-6"]:not(:first-child, .sidebar, .sidebar ~ .section) > div {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+/* the next row of the same set: 32px between them, as between live column containers */
+.template-viewpoint main > .section[data-layout="6-6"]:not(:first-child, .sidebar, .sidebar ~ .section) + .template-viewpoint main > .section[data-layout="6-6"]:not(:first-child, .sidebar, .sidebar ~ .section) {
+  margin-top: 0;
 }
 
 /* ---------------------------------------------------------------- case-study-detail */
@@ -162,6 +209,7 @@
 }
 
 /* each live text component starts with its h2 (ISSUE / ACTION / OUTCOME): 24px between them */
+/* stylelint-disable-next-line no-descending-specificity -- other template than the viewpoint title rules */
 .template-case-study-detail main > .section:not(:first-child, .sidebar) .default-content-wrapper > h2:not(:first-child) {
   margin-top: 24px;
 }
@@ -298,6 +346,18 @@
   .template-case-study-detail main > .section:not(:first-child, .sidebar, .sidebar ~ .section) > .default-content-wrapper {
     padding-inline: 0;
   }
+
+  .template-viewpoint main > .section[data-layout="6-6"]:not(:first-child, .sidebar, .sidebar ~ .section) {
+    justify-content: flex-start;
+    gap: 24px;
+    padding-inline: calc((100% - var(--width-centered)) / 2);
+  }
+}
+
+@media (width >= 961px) {
+  .template-viewpoint main > .section[data-layout="6-6"]:not(:first-child, .sidebar, .sidebar ~ .section) > div {
+    width: calc(50% - 12px);
+  }
 }
 
 /* ---------------------------------------------------------------- >= 1101px (live desktop) */
@@ -351,6 +411,12 @@
 
   .template-viewpoint main > .section:not(:first-child, .sidebar, .sidebar ~ .section) {
     padding-right: 24px;
+  }
+
+  .template-viewpoint main > .section[data-layout="6-6"]:not(:first-child, .sidebar, .sidebar ~ .section) {
+    /* (100% - 75%) / 2 of the 920px column, then the column's 24px on the right */
+    padding-left: calc((100% - 24px) / 8);
+    padding-right: calc((100% - 24px) / 8 + 24px);
   }
 
   .template-viewpoint main > .section.sidebar {

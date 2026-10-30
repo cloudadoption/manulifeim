@@ -15,6 +15,7 @@ import {
 } from './aem.js';
 import { isChromePath } from './dom-utils.js';
 import buildSectionTabs from './section-tabs.js';
+import buildSectionColumns from './section-columns.js';
 
 if (window.trustedTypes && window.trustedTypes.createPolicy) {
   const innerTT = window.trustedTypes.createPolicy('tt-inner', {
@@ -214,6 +215,7 @@ export function decorateMain(main) {
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  if (!isAuthoring()) buildSectionColumns(main);
   decorateButtons(main);
 }
 

@@ -84,6 +84,34 @@ test('video block: rows split over cells and no transcript; without a player lin
   assert.equal(plain.querySelector('figcaption').textContent, 'Caption only');
 });
 
+test('video small: the caption sits in the poster after the play label; a list of links follows the poster', async () => {
+  const { default: decorate } = await fresh('../blocks/video/video.js');
+  const main = document.querySelector('main');
+  main.innerHTML = `<div class="video small"><div><div><p><picture><img src="/media-da/p.jpg" alt="Frances Donald"></picture></p>
+    <p><a href="${PLAYER}">${PLAYER}</a></p><p>The global economic recovery might be underway.</p>
+    <ul><li><a href="/institutional/tw/en/resources/documents/transcript-key-risks">Download transcript (PDF)</a></li></ul></div></div></div>`;
+  const block = main.querySelector('.video');
+  await decorate(block);
+  const button = block.querySelector('button.video-media');
+  assert.deepEqual([...button.children].map((c) => c.className || c.tagName.toLowerCase()), ['picture', 'video-play-icon', 'video-play-label', 'video-caption']);
+  assert.equal(button.querySelector('.video-caption').textContent, 'The global economic recovery might be underway.');
+  assert.equal(block.querySelector('figcaption'), null);
+  assert.equal(button.getAttribute('aria-label'), 'Play video: The global economic recovery might be underway.');
+  const list = block.querySelector(':scope > ul.video-links');
+  assert.ok(list, 'links under the figure');
+  assert.equal(list.previousElementSibling.tagName, 'FIGURE');
+  assert.equal(list.querySelector('a').textContent, 'Download transcript (PDF)', 'a listed link stays a link (not the modal transcript)');
+});
+
+test('video (default): a list of links also shows under the poster, the caption stays a figcaption', async () => {
+  const { default: decorate } = await fresh('../blocks/video/video.js');
+  const block = blockFrom(`<div><div><picture><img src="/media-da/p.jpg" alt=""></picture><p><a href="${PLAYER}">${PLAYER}</a></p>
+    <p>Caption</p><ul><li><a href="/x.pdf">Download</a></li><li><a href="/y.pdf">Slides</a></li></ul></div></div>`);
+  await decorate(block);
+  assert.equal(block.querySelector('figcaption').textContent, 'Caption');
+  assert.deepEqual([...block.querySelectorAll('ul.video-links a')].map((a) => a.textContent), ['Download', 'Slides']);
+});
+
 test('player links anywhere open the modal on a plain click; modified clicks and other links are left alone', async () => {
   const { decorateVideoLinks } = await fresh('../scripts/video.js');
   const main = document.querySelector('main');
