@@ -632,6 +632,23 @@ button.button.accent:focus-visible {
   padding-bottom: var(--spacing-section-edge);
 }
 
+/* strategy data panels (live strategyDetail__heading): the Key facts, Performance and
+   Characteristics sections (divider, Nav Title and a Table; only on the strategy pages) open with
+   a light page-title-size heading and its 12px "as of" line 8px below */
+main > .section.divider.table-container[data-nav-title] > .default-content-wrapper:first-child > h2:first-child {
+  margin-bottom: 8px;
+  font-size: var(--font-size-page-title);
+  font-weight: 300;
+  line-height: var(--line-height-heading);
+}
+
+main > .section.divider.table-container[data-nav-title] > .default-content-wrapper:first-child > h2:first-child + p {
+  margin-top: 0;
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
+  color: var(--color-text-muted);
+}
+
 /* section tabs (scripts/section-tabs.js, blocks/tabs variant sections): closed panels; beats
    the display of the section layouts */
 main > .section[data-tab][hidden] {
@@ -735,6 +752,13 @@ main > .section.title-row a.link-cta::before {
 main > .section.title-row a.link-cta:hover,
 main > .section.title-row a.link-cta:focus {
   text-decoration: underline;
+}
+
+/* the strategy panels sit on the section padding at every width (live strategyDetail has no
+   column-container inset): the Key facts section and the data sections after it */
+main > .section[data-nav-title='Key facts'] > .default-content-wrapper,
+main > .section[data-nav-title='Key facts'] ~ .section.divider.table-container > .default-content-wrapper {
+  padding-inline: var(--spacing-section-x);
 }
 
 /* divider: top rule 1px #e0e0e0, 32px above and below (64px from 601px) */

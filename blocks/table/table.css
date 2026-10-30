@@ -76,6 +76,8 @@
 .table td p,
 .table th p {
   margin: 0;
+  font-size: inherit;
+  line-height: inherit;
 }
 
 .table td a:any-link,
@@ -167,6 +169,35 @@
   margin: 0;
 }
 
+/* strategy Key facts (live strategyDetail__keyFacts): label (12px bold) over value (24px), no table
+   lines; stacked, then an auto-width 3-column grid from 801px */
+main > .section[data-nav-title='Key facts'] .table.header-column tr {
+  margin: 0;
+  padding: 0 0 24px;
+  border: none;
+}
+
+main > .section[data-nav-title='Key facts'] .table.header-column tr :is(th, td) {
+  display: block;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  color: var(--color-text);
+}
+
+main > .section[data-nav-title='Key facts'] .table.header-column tr :is(th, td):first-child {
+  margin-bottom: 8px;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  line-height: var(--line-height-xs);
+}
+
+main > .section[data-nav-title='Key facts'] .table.header-column tr td {
+  font-size: var(--font-size-h3);
+  font-weight: 400;
+  line-height: var(--line-height-heading);
+}
+
 @media (width >= 601px) {
   .table .table-title {
     font-size: 32px;
@@ -215,5 +246,32 @@
   .table td[data-title]::before,
   .table th[scope="row"][data-title]::before {
     content: none;
+  }
+
+  main > .section[data-nav-title='Key facts'] .table.header-column tbody {
+    display: inline-grid;
+    grid-template-columns: repeat(3, auto);
+    width: auto;
+  }
+
+  main > .section[data-nav-title='Key facts'] .table.header-column tr {
+    display: block;
+    min-width: 270px;
+    padding: 0 24px 24px 0;
+  }
+
+  main > .section[data-nav-title='Key facts'] .table.header-column tr :is(th, td) {
+    display: block;
+    padding: 0;
+  }
+
+  main > .section[data-nav-title='Key facts'] .table.header-column tr :is(th, td):first-child {
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-xs);
+  }
+
+  main > .section[data-nav-title='Key facts'] .table.header-column tr td {
+    font-size: var(--font-size-h3);
+    line-height: var(--line-height-heading);
   }
 }
