@@ -220,8 +220,31 @@ export function lastSegment(href) {
  * @param {Element} root
  * @param {{livePath: string, unmigrated: Map<string,string>, rules?: object}} ctx
  */
+/**
+ * Original URL of an Outlook SafeLinks wrapper (https://*.safelinks.protection.outlook.com/
+ * ?url=<encoded>&data=<recipient, tracking>), else the href unchanged.
+ */
+export function unwrapSafeLink(href) {
+  try {
+    const u = new URL(href);
+    if (!/(^|\.)safelinks\.protection\.outlook\.com$/i.test(u.hostname)) return href;
+    const target = u.searchParams.get('url');
+    return target && /^https?:\/\//i.test(target) ? target : href;
+  } catch (e) {
+    return href;
+  }
+}
+
 export function rewriteLinks(root, ctx) {
   root.querySelectorAll('a').forEach((a) => {
+    // a title with line breaks (Outlook "Original URL: … Click to follow link.") breaks the
+    // importer's markdown link syntax and leaks the raw link into the text; links need no title
+    const title = a.getAttribute('title');
+    if (title !== null && (/[\r\n]/.test(title) || /^original url:/i.test(title.trim()))) a.removeAttribute('title');
+    if (a.hasAttribute('href')) {
+      const unwrapped = unwrapSafeLink(a.getAttribute('href'));
+      if (unwrapped !== a.getAttribute('href')) a.setAttribute('href', unwrapped);
+    }
     // live video modal links (Brightcove) -> player URL
     const video = a.getAttribute('data-videomodal');
     if (video && (!a.getAttribute('href') || a.getAttribute('href') === '#')) {

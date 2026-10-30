@@ -16,6 +16,9 @@
  *   (e.g. text in an fw-8 column next to an empty fw-4 one, or text next to a form)
  * - otherwise the columns are flattened in order
  * - junk components are dropped
+ * - navigationTabs whose panels hold only text and figures -> Tabs block (others flatten)
+ * - strategyDetail -> one section per data panel (Key facts, Performance, ...), with the
+ *   panel's sectionBreak as Id / Nav Title and its divider (strategy-section parser)
  *
  * The model is rendered as <div class="mim-section" data-mim="{json}"> wrappers holding
  * default-content nodes (already cleaned) and the original block components (parsed
@@ -28,7 +31,7 @@ import {
 
 /* live components that are not content */
 const DROP = [
-  'ghost', 'trending-topics2', 'consentModal', 'subscribe', 'strategyDetail', 'sort-viewpoints',
+  'ghost', 'trending-topics2', 'consentModal', 'subscribe', 'sort-viewpoints',
   'imageToggle', 'strategyTag', 'caseStudyDetail__bottom', 'pagination',
   'share-controls', 'viewpoint-detail__print-authors', 'videoModal', 'xfpage',
 ];
@@ -74,7 +77,22 @@ export const BLOCK_COMPONENTS = {
   caseStudyDetail__sidebar: 'case-study-sidebar',
   'mim-authors': 'author',
   search: 'search',
+  videoKicker: 'video',
 };
+
+/** navigationTabs with 2+ panels that hold only text and figures can be a Tabs block. */
+function tabsBlock(el) {
+  const items = [...el.querySelectorAll('.navigationTabs__contentItem')];
+  if (items.length < 2) return false;
+  return items.every((item) => {
+    const inner = item.querySelector('.navigationTabs__contentInner') || item;
+    return [...inner.children].every((c) => {
+      const k = classify(c);
+      return k.kind === 'drop' || (k.kind === 'default' && k.name !== 'navigationTabs')
+        || (k.kind === 'block' && k.name === 'figure');
+    });
+  });
+}
 
 const DEFAULT_COMPONENTS = [
   'text', 'title', 'image', 'keyTakeaways', 'quote2', 'iframe-wrapper', 'landingCta',
@@ -93,6 +111,8 @@ export function classify(el) {
   if (cl.includes('sectionBreak')) return { kind: 'sectionBreak' };
   if (cl.includes('divider')) return { kind: 'divider' };
   if (cl.includes('column-container')) return { kind: 'columns' };
+  if (cl.includes('strategyDetail')) return { kind: 'strategy' };
+  if (cl.includes('navigationTabs') && tabsBlock(el)) return { kind: 'block', name: 'tabs' };
   if (cl.includes('table') && cl.includes('parbase')) return { kind: 'block', name: 'table' };
   if (cl.includes('search') && !cl.includes('search-mim')) return { kind: 'block', name: 'search' };
   const blockClass = cl.find((c) => BLOCK_COMPONENTS[c] && c !== 'search');
@@ -281,7 +301,67 @@ function columnModel(document, list) {
   return out;
 }
 
+/**
+ * Records the strategyDetail panel markers on the panels themselves. The importer's own
+ * preProcess removes every <hr> and every empty <a> (a.sectionBreak), so the import scripts
+ * call this in their preprocess: data-mim-break = {id, navTitle} of the panel's sectionBreak,
+ * data-mim-divider when an <hr> precedes it, data-mim-trailing-divider on the root for an
+ * <hr> after the last panel.
+ */
+export function markStrategyPanels(document) {
+  document.querySelectorAll('.strategyDetail__root').forEach((root) => {
+    let brk = null;
+    let divider = false;
+    [...root.children].forEach((c) => {
+      if (c.classList.contains('sectionBreak')) {
+        const s = c.matches('[data-section]') ? c : (c.querySelector('[data-section]') || c);
+        brk = { id: s.id || c.id || '', navTitle: norm(s.getAttribute('data-section') || '') };
+      } else if (c.tagName === 'HR') {
+        divider = true;
+      } else if (c.matches('section.strategyDetail__section')) {
+        if (brk) c.setAttribute('data-mim-break', JSON.stringify(brk));
+        if (divider) c.setAttribute('data-mim-divider', '');
+        brk = null;
+        divider = false;
+      }
+    });
+    if (divider) root.setAttribute('data-mim-trailing-divider', '');
+  });
+}
+
+/* strategyDetail panels: sectionBreak -> Id / Nav Title, hr -> divider, section -> block
+   (from the data-mim-* markers when markStrategyPanels ran, else from the live elements) */
+function expandStrategy(el) {
+  const root = el.querySelector('.strategyDetail__root') || el;
+  const marked = !!root.querySelector(':scope > [data-mim-break], :scope > [data-mim-divider]')
+    || root.hasAttribute('data-mim-trailing-divider');
+  const items = [...root.children].flatMap((c) => {
+    if (!marked && c.classList.contains('sectionBreak')) return [{ type: 'sectionBreak', el: c }];
+    if (!marked && c.tagName === 'HR') return [{ type: 'divider' }];
+    if (!c.matches('section.strategyDetail__section') || isEmpty(c)) return [];
+    const out = [];
+    if (marked && c.hasAttribute('data-mim-divider')) out.push({ type: 'divider' });
+    if (marked && c.hasAttribute('data-mim-break')) {
+      let b = {};
+      try {
+        b = JSON.parse(c.getAttribute('data-mim-break'));
+      } catch (e) {
+        b = {};
+      }
+      const anchor = c.ownerDocument.createElement('a');
+      anchor.id = b.id || '';
+      anchor.setAttribute('data-section', b.navTitle || '');
+      out.push({ type: 'sectionBreak', el: anchor });
+    }
+    out.push({ type: 'block', el: c, name: 'strategy-section' });
+    return out;
+  });
+  if (marked && root.hasAttribute('data-mim-trailing-divider')) items.push({ type: 'divider' });
+  return items;
+}
+
 function itemFor(document, i) {
+  if (i.kind === 'strategy') return expandStrategy(i.el);
   if (i.kind === 'divider') return [{ type: 'divider' }];
   if (i.kind === 'sectionBreak') return [{ type: 'sectionBreak', el: i.el }];
   if (i.kind === 'columns') return expandColumns(document, i.el);

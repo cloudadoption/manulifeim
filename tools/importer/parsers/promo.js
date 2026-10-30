@@ -8,10 +8,14 @@
  * Colour of the first item is the block variant; each row carries its own colour.
  * A title made of several <p>s (e.g. "Latest asset allocation views" + <sup>June 2026</sup>)
  * is joined with <br>.
+ * Video item (data-videomodal on the item, link href="#"): the link becomes the Brightcove
+ * player URL and data-transcript-url a "Transcript" link (blocks/promo moves it into the
+ * player modal).
  */
 import {
-  h, image, block, text, linkFrom, inlineHtml,
+  h, image, block, text, linkFrom, linkParagraph, inlineHtml,
 } from '../utils/dom.js';
+import { playerUrl, transcriptUrl } from './video.js';
 
 const COLOURS = ['green', 'navy', 'blue', 'gold', 'violet', 'white'];
 
@@ -32,7 +36,14 @@ export default function parse(element, { document }) {
       if (paras.length) paras.forEach((p) => content.push(h(document, 'p', p.innerHTML.trim())));
       else if (text(sub)) content.push(h(document, 'p', sub.innerHTML.trim()));
     }
-    it.querySelectorAll('a.simpleBanner__link').forEach((a) => content.push(linkFrom(document, a)));
+    const video = it.matches('[data-videomodal]') ? playerUrl(it) : '';
+    it.querySelectorAll('a.simpleBanner__link').forEach((a) => {
+      const href = (a.getAttribute('href') || '').trim();
+      if (video && (!href || href === '#')) content.push(linkParagraph(document, video, text(a) || 'Watch now'));
+      else content.push(linkFrom(document, a));
+    });
+    const transcript = video ? transcriptUrl(it) : '';
+    if (transcript) content.push(linkParagraph(document, transcript, 'Transcript'));
     const img = image(document, it.querySelector('.simpleBanner__image img'));
     return [img || '', content.filter(Boolean), colourOf(it)];
   });

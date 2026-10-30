@@ -53,6 +53,9 @@ import caseStudySidebarParser from './parsers/case-study-sidebar.js';
 import formParser from './parsers/form.js';
 import searchParser from './parsers/search.js';
 import listingParser from './parsers/listing.js';
+import tabsParser from './parsers/tabs.js';
+import strategySectionParser from './parsers/strategy-section.js';
+import videoParser from './parsers/video.js';
 
 import metadataTransformer from './transformers/metadata.js';
 import cleanupTransformer from './transformers/cleanup.js';
@@ -61,6 +64,7 @@ import linksTransformer from './transformers/links.js';
 
 import { FRAGMENT_PLACEHOLDER } from './parsers/browse-by.js';
 import { documentPathFor, normalizePath, LIVE_ORIGIN } from './utils/links.js';
+import { markStrategyPanels } from './utils/page-model.js';
 
 const TEMPLATE_NAME = 'viewpoints';
 const PAGE_TEMPLATE = PAGE_TEMPLATES.templates.find((t) => t.name === TEMPLATE_NAME);
@@ -97,6 +101,9 @@ const parsers = {
   form: formParser,
   search: searchParser,
   listing: listingParser,
+  tabs: tabsParser,
+  'strategy-section': strategySectionParser,
+  video: videoParser,
 };
 
 // order matters: metadata reads <head> and the live sidebar before cleanup / sections
@@ -142,6 +149,8 @@ const PRE_CHROME = ['#auth-container', 'div.xfpage', 'dialog#region-modal', '#on
 
 export default {
   preprocess: ({ document }) => {
+    // before the importer's preProcess drops <hr> and empty <a> (strategy panel markers)
+    markStrategyPanels(document);
     PRE_CHROME.forEach((sel) => document.querySelectorAll(sel).forEach((n) => {
       if (!n.querySelector('main')) n.remove();
     }));

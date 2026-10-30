@@ -43,6 +43,24 @@
           ]
         },
         {
+          "name": "tabs",
+          "instances": [
+            ".navigationTabs"
+          ]
+        },
+        {
+          "name": "strategy-section",
+          "instances": [
+            "section.strategyDetail__section"
+          ]
+        },
+        {
+          "name": "video",
+          "instances": [
+            ".videoKicker"
+          ]
+        },
+        {
           "name": "columns",
           "instances": [
             ".column-container[data-mim-columns]"
@@ -538,6 +556,24 @@
           ]
         },
         {
+          "name": "tabs",
+          "instances": [
+            ".navigationTabs"
+          ]
+        },
+        {
+          "name": "strategy-section",
+          "instances": [
+            "section.strategyDetail__section"
+          ]
+        },
+        {
+          "name": "video",
+          "instances": [
+            ".videoKicker"
+          ]
+        },
+        {
           "name": "columns",
           "instances": [
             ".column-container[data-mim-columns]"
@@ -750,6 +786,24 @@
           "name": "section-nav-links",
           "instances": [
             ".pressCategories__inner"
+          ]
+        },
+        {
+          "name": "tabs",
+          "instances": [
+            ".navigationTabs"
+          ]
+        },
+        {
+          "name": "strategy-section",
+          "instances": [
+            "section.strategyDetail__section"
+          ]
+        },
+        {
+          "name": "video",
+          "instances": [
+            ".videoKicker"
           ]
         },
         {
@@ -1651,6 +1705,24 @@
           ]
         },
         {
+          "name": "tabs",
+          "instances": [
+            ".navigationTabs"
+          ]
+        },
+        {
+          "name": "strategy-section",
+          "instances": [
+            "section.strategyDetail__section"
+          ]
+        },
+        {
+          "name": "video",
+          "instances": [
+            ".videoKicker"
+          ]
+        },
+        {
           "name": "columns",
           "instances": [
             ".column-container[data-mim-columns]"
@@ -1854,6 +1926,24 @@
           "name": "section-nav-links",
           "instances": [
             ".pressCategories__inner"
+          ]
+        },
+        {
+          "name": "tabs",
+          "instances": [
+            ".navigationTabs"
+          ]
+        },
+        {
+          "name": "strategy-section",
+          "instances": [
+            "section.strategyDetail__section"
+          ]
+        },
+        {
+          "name": "video",
+          "instances": [
+            ".videoKicker"
           ]
         },
         {
@@ -2222,6 +2312,24 @@
           ]
         },
         {
+          "name": "tabs",
+          "instances": [
+            ".navigationTabs"
+          ]
+        },
+        {
+          "name": "strategy-section",
+          "instances": [
+            "section.strategyDetail__section"
+          ]
+        },
+        {
+          "name": "video",
+          "instances": [
+            ".videoKicker"
+          ]
+        },
+        {
           "name": "columns",
           "instances": [
             ".column-container[data-mim-columns]"
@@ -2429,6 +2537,24 @@
           "name": "section-nav-links",
           "instances": [
             ".pressCategories__inner"
+          ]
+        },
+        {
+          "name": "tabs",
+          "instances": [
+            ".navigationTabs"
+          ]
+        },
+        {
+          "name": "strategy-section",
+          "instances": [
+            "section.strategyDetail__section"
+          ]
+        },
+        {
+          "name": "video",
+          "instances": [
+            ".videoKicker"
           ]
         },
         {
@@ -2699,6 +2825,24 @@
           ]
         },
         {
+          "name": "tabs",
+          "instances": [
+            ".navigationTabs"
+          ]
+        },
+        {
+          "name": "strategy-section",
+          "instances": [
+            "section.strategyDetail__section"
+          ]
+        },
+        {
+          "name": "video",
+          "instances": [
+            ".videoKicker"
+          ]
+        },
+        {
           "name": "columns",
           "instances": [
             ".column-container[data-mim-columns]"
@@ -2902,6 +3046,24 @@
           "name": "section-nav-links",
           "instances": [
             ".pressCategories__inner"
+          ]
+        },
+        {
+          "name": "tabs",
+          "instances": [
+            ".navigationTabs"
+          ]
+        },
+        {
+          "name": "strategy-section",
+          "instances": [
+            "section.strategyDetail__section"
+          ]
+        },
+        {
+          "name": "video",
+          "instances": [
+            ".videoKicker"
           ]
         },
         {
